@@ -13,11 +13,75 @@ exits <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_s
 ProviderData = read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/Provider_data.csv"))
 #carehomes <- read.csv("C:/Users/benjamin.goodair/OneDrive - Nexus365/Documents/Children's Care Homes Project/Data/Ben report dates.csv")
 
-source("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Code/provider_cleaning_function.R")
-ProviderData <- create_provider_data()
 
 
-####
+####provider_data####
+
+df <-rbind( read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2018.csv"), skip=1)%>%
+  dplyr::mutate(year=2018)%>%
+  filter(Provision.type=="Children's home",
+         Registration.status=="Active")%>%
+  dplyr::select(Sector, year, Places, Local.authority),
+
+
+read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2019.csv"), skip=1)%>%
+  dplyr::mutate(year=2019)%>%
+  filter(Provision.type=="Children's home",
+         Registration.status=="Active")%>%
+  dplyr::select(Sector, year, Places, Local.authority),
+
+
+read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2020.csv"), skip=1)%>%
+  dplyr::mutate(year=2020)%>%
+  filter(Provision.type=="Children's home",
+         Registration.status=="Active")%>%
+  dplyr::select(Sector, year, Places, Local.authority),
+
+
+read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2021.csv"), skip=1)%>%
+  dplyr::mutate(year=2021)%>%
+  filter(Provision.type=="Children's home",
+         Registration.status=="Active")%>%
+  dplyr::select(Sector, year, Places, Local.authority),
+
+
+read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2022_yep.csv"), skip=4)%>%
+  dplyr::mutate(year=2022)%>%
+  filter(Provision.type=="Children's home",
+         Registration.status=="Active")%>%
+  dplyr::select(Sector, year, Places, Local.authority),
+
+
+read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2023.csv"), skip=3)%>%
+  dplyr::mutate(year=2023)%>%
+  filter(Provision.type=="Children's home",
+         Registration.status=="Active")%>%
+  dplyr::select(Sector, year, Places, Local.authority))%>%
+  dplyr::mutate(Sector= ifelse(Sector=="Health Authority", "Local Authority", Sector))%>%
+  dplyr::group_by(Sector, year,  Local.authority)%>%
+  dplyr::summarise(Places = sum(as.numeric(Places), na.rm=T))%>%
+  dplyr::ungroup() %>%
+  tidyr::complete(Local.authority, Sector = c("Private", "Local Authority", "Voluntary"), year = c(2018,2019,2020,2021,2022,2023)) %>%
+  # Replace NA Places with 0
+  replace_na(list(Places = 0))%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())%>%
+  tidyr::pivot_wider(id_cols = c("Local.authority", "year"), names_from = "Sector", values_from = "Places", names_prefix = "C.Home_Places_")
 
 
 
@@ -225,29 +289,34 @@ yes <- panele %>%dplyr::select(LA_per, Local.authority,residential_no, percent,F
   dplyr::ungroup()
 
 panele <- full_join(panele, yes, by="Local.authority")
+panele <- full_join(panele, df, by=c("Local.authority", "year"))
 
 yes <- panele %>%
   dplyr::filter(year=="2018")%>%
-  dplyr::select(LA_per, Average_house_price, Local.authority, percent, LA_chomes_places_per,LA_chomes_places_n, LA_no, net_places, own_spend_per)%>%
+  dplyr::select(LA_per, Average_house_price, Local.authority, percent,residential_no, `C.Home_Places_Local Authority`,C.Home_Places_Private, LA_no, net_places, own_spend_per)%>%
   dplyr::group_by(Local.authority)%>%
   dplyr::mutate(LA_per_2018 = LA_per,
                    LA_no_2018 = LA_no,
+                residential_no_2018 = residential_no,
                    outside_boundary_2018 = percent,
                    own_spend_2018 = own_spend_per,
-                Average_house_price_2017 = Average_house_price)%>%
-  dplyr::select(own_spend_2018, Average_house_price_2017, Local.authority, outside_boundary_2018, LA_no_2018, LA_per_2018)%>%
+                Average_house_price_2017 = Average_house_price,
+                C.Home_Places_LA_2018 = `C.Home_Places_Local Authority`,
+                C.Home_Places_Private_2018 = C.Home_Places_Private)%>%
+  dplyr::select(own_spend_2018, Average_house_price_2017,C.Home_Places_Private_2018,C.Home_Places_LA_2018, residential_no_2018, Local.authority, outside_boundary_2018, LA_no_2018, LA_per_2018)%>%
   dplyr::ungroup()
 
 panele <- full_join(panele, yes, by="Local.authority")
 
-panele <- panele %>%
-  dplyr::mutate(la_capacity_homes = LA_chomes_places_n_average-as.numeric(residential_no_average),
-                fp_capacity_homes =as.numeric(FP_chomes_places_n_average)-as.numeric(residential_no_average))
 
+panele <- panele %>%
+  rename(C.Home_Places_LA = `C.Home_Places_Local Authority`)%>%
+  dplyr::mutate(la_capacity_homes = C.Home_Places_LA-as.numeric(residential_no),
+                fp_capacity_homes =C.Home_Places_Private-as.numeric(residential_no))
 panelplm <- plm::pdata.frame(panele, index=c("Local.authority", "year"))
 #panelplm$check <- lead(panelplm$net_places)
 
-summary(plm(as.numeric(unreg_per)~lag(as.numeric(children_in_care))+(as.numeric(LA_per))*(as.numeric(Asylum_per))+lag(as.numeric(Foster_per)), data=panelplm, model="within", effect = "twoway"))
+summary(plm(as.numeric(unreg_per)~lag(as.numeric(children_in_care))+(as.numeric(fp_capacity_homes))*(as.numeric(Asylum_per))+lag(as.numeric(Foster_per)), data=panelplm, model="within", effect = "twoway"))
 
 yes1 <- plm(unreg_per~children_in_care+la_capacity_homes*Asylum_per+Foster_per, data=panelplm, model="fd")
 yes1 <- plm(unreg_per~children_in_care+fp_capacity_homes*Asylum_per+Foster_per, data=panelplm, model="fd")
