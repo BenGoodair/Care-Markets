@@ -119,7 +119,7 @@ panele <- panel %>%
                 net_places = sum(as.numeric(places)),
                 year = as.numeric(year))%>%
   dplyr::ungroup()%>%
-  dplyr::full_join(.,la_df %>%dplyr::filter(variable == "Placed outside the local authority boundary",
+  dplyr::full_join(.,la_df %>%dplyr::filter(variable == "Placed inside the local authority boundary",
                                             subcategory=="Locality of placement") %>%
                      dplyr::mutate(LA_Name = ifelse(LA_Name=="COUNTY DURHAM", "DURHAM", LA_Name))%>%
                      dplyr::rename(Local.authority = LA_Name), by=c("Local.authority", "year"))%>%
@@ -169,6 +169,28 @@ panele <- panel %>%
                                    residential_per = percent,
                                    residential_no = number)%>%
                      dplyr::select(Local.authority, year,  residential_per,residential_no), by=c("Local.authority", "year"))%>%
+  dplyr::full_join(., ProviderData %>% dplyr::select(Government.Office.Region, Local.authority)%>%
+                     dplyr::distinct()%>%
+                     dplyr::mutate(Local.authority = Local.authority %>%
+                                     gsub('&', 'and', .) %>%
+                                     gsub('[[:punct:] ]+', ' ', .) %>%
+                                     gsub('[0-9]', '', .)%>%
+                                     toupper() %>%
+                                     gsub("CITY OF", "",.)%>%
+                                     gsub("UA", "",.)%>%
+                                     gsub("COUNTY OF", "",.)%>%
+                                     gsub("ROYAL BOROUGH OF", "",.)%>%
+                                     gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                                     gsub("UA", "",.)%>%
+                                     gsub("DARWIN", "DARWEN", .)%>%
+                                     gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                                     gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                                     gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                                     gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                                     str_trim())%>%
+                     dplyr::filter(Government.Office.Region!= "North East, Yorkshire and the Humber",
+                                   Government.Office.Region!= "NULL"),
+                   by="Local.authority")%>%#add region FEs to pooled modelssss
   dplyr::distinct()
 
 
@@ -213,7 +235,7 @@ house_price <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/child
 
 panele <- panele%>%
   dplyr::filter(!is.na(year))%>%
-  dplyr::select(Local.authority, year, net_places,net_homes,residential_no,FP_chomes_places_n,FP_chomes_places_per,residential_per,LA_chomes_places_n,LA_chomes_places_per,own_spend_number,own_spend_per, percent, children_in_care,LA_per, LA_no, Asylum_no,Asylum_per, Foster_per)%>%
+  dplyr::select(Local.authority, year, net_places,net_homes, Government.Office.Region, residential_no,FP_chomes_places_n,FP_chomes_places_per,residential_per,LA_chomes_places_n,LA_chomes_places_per,own_spend_number,own_spend_per, percent, children_in_care,LA_per, LA_no, Asylum_no,Asylum_per, Foster_per)%>%
   dplyr::distinct()%>%
   dplyr::mutate(percent= as.numeric(percent))%>%
   dplyr::filter(Local.authority!="LONDON")%>%
@@ -312,58 +334,33 @@ panele <- full_join(panele, yes, by="Local.authority")
 panele <- panele %>%
   rename(C.Home_Places_LA = `C.Home_Places_Local Authority`)%>%
   dplyr::mutate(la_capacity_homes = C.Home_Places_LA-as.numeric(residential_no),
-                fp_capacity_homes =C.Home_Places_Private-as.numeric(residential_no))
+                fp_capacity_homes =C.Home_Places_Private-as.numeric(residential_no),
+                all_capcaity_homes = (C.Home_Places_Private+C.Home_Places_LA+C.Home_Places_Voluntary)-as.numeric(residential_no),
+                chome_places_all = (C.Home_Places_Private+C.Home_Places_LA+C.Home_Places_Voluntary))
+
 panelplm <- plm::pdata.frame(panele, index=c("Local.authority", "year"))
 #panelplm$check <- lead(panelplm$net_places)
 
 summary(plm(as.numeric(unreg_per)~lag(as.numeric(children_in_care))+(as.numeric(fp_capacity_homes))*(as.numeric(Asylum_per))+lag(as.numeric(Foster_per)), data=panelplm, model="within", effect = "twoway"))
 
-yes1 <- plm(unreg_per~children_in_care+la_capacity_homes*Asylum_per+Foster_per, data=panelplm, model="fd")
-yes1 <- plm(unreg_per~children_in_care+fp_capacity_homes*Asylum_per+Foster_per, data=panelplm, model="fd")
+yes1 <- plm(as.numeric(unregulated)~percent+children_in_care, data=panelplm, model="pooling")
+yes2 <- plm(as.numeric(unregulated)~percent*Asylum_per+children_in_care, data=panelplm, model="pooling")
+yes3 <- plm(as.numeric(unregulated)~percent*Asylum_per+children_in_care+as.numeric(residential_per)+Government.Office.Region, data=panelplm, model="pooling")
+yes4 <- plm(as.numeric(unregulated)~chome_places_all+children_in_care, data=panelplm, model="pooling")
+yes5 <- plm(as.numeric(unregulated)~chome_places_all*Asylum_per+children_in_care, data=panelplm, model="pooling")
+yes6 <- plm(as.numeric(unregulated)~chome_places_all*Asylum_per+children_in_care+as.numeric(residential_per)+Government.Office.Region, data=panelplm, model="pooling")
 
-summary(yes1)
+#summary(yes1)
 
-
-yes2 <- plm(unreg_per~children_in_care+own_spend_2018*Asylum_per+Foster_per, data=df, model="fd")
-yes3 <- plm(unreg_per~children_in_care+outside_boundary_2018*Asylum_per+Foster_per, data=df, model="fd")
-yes3 <- plm(unreg_per~children_in_care+Average_house_price_2017*Asylum_per, data=df, model="fd")
-
-vcovCR(yes1, vcoc="CR2")
-
-data("Grunfeld", package = "plm")
-
-
-Grunfeld
-pgrangertest(inv ~ value, data = Grunfeld)
-pgrangertest(unreg_per~Average_house_price.x, data = panelplm, order = 1L)
-
-lmtest::grangertest(unreg_per~Average_house_price.x, data = panelplm, order = 1L)
-
-
-  set.seed(1)
-cities <- rep(c('a', 'b', 'c', 'd', 'e'), each=4)
-time <- rep(factor(c('Jan', 'Feb', 'Mar', 'Apr'), levels =c('Jan', 'Feb', 'Mar', 'Apr') ), 5)
-panel <- data.frame(City=cities, Month=time)
-panel$X <- rnorm(20,2,1)
-panel$Y <- 5+2*panel$X+rnorm(20)
-
-#Using the package
-summary(plm(Y~X, model='fd',data=panel,index = c('City', 'Month')))
-#Estimate=1.8372
-
-#Manually
-panel$diff_lag_Y <- ave(panel$Y, panel$City, FUN = function(x) x- dplyr::lag(x))
-panel$diff_lag_X<- ave(panel$X, panel$City, FUN =  function(x) x- dplyr::lag(x))
-
-summary(lm(panel$diff_lag_Y~panel$diff_lag_X, data=panel))
-#Estimate=1.8372
-
+#plot_model(yes3, "int")
 
 yes1sum <- as.list(modelsummary(yes1, output = "modelsummary_list", statistic = c("conf.int","p={p.value}")))
 yes2sum <- as.list(modelsummary(yes2, output = "modelsummary_list", statistic = c("conf.int","p={p.value}")))
+yes3sum <- as.list(modelsummary(yes3, output = "modelsummary_list", statistic = c("conf.int","p={p.value}")))
+yes4sum <- as.list(modelsummary(yes4, output = "modelsummary_list", statistic = c("conf.int","p={p.value}")))
+yes5sum <- as.list(modelsummary(yes5, output = "modelsummary_list", statistic = c("conf.int","p={p.value}")))
+yes6sum <- as.list(modelsummary(yes6, output = "modelsummary_list", statistic = c("conf.int","p={p.value}")))
 
-#FEmisssum <- as.list(modelsummary(FEmiss, output = "modelsummary_list", statistic = c("conf.int","p={p.value}")))
-#FEmissconsum <- as.list(modelsummary(FEmisscon, output = "modelsummary_list", statistic = c("conf.int","p={p.value}")))
 
 
 
@@ -373,82 +370,89 @@ yes1sum$tidy$conf.low <- yes1sum$tidy$estimate-(1.96*coef_test(yes1, vcov = "CR2
 yes1sum$tidy$conf.high <- yes1sum$tidy$estimate+(1.96*coef_test(yes1, vcov = "CR2", cluster = panelplm$Local.authority, test = "Satterthwaite")$SE)
 yes1sum$tidy$estimate <- yes1sum$tidy$estimate
 
-FElocconsum$tidy$p.value <- coef_test(FEloccon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$p
-FElocconsum$tidy$std.error <- coef_test(FEloccon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE
-FElocconsum$tidy$conf.low <- FElocconsum$tidy$estimate-(1.96*coef_test(FEloccon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-FElocconsum$tidy$conf.high <- FElocconsum$tidy$estimate+(1.96*coef_test(FEloccon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-FElocconsum$tidy$estimate <- FElocconsum$tidy$estimate
+yes2sum$tidy$p.value <- coef_test(yes2, vcov = "CR2", cluster = panelplm$Local.authority, test = "Satterthwaite")$p
+yes2sum$tidy$std.error <- coef_test(yes2, vcov = "CR2", cluster = panelplm$Local.authority, test = "Satterthwaite")$SE
+yes2sum$tidy$conf.low <- yes2sum$tidy$estimate-(1.96*coef_test(yes2, vcov = "CR2", cluster = panelplm$Local.authority, test = "Satterthwaite")$SE)
+yes2sum$tidy$conf.high <- yes2sum$tidy$estimate+(1.96*coef_test(yes2, vcov = "CR2", cluster = panelplm$Local.authority, test = "Satterthwaite")$SE)
+yes2sum$tidy$estimate <- yes2sum$tidy$estimate
 
-FElocconsum_cbps$tidy$p.value <- coef_test(FEloccon_cbps, vcov = "CR2", cluster = CBPS_data$New_geog_code, test = "Satterthwaite")$p
-FElocconsum_cbps$tidy$std.error <- coef_test(FEloccon_cbps, vcov = "CR2", cluster = CBPS_data$New_geog_code, test = "Satterthwaite")$SE
-FElocconsum_cbps$tidy$conf.low <- FElocconsum_cbps$tidy$estimate-(1.96*coef_test(FEloccon_cbps, vcov = "CR2", cluster = CBPS_data$New_geog_code, test = "Satterthwaite")$SE)
-FElocconsum_cbps$tidy$conf.high <- FElocconsum_cbps$tidy$estimate+(1.96*coef_test(FEloccon_cbps, vcov = "CR2", cluster = CBPS_data$New_geog_code, test = "Satterthwaite")$SE)
-FElocconsum_cbps$tidy$estimate <- FElocconsum_cbps$tidy$estimate
+yes3sum$tidy$p.value <- coef_test(yes3, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$p
+yes3sum$tidy$std.error <- coef_test(yes3, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE
+yes3sum$tidy$conf.low <- yes3sum$tidy$estimate-(1.96*coef_test(yes3, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE)
+yes3sum$tidy$conf.high <- yes3sum$tidy$estimate+(1.96*coef_test(yes3, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE)
+yes3sum$tidy$estimate <- yes3sum$tidy$estimate
 
-FEstabesum$tidy$p.value <- coef_test(FEstabe, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$p
-FEstabesum$tidy$std.error <- coef_test(FEstabe, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE
-FEstabesum$tidy$conf.low <- FEstabesum$tidy$estimate-(1.96*coef_test(FEstabe, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-FEstabesum$tidy$conf.high <- FEstabesum$tidy$estimate+(1.96*coef_test(FEstabe, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-FEstabesum$tidy$estimate <- FEstabesum$tidy$estimate
-
-FEstabeconsum$tidy$p.value <- coef_test(FEstabecon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$p
-FEstabeconsum$tidy$std.error <- coef_test(FEstabecon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE
-FEstabeconsum$tidy$conf.low <- FEstabeconsum$tidy$estimate-(1.96*coef_test(FEstabecon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-FEstabeconsum$tidy$conf.high <- FEstabeconsum$tidy$estimate+(1.96*coef_test(FEstabecon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-FEstabeconsum$tidy$estimate <- FEstabeconsum$tidy$estimate
+yes4sum$tidy$p.value <- coef_test(yes4, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$p
+yes4sum$tidy$std.error <- coef_test(yes4, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE
+yes4sum$tidy$conf.low <- yes4sum$tidy$estimate-(1.96*coef_test(yes4, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE)
+yes4sum$tidy$conf.high <- yes4sum$tidy$estimate+(1.96*coef_test(yes4, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE)
+yes4sum$tidy$estimate <- yes4sum$tidy$estimate
 
 
-FEstabeconsum_cbps$tidy$p.value <- coef_test(FEstabecon_cbps, vcov = "CR2", cluster = CBPS_data$New_geog_code, test = "Satterthwaite")$p
-FEstabeconsum_cbps$tidy$std.error <- coef_test(FEstabecon_cbps, vcov = "CR2", cluster = CBPS_data$New_geog_code, test = "Satterthwaite")$SE
-FEstabeconsum_cbps$tidy$conf.low <- FEstabeconsum_cbps$tidy$estimate-(1.96*coef_test(FEstabecon_cbps, vcov = "CR2", cluster = CBPS_data$New_geog_code, test = "Satterthwaite")$SE)
-FEstabeconsum_cbps$tidy$conf.high <- FEstabeconsum_cbps$tidy$estimate+(1.96*coef_test(FEstabecon_cbps, vcov = "CR2", cluster = CBPS_data$New_geog_code, test = "Satterthwaite")$SE)
-FEstabeconsum_cbps$tidy$estimate <- FEstabeconsum_cbps$tidy$estimate
+yes5sum$tidy$p.value <- coef_test(yes5, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$p
+yes5sum$tidy$std.error <- coef_test(yes5, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE
+yes5sum$tidy$conf.low <- yes5sum$tidy$estimate-(1.96*coef_test(yes5, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE)
+yes5sum$tidy$conf.high <- yes5sum$tidy$estimate+(1.96*coef_test(yes5, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE)
+yes5sum$tidy$estimate <- yes5sum$tidy$estimate
 
-# FEmisssum$tidy$p.value <- coef_test(FEmiss, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$p
-# FEmisssum$tidy$std.error <- coef_test(FEmiss, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE
-# FEmisssum$tidy$conf.low <- FEmisssum$tidy$estimate-(1.96*coef_test(FEmiss, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-# FEmisssum$tidy$conf.high <- FEmisssum$tidy$estimate+(1.96*coef_test(FEmiss, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-# FEmisssum$tidy$estimate <- FEmisssum$tidy$estimate
-# 
-# FEmissconsum$tidy$p.value <- coef_test(FEmisscon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$p
-# FEmissconsum$tidy$std.error <- coef_test(FEmisscon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE
-# FEmissconsum$tidy$conf.low <- FEmissconsum$tidy$estimate-(1.96*coef_test(FEmisscon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-# FEmissconsum$tidy$conf.high <- FEmissconsum$tidy$estimate+(1.96*coef_test(FEmisscon, vcov = "CR2", cluster = df$New_geog_code, test = "Satterthwaite")$SE)
-# FEmissconsum$tidy$estimate <- FEmissconsum$tidy$estimate
+
+yes6sum$tidy$p.value <- coef_test(yes6, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$p
+yes6sum$tidy$std.error <- coef_test(yes6, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE
+yes6sum$tidy$conf.low <- yes6sum$tidy$estimate-(1.96*coef_test(yes6, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE)
+yes6sum$tidy$conf.high <- yes6sum$tidy$estimate+(1.96*coef_test(yes6, vcov = "CR2", cluster = df$Local.authority, test = "Satterthwaite")$SE)
+yes6sum$tidy$estimate <- yes6sum$tidy$estimate
 
 
 #feonly
 
-cm <- c("per_for_profit" = "For-profit Outsourcing (%)",
-        "per_foster_percent" = "Fostering placements (%)",
-        "per_white_percent" = "CIC ethnicity (white, %)",
-        "per_female_percent" = "CIC sex (Female, %)",
-        "CLA_Mar" = "CIC (n)", 
-        "per_short_term" = "Short term only placements (%)",
-        "Total_spend" = "Children's Social Care Expenditure (£, Ms)")
+cm <- c("chome_places_all" = "Children's homes places (n)",
+        "percent" = "Inside area placements (%)",
+        "Asylum_per" = "Asylum-seeking children (%)",
+        "children_in_care" = "Children in care (n)",
+        "as.numeric(residential_per)" = "Residential placements (%)" ,
+        "percent:Asylum_per" = "In area:Asylum interaction",
+        "chome_places_all:Asylum_per" = "Home places:Asylum interaction")
 
-rows <- tribble(~term,          ~`Placements outside LA (%) [.95 ci]`,  ~`p-value`,~`Placements outside LA (%) [.95 ci]`,  ~`p-value`,  ~`Placements outside LA (%) [.95 ci]`,  ~`p-value`, ~`Placements unstable (%) [.95 ci]`,  ~`p-value`, ~`Placements unstable (%) [.95 ci]`,  ~`p-value`,  ~`Placements unstable (%) [.95 ci]`,  ~`p-value`, 
-                'CCG Fixed Effects', 'Yes',  'Yes', 'Yes',  'Yes','Yes',  'Yes','Yes',  'Yes',  'Yes','Yes','Yes','Yes',
-                'Time Fixed Effects','Yes','Yes','Yes',  'Yes','Yes','Yes','Yes',  'Yes',  'Yes','Yes','Yes','Yes',
-                'Clustered Standard Errors', 'Yes','Yes', 'Yes',  'Yes','Yes','Yes','Yes',  'Yes','Yes','Yes','Yes',  'Yes')
+rows <- tribble(~term,          ~`Placements outside LA (%) [.95 ci]`,  ~`p-value`,~`Placements outside LA (%) [.95 ci]`,  ~`p-value`,  ~`Placements outside LA (%) [.95 ci]`,  ~`p-value`, ~`Placements unstable (%) [.95 ci]`,  ~`p-value`, ~`Placements unstable (%) [.95 ci]`,  ~`p-value`, ~`Placements unstable (%) [.95 ci]`,  ~`p-value`, 
+                'Regional Fixed Effects', 'No',  'No', 'No',  'No','Yes',  'Yes','No',  'No', 'No',  'No', 'Yes',  'Yes',
+                'Clustered Standard Errors', 'Yes','Yes', 'Yes',  'Yes','Yes','Yes','Yes',  'Yes','Yes',  'Yes','Yes',  'Yes')
 
 
-table <- modelsummary(list("Placements outside LA [.95 ci]"=FElocsum,"p-value"=FElocsum,"Placements outside LA [.95 ci]"=FElocconsum,"p-value"=FElocconsum,"Placements outside LA [.95 ci]"=FElocconsum_cbps,"p-value"=FElocconsum_cbps, "Placements unstable (%) [.95 ci]" = FEstabesum, "p-value" = FEstabesum,"Placements unstable (%) [.95 ci]" = FEstabeconsum, "p-value" = FEstabeconsum,"Placements unstable (%) [.95 ci]" = FEstabeconsum_cbps, "p-value" = FEstabeconsum_cbps),
+table <- modelsummary(list("Unregulated Placements [.95 ci]"=yes1sum,"p-value"=yes1sum,"Unregulated Placements [.95 ci]"=yes2sum,"p-value"=yes2sum,"Unregulated Placements [.95 ci]"=yes3sum,"p-value"=yes3sum, "Unregulated Placements [.95 ci]" = yes4sum, "p-value" = yes4sum, "Unregulated Placements [.95 ci]" = yes5sum, "p-value" = yes5sum, "Unregulated Placements [.95 ci]" = yes6sum, "p-value" = yes6sum),
                       coef_omit = "Intercept|dept|year", add_rows = rows, coef_map = cm,
                       fmt = 4, estimate = c("{estimate} [{conf.low}, {conf.high}]", "p.value","{estimate} [{conf.low}, {conf.high}]", "p.value","{estimate} [{conf.low}, {conf.high}]", "p.value","{estimate} [{conf.low}, {conf.high}]", "p.value","{estimate} [{conf.low}, {conf.high}]", "p.value","{estimate} [{conf.low}, {conf.high}]", "p.value"), statistic = NULL,
-                      notes = list('Table reports results from multivariate longitudinal regression models.',
-                                   'Robust SEs are clustered at CCG level and use a bias-reduced linearization estimator (CR2)'),
+                      notes = list('Table reports results from multivariate pooled regression models.',
+                                   'Robust SEs are clustered at LA level and use a bias-reduced linearization estimator (CR2)'),
                       output = "gt") 
 # add_header_above(c(" ", "Fixed Effects" = 2, "First Differences" = 2, "Covariate Balancing (1)" = 2, "Covariate Balancing (2)" = 2, "Multi-Level Model" = 2))
 
 table
 
 
+gt::gtsave(table, "C:/Users/benjamin.goodair/OneDrive - Nexus365/Documents/GitHub/Care Markets/Tables/Table1.html")
+
+
+panelplm <- panelplm%>% dplyr::mutate(time = as.numeric(year)-9)
+
+growmodel<- lmerTest::lmer(as.numeric(unregulated)~time*chome_places_all*Asylum_per+children_in_care+Government.Office.Region+(1+time|Local.authority),  data=panelplm, na.action=na.exclude)
+growmodel<- lmerTest::lmer(as.numeric(unregulated)~time*chome_places_all*Asylum_per+children_in_care+Government.Office.Region+(1+time|Local.authority),  data=panelplm, na.action=na.exclude)
+growmodel<- lmerTest::lmer(as.numeric(unregulated)~time*percent*Asylum_per+children_in_care+Government.Office.Region+(1+time|Local.authority),  data=panelplm, na.action=na.exclude)
 
 
 
+growmodel<- lmerTest::lmer(as.numeric(unregulated)~time*LA_per*Asylum_per+Government.Office.Region+(1+time|Local.authority),  data=panelplm, na.action=na.exclude)
+growmodel<- lmerTest::lmer(as.numeric(unregulated)~time*children_in_care*percent+Asylum_per+Government.Office.Region+(1+time|Local.authority),  data=panelplm, na.action=na.exclude)
+growmodel<- lmerTest::lmer(as.numeric(unregulated)~time*Asylum_per+Government.Office.Region+(1+time|Local.authority),  data=panelplm, na.action=na.exclude)
 
 
+
+growmodel<- lmerTest::lmer(as.numeric(unregulated)~time*chome_places_all+children_in_care+Government.Office.Region+(1+time|Local.authority),  data=panelplm[panelplm$Asylum_per<8,], na.action=na.exclude)
+yes6 <- plm(as.numeric(chome_places_all)~Asylum_per+children_in_care+Government.Office.Region, data=panelplm[panelplm$Asylum_per>8,], model="pooling")
+
+
+
+summary(growmodel)
+plot_model(growmodel, "int")
 
 
 library(sjPlot)
@@ -607,6 +611,259 @@ plot <- cowplot::plot_grid(b,c, ncol = 1, labels = c("A","B"))
 plot <- cowplot::plot_grid(plot,a, ncol = 2, labels=c("","C"))
 
 ggsave(plot=plot, filename="C:/Users/benjamin.goodair/OneDrive - Nexus365/Documents/GitHub/Care Markets/figures/figure_1.jpeg", width=14, height=9, dpi=600)
+
+
+
+
+
+
+
+
+map <- st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2022_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")%>%
+  dplyr::rename(Local.authority = CTYUA22NM)%>%
+  dplyr::filter(Local.authority!="Wales",
+                Local.authority!="Scotland",
+                grepl('^E', CTYUA22CD))%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())%>%
+  dplyr::full_join(., panele %>%
+                     dplyr::mutate( c_homes_per = as.numeric(chome_places_all)/ as.numeric(children_in_care)*100)%>%
+                     dplyr::select(Local.authority, c_homes_per)%>%
+                     dplyr::group_by(Local.authority)%>%
+                     dplyr::summarise(c_homes_per = mean(c_homes_per, na.rm=T))%>%
+                     dplyr::ungroup(),
+                   by="Local.authority")%>%
+  st_as_sf(.)
+
+
+
+
+no_classes <- 6
+
+
+quantiles <- quantile(as.double(map$c_homes_per), 
+                      probs = seq(0, 1, length.out = no_classes + 1), na.rm=T)
+
+# here I define custom labels (the default ones would be ugly)
+labels <- c()
+for(idx in 1:length(quantiles)){
+  labels <- c(labels, paste0(round(quantiles[idx], 2), 
+                             " - ", 
+                             round(quantiles[idx + 1], 2)))
+}
+# I need to remove the last label 
+# because that would be something like "66.62 - NA"
+labels <- labels[1:length(labels)-1]
+
+
+
+
+a <- map %>%  dplyr::mutate(unreg_quantiles =cut(c_homes_per, 
+                                                 breaks = quantiles, 
+                                                 labels = labels, 
+                                                 include.lowest = T) )%>%
+  ggplot(.) +
+  geom_sf(aes(fill = unreg_quantiles), color = "black") +
+  theme_map()+
+  labs(x = NULL, 
+       y = NULL)+
+  scale_fill_brewer(
+    palette = "OrRd",
+    name = "Children's home places\n(per child in care, 2019-2023)", na.value="grey")+
+  theme(text=element_text(size=10), legend.key.size = unit(0.65, "cm"), legend.title = element_text(size=9))
+
+
+ggsave(plot=a, filename="C:/Users/benjamin.goodair/OneDrive - Nexus365/Documents/GitHub/Care Markets/figures/map_chomes.jpeg", width=8, height=6, dpi=600)
+
+
+
+map <- st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2022_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")%>%
+  dplyr::rename(Local.authority = CTYUA22NM)%>%
+  dplyr::filter(Local.authority!="Wales",
+                Local.authority!="Scotland",
+                grepl('^E', CTYUA22CD))%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())%>%
+  dplyr::full_join(., panele %>%
+                     dplyr::mutate( c_homes_per = as.numeric(chome_places_all)/ as.numeric(children_in_care)*100)%>%
+                     dplyr::select(Local.authority, c_homes_per)%>%
+                     dplyr::group_by(Local.authority)%>%
+                     dplyr::summarise(c_homes_per = mean(c_homes_per, na.rm=T))%>%
+                     dplyr::ungroup(),
+                   by="Local.authority")%>%
+  st_as_sf(.)
+
+
+
+
+no_classes <- 6
+
+
+quantiles <- quantile(as.double(map$c_homes_per), 
+                      probs = seq(0, 1, length.out = no_classes + 1), na.rm=T)
+
+# here I define custom labels (the default ones would be ugly)
+labels <- c()
+for(idx in 1:length(quantiles)){
+  labels <- c(labels, paste0(round(quantiles[idx], 2), 
+                             " - ", 
+                             round(quantiles[idx + 1], 2)))
+}
+# I need to remove the last label 
+# because that would be something like "66.62 - NA"
+labels <- labels[1:length(labels)-1]
+
+
+
+
+a <- map %>%  dplyr::mutate(unreg_quantiles =cut(c_homes_per, 
+                                                 breaks = quantiles, 
+                                                 labels = labels, 
+                                                 include.lowest = T) )%>%
+  ggplot(.) +
+  geom_sf(aes(fill = unreg_quantiles), color = "black") +
+  theme_map()+
+  labs(x = NULL, 
+       y = NULL)+
+  scale_fill_brewer(
+    palette = "OrRd",
+    name = "Children's home places\n(per child in care, 2019-2023)", na.value="grey")+
+  theme(text=element_text(size=10), legend.key.size = unit(0.65, "cm"), legend.title = element_text(size=9))
+
+
+ggsave(plot=a, filename="C:/Users/benjamin.goodair/OneDrive - Nexus365/Documents/GitHub/Care Markets/figures/map_chomes.jpeg", width=8, height=6, dpi=600)
+
+
+
+
+
+map <- st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2022_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")%>%
+  dplyr::rename(Local.authority = CTYUA22NM)%>%
+  dplyr::filter(Local.authority!="Wales",
+                Local.authority!="Scotland",
+                grepl('^E', CTYUA22CD))%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())%>%
+  dplyr::full_join(., panele %>%
+                     dplyr::select(Local.authority, percent)%>%
+                     dplyr::group_by(Local.authority)%>%
+                     dplyr::summarise(percent = mean(percent, na.rm=T))%>%
+                     dplyr::ungroup(),
+                   by="Local.authority")%>%
+  st_as_sf(.)
+
+
+
+
+no_classes <- 6
+
+
+quantiles <- quantile(as.double(map$percent), 
+                      probs = seq(0, 1, length.out = no_classes + 1), na.rm=T)
+
+# here I define custom labels (the default ones would be ugly)
+labels <- c()
+for(idx in 1:length(quantiles)){
+  labels <- c(labels, paste0(round(quantiles[idx], 2), 
+                             " - ", 
+                             round(quantiles[idx + 1], 2)))
+}
+# I need to remove the last label 
+# because that would be something like "66.62 - NA"
+labels <- labels[1:length(labels)-1]
+
+
+
+
+a <- map %>%  dplyr::mutate(unreg_quantiles =cut(percent, 
+                                                 breaks = quantiles, 
+                                                 labels = labels, 
+                                                 include.lowest = T) )%>%
+  ggplot(.) +
+  geom_sf(aes(fill = unreg_quantiles), color = "black") +
+  theme_map()+
+  labs(x = NULL, 
+       y = NULL)+
+  scale_fill_brewer(
+    palette = "OrRd",
+    name = "Inside area placements\n(Average %, 2019-2023)", na.value="grey")+
+  theme(text=element_text(size=10), legend.key.size = unit(0.65, "cm"), legend.title = element_text(size=9))
+
+
+ggsave(plot=a, filename="C:/Users/benjamin.goodair/OneDrive - Nexus365/Documents/GitHub/Care Markets/figures/map_inside_Area.jpeg", width=8, height=6, dpi=600)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
