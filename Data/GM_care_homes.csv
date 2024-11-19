@@ -1,0 +1,830 @@
+"","Sector","URN","Places","Local.authority","Organisation","Organisation_fame_search","Company.name","Join","Leave","Registered.number"
+"1","Local Authority","SC059853",6,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"2","Voluntary","SC008596",8,"STOCKPORT",NA,NA,NA,NA,"2016-07-13",NA
+"3","Local Authority","SC040982",5,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"4","Private","SC480161",6,"TAMESIDE","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-09-10",NA,"08885676"
+"5","Local Authority","SC051856",4,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"6","Private","SC062263",1,"ROCHDALE","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"7","Local Authority","SC034108",6,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,NA,NA,NA
+"8","Local Authority","SC040719",3,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"9","Local Authority","SC369857",5,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"10","Local Authority","SC041018",6,"WIGAN",NA,NA,NA,NA,"2016-07-31",NA
+"11","Private","SC387148",5,"TRAFFORD","Fairfield Residential Ltd","Fairfield Residential Ltd","FAIRFIELD RESIDENTIAL LIMITED",NA,NA,"06677877"
+"12","Voluntary","SC025739",4,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"13","Private","SC067238",5,"STOCKPORT",NA,NA,NA,NA,"2017-06-30",NA
+"14","Local Authority","SC059842",5,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"15","Local Authority","SC032475",5,"TRAFFORD","Trafford Borough Council","Trafford Borough Council",NA,NA,NA,NA
+"16","Local Authority","SC040266",5,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"17","Private","SC456857",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"18","Private","SC479654",6,"ROCHDALE","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-09-05",NA,"08885676"
+"19","Private","SC356864",2,"BURY","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"20","Private","SC389823",5,"BOLTON","Courtyard Care Limited","Courtyard Care Limited","COURTYARD CARE LIMITED",NA,NA,"04945227"
+"21","Private","SC021677",4,"MANCHESTER","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"22","Local Authority","SC040926",6,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"23","Private","SC389649",3,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2020-12-20","04280519"
+"24","Private","SC411825",2,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED",NA,NA,"06968122"
+"25","Private","SC008488",8,"STOCKPORT","Halliwell Homes Limited","Halliwell Homes Limited","HALLIWELL HOMES LIMITED",NA,NA,"03681826"
+"26","Local Authority","SC066549",2,"TRAFFORD",NA,NA,NA,NA,"2016-04-30",NA
+"27","Local Authority","SC360599",4,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,"2022-09-22",NA
+"28","Private","SC451174",2,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"29","Private","SC005751",1,"WIGAN","Doncaster Deaf Trust","Doncaster Deaf Trust","DONCASTER DEAF TRUST",NA,NA,"04105045"
+"30","Private","SC035657",7,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"31","Voluntary","SC025714",5,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"32","Local Authority","SC035492",5,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"33","Private","SC394463",3,"STOCKPORT","Cornerstone Children's Homes Limited","Cornerstone childrens Homes Limited","CORNERSTONE CHILDREN'S HOMES LIMITED",NA,NA,"06681557"
+"34","Private","SC387672",5,"MANCHESTER",NA,NA,NA,NA,"2016-11-30",NA
+"35","Private","SC357455",4,"BLACKBURN WITH DARWEN","Woodside House Care Ltd","Woodside House Care Ltd","WOODSIDE HOUSE CARE LTD",NA,NA,"04960062"
+"36","Private","SC477939",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED","2014-06-03",NA,"05087886"
+"37","Private","SC008487",6,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"38","Private","SC446325",2,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"39","Private","SC021683",4,"MANCHESTER","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"40","Voluntary","SC035518",28,"STOCKPORT","Sea Shell Trust Limited","Sea Shell Trust Limited","SEASHELL TRUST",NA,NA,"04216714"
+"41","Private","SC061928",8,"MANCHESTER",NA,NA,NA,NA,"2016-03-21",NA
+"42","Private","SC479647",6,"WIGAN","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-10-08",NA,"08885676"
+"43","Private","SC456542",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"44","Private","SC043972",5,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"45","Private","SC066072",3,"OLDHAM","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"46","Private","SC456532",2,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"47","Private","SC400355",3,"STOCKPORT","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"48","Private","SC430239",5,"TAMESIDE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"49","Private","SC420388",4,"BURY","Alliance Care & Education Limited","Alliance Care & Education Limited","KEYS ACE LIMITED",NA,NA,"05556312"
+"50","Private","SC396104",6,"TAMESIDE","Full Circle Care","Full Circle Care","FULL CIRCLE CARE LTD",NA,NA,"06610632"
+"51","Voluntary","SC025740",6,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"52","Private","SC411030",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"53","Voluntary","SC025715",3,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"54","Private","SC477726",2,"WIGAN","Crystal Care Solutions Limited Company Number 05952454","Crystal Care Solutions Limited","CRYSTAL CARE SOLUTIONS LIMITED","2014-07-18",NA,"05952454"
+"55","Private","SC005553",7,"OLDHAM","Dalepeak Limited","Dalepeak Limited","DALEPEAK LIMITED",NA,NA,"03612944"
+"56","Local Authority","SC372511",5,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,NA,NA
+"57","Private","SC043697",7,"TAMESIDE","Halliwell Homes Limited","Halliwell Homes Limited","HALLIWELL HOMES LIMITED",NA,NA,"03681826"
+"58","Local Authority","SC357979",3,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,NA,NA,NA
+"59","Private","SC456418",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"60","Private","SC413779",2,"ROCHDALE","Aspire Child Care Ltd","Aspire Child Care Ltd","ASPIRE CHILD CARE LTD",NA,NA,"06984654"
+"61","Voluntary","SC025712",2,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"62","Private","SC063197",1,"ROCHDALE",NA,NA,NA,NA,"2017-05-18",NA
+"63","Local Authority","SC032496",6,"TRAFFORD","Trafford Borough Council","Trafford Borough Council",NA,NA,NA,NA
+"64","Private","SC357159",2,"ROCHDALE","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-03-05","03946050"
+"65","Private","SC443658",7,"BURY",NA,NA,NA,NA,"2016-02-14",NA
+"66","Private","SC066560",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"67","Private","SC065189",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"68","Local Authority","SC064515",4,"OLDHAM",NA,NA,NA,NA,"2016-03-31",NA
+"69","Private","SC456419",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"70","Private","SC067899",7,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"71","Local Authority","SC035339",6,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"72","Local Authority","SC034012",3,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,NA,NA,NA
+"73","Private","SC366343",4,"TAMESIDE","Maple Leaf Care Limited","Maple Leaf Care Limited","MAPLE LEAF CARE LIMITED",NA,NA,"05951541"
+"74","Private","SC456850",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"75","Private","SC356817",4,"OLDHAM","Lifetime Opportunities Ltd","Lifetime Opportunities Ltd","LIFETIME OPPORTUNITIES LTD",NA,NA,"05040885"
+"76","Private","SC062309",6,"TAMESIDE","Courtyard Care Limited","Courtyard Care Limited","COURTYARD CARE LIMITED",NA,NA,"04945227"
+"77","Private","SC457506",2,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2021-08-06","04280519"
+"78","Local Authority","SC063683",6,"MANCHESTER","Manchester City Council","Manchester City Council",NA,NA,NA,NA
+"79","Voluntary","SC025713",2,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"80","Private","SC063054",1,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,"2018-05-30","05087886"
+"81","Private","SC068277",6,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2018-07-10","04280519"
+"82","Local Authority","SC039070",5,"STOCKPORT","Stockport Council","Stockport Council",NA,NA,NA,NA
+"83","Private","SC456416",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"84","Voluntary","SC057718",5,"BOLTON","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"85","Private","SC456409",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"86","Private","SC378407",2,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"87","Private","SC005589",2,"TAMESIDE","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"88","Private","SC372117",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"89","Private","SC467268",5,"BLACKBURN WITH DARWEN","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"90","Private","SC442864",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"91","Private","SC390577",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"92","Private","SC008484",6,"STOCKPORT","","",NA,NA,NA,NA
+"93","Private","SC062475",1,"ROCHDALE",NA,NA,NA,NA,"2016-08-23",NA
+"94","Voluntary","SC397344",4,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"95","Private","SC416464",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"96","Private","SC361811",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"97","Voluntary","SC373044",4,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"98","Private","SC456539",1,"BOLTON","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"99","Private","SC064428",4,"WIGAN","Active 8 Care Ltd","Active 8 Care Ltd","KEYS ACTIVE 8 CARE LIMITED",NA,NA,"05107898"
+"100","Private","SC065617",1,"ROCHDALE",NA,NA,NA,NA,"2017-05-15",NA
+"101","Private","SC064836",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"102","Private","SC008607",2,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"103","Private","SC381722",2,"BURY","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-02-26","03946050"
+"104","Private","SC456405",2,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2018-08-01","04280519"
+"105","Voluntary","SC025747",3,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"106","Private","SC420066",8,"TRAFFORD",NA,NA,NA,NA,"2017-11-30",NA
+"107","Private","SC064666",2,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"108","Private","SC398367",4,"WIGAN","Cherry Cottage Limited","Cherry Cottage Limited","CHERRY COTTAGE LIMITED",NA,"2020-04-23","05864035"
+"109","Private","SC008490",4,"STOCKPORT","Stepping Stones Children's Services Limited","Stepping Stones childrens Services Limited","STEPPING STONES CHILDREN'S SERVICES LTD",NA,NA,"15399498"
+"110","Local Authority","SC067052",4,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,"2021-08-09",NA
+"111","Private","SC382807",2,"ROCHDALE",NA,NA,NA,NA,"2017-06-14",NA
+"112","Private","SC416267",2,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"113","Local Authority","SC034922",4,"ROCHDALE","Rochdale Metropolitan Borough Council","Rochdale Metropolitan Borough Council",NA,NA,NA,NA
+"114","Private","SC472680",5,"MANCHESTER","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"115","Private","SC357133",3,"STOCKPORT","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"116","Private","SC067261",4,"BLACKBURN WITH DARWEN",NA,NA,NA,NA,"2015-06-01",NA
+"117","Local Authority","SC040723",4,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"118","Private","SC473473",3,"ROCHDALE","Nestlings Care Ltd","Nestlings Care Ltd","NESTLINGS CARE LTD",NA,NA,"07252721"
+"119","Private","SC021679",4,"MANCHESTER","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"120","Private","SC469411",4,"BURY",NA,NA,NA,NA,"2017-10-27",NA
+"121","Private","SC008486",6,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"122","Local Authority","SC034825",5,"ROCHDALE",NA,NA,NA,NA,"2016-05-01",NA
+"123","Private","SC429189",5,"MANCHESTER","R Place Limited","R Place Limited","R PLACE LIMITED",NA,"2020-07-29","07496321"
+"124","Private","SC008600",6,"STOCKPORT","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"125","Private","SC394478",3,"STOCKPORT","Cornerstone Children's Homes Limited","Cornerstone childrens Homes Limited","CORNERSTONE CHILDREN'S HOMES LIMITED",NA,NA,"06681557"
+"126","Private","SC069198",3,"BURY","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"127","Private","SC407169",4,"STOCKPORT","Choices Home For Children Limited","Choices Home For Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"128","Local Authority","SC042037",5,"MANCHESTER",NA,NA,NA,NA,"2017-03-08",NA
+"129","Private","SC456413",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"130","Voluntary","SC470797",4,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"131","Private","SC426684",3,"MANCHESTER",NA,NA,NA,NA,"2016-06-30",NA
+"132","Private","SC064530",2,"OLDHAM","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"133","Private","SC069176",4,"TAMESIDE","Oakfields Children's Care Limited","Oakfields childrens Care Limited","OAKFIELDS CHILDREN'S CARE LIMITED",NA,NA,"05425280"
+"134","Private","SC369144",6,"TAMESIDE","Progressive Care Ltd","Progressive Care Ltd","PROGRESSIVE CARE LIMITED",NA,"2018-07-31","03641345"
+"135","Local Authority","SC032772",5,"TAMESIDE",NA,NA,NA,NA,"2017-12-06",NA
+"136","Private","SC433290",6,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2021-03-31","04280519"
+"137","Voluntary","SC008575",5,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"138","Private","SC357468",1,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"139","Private","SC386837",2,"STOCKPORT","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"140","Private","SC068223",3,"WIGAN",NA,NA,NA,NA,"2018-01-15",NA
+"141","Local Authority","SC033539",6,"MANCHESTER",NA,NA,NA,NA,"2016-10-28",NA
+"142","Private","SC068658",6,"BURY",NA,NA,NA,NA,"2016-03-14",NA
+"143","Local Authority","SC031015",6,"MANCHESTER",NA,NA,NA,NA,"2016-11-30",NA
+"144","Private","SC065072",2,"ROCHDALE","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"145","Private","SC413156",2,"ROCHDALE",NA,NA,NA,NA,"2016-09-13",NA
+"146","Private","SC065374",5,"STOCKPORT","Care Haven (UK) Ltd","Care Haven (UK) Ltd","CARE HAVEN (UK) LTD",NA,NA,"03762420"
+"147","Local Authority","SC034851",5,"ROCHDALE","Rochdale Metropolitan Borough Council","Rochdale Metropolitan Borough Council",NA,NA,NA,NA
+"148","Local Authority","SC402508",5,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,"2020-01-22",NA
+"149","Private","SC456543",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"150","Local Authority","SC387671",6,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"151","Private","SC381339",6,"MANCHESTER","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,"2022-06-11","04460745"
+"152","Private","SC439116",2,"TRAFFORD","Aspireone Care Ltd","Aspireone Care Ltd","ASPIREONE CARE LIMITED",NA,NA,"07483842"
+"153","Local Authority","SC040437",6,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,NA,NA
+"154","Private","SC005567",4,"TAMESIDE","Stepping Stones Children's Services Limited","Stepping Stones childrens Services Limited","STEPPING STONES CHILDREN'S SERVICES LTD",NA,NA,"15399498"
+"155","Voluntary","SC451266",4,"BOLTON",NA,NA,NA,NA,"2016-03-18",NA
+"156","Private","SC008435",4,"BURY","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-02-26","03946050"
+"157","Private","SC436559",5,"STOCKPORT","Choices Home For Children Limited","Choices Home For Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"158","Private","SC046621",2,"ROCHDALE","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-02-26","03946050"
+"159","Private","SC008485",6,"STOCKPORT","Choices Home For Children Limited","Choices Home For Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"160","Private","SC403464",2,"ROCHDALE","Aspire Child Care Ltd","Aspire Child Care Ltd","ASPIRE CHILD CARE LTD",NA,NA,"06984654"
+"161","Local Authority","SC032531",1,"ROCHDALE",NA,NA,NA,NA,"2016-02-01",NA
+"162","Private","SC021684",6,"MANCHESTER","Social Care Services Limited","Social Care Services Limited","SOCIAL CARE SERVICES LIMITED",NA,NA,"02428089"
+"163","Voluntary","SC025744",6,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"164","Voluntary","SC467796",3,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"165","Private","SC008608",2,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"166","Voluntary","SC009390",4,"BOLTON",NA,NA,NA,NA,"2015-11-01",NA
+"167","Voluntary","SC025745",5,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"168","Voluntary","SC044026",5,"TAMESIDE",NA,NA,NA,NA,"2015-06-01",NA
+"169","Private","SC049189",3,"ROCHDALE","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"170","Private","SC008608",2,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"171","Private","SC021684",6,"MANCHESTER","Social Care Services Limited","Social Care Services Limited","SOCIAL CARE SERVICES LIMITED",NA,NA,"02428089"
+"172","Voluntary","SC025740",6,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"173","Local Authority","SC032772",5,"TAMESIDE",NA,NA,NA,NA,"2017-12-06",NA
+"174","Private","SC005553",7,"OLDHAM","Dalepeak Limited","Dalepeak Limited","DALEPEAK LIMITED",NA,NA,"03612944"
+"175","Private","SC008488",8,"STOCKPORT","Halliwell Homes Limited","Halliwell Homes Limited","HALLIWELL HOMES LIMITED",NA,NA,"03681826"
+"176","Private","SC021677",4,"MANCHESTER","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"177","Voluntary","SC025739",4,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"178","Local Authority","SC032496",6,"TRAFFORD","Trafford Borough Council","Trafford Borough Council",NA,NA,NA,NA
+"179","Private","SC005567",4,"TAMESIDE","Stepping Stones Children's Services Limited","Stepping Stones childrens Services Limited","STEPPING STONES CHILDREN'S SERVICES LTD",NA,NA,"15399498"
+"180","Private","SC008485",6,"STOCKPORT","Choices Home For Children Limited","Choices Home For Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"181","Voluntary","SC025712",2,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"182","Voluntary","SC025714",5,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"183","Voluntary","SC025715",3,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"184","Voluntary","SC025747",3,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"185","Local Authority","SC034012",3,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,NA,NA,NA
+"186","Local Authority","SC034851",5,"ROCHDALE","Rochdale Metropolitan Borough Council","Rochdale Metropolitan Borough Council",NA,NA,NA,NA
+"187","Local Authority","SC040723",4,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"188","Local Authority","SC059853",6,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"189","Private","SC062263",1,"ROCHDALE","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"190","Private","SC357159",2,"ROCHDALE","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-03-05","03946050"
+"191","Private","1155775",3,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2015-09-24",NA,"04280519"
+"192","Private","SC008487",6,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"193","Private","SC008490",4,"STOCKPORT","Stepping Stones Children's Services Limited","Stepping Stones childrens Services Limited","STEPPING STONES CHILDREN'S SERVICES LTD",NA,NA,"15399498"
+"194","Voluntary","SC008596",8,"STOCKPORT",NA,NA,NA,NA,"2016-07-13",NA
+"195","Voluntary","SC025745",5,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"196","Private","SC049189",3,"ROCHDALE","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"197","Private","SC064666",2,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"198","Private","SC008435",4,"BURY","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-02-26","03946050"
+"199","Voluntary","SC025744",6,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"200","Local Authority","SC041018",6,"WIGAN",NA,NA,NA,NA,"2016-07-31",NA
+"201","Private","SC043972",5,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"202","Local Authority","SC059842",5,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"203","Private","SC062475",1,"ROCHDALE",NA,NA,NA,NA,"2016-08-23",NA
+"204","Private","SC005589",2,"TAMESIDE","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"205","Private","SC005751",1,"WIGAN","Doncaster Deaf Trust","Doncaster Deaf Trust","DONCASTER DEAF TRUST",NA,NA,"04105045"
+"206","Private","SC008484",6,"STOCKPORT","","",NA,NA,NA,NA
+"207","Private","SC008486",6,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"208","Private","SC021683",4,"MANCHESTER","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"209","Local Authority","SC033539",6,"MANCHESTER",NA,NA,NA,NA,"2016-10-28",NA
+"210","Local Authority","SC360599",4,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,"2022-09-22",NA
+"211","Private","SC361811",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"212","Private","SC413779",2,"ROCHDALE","Aspire Child Care Ltd","Aspire Child Care Ltd","ASPIRE CHILD CARE LTD",NA,NA,"06984654"
+"213","Private","SC429189",5,"MANCHESTER","R Place Limited","R Place Limited","R PLACE LIMITED",NA,"2020-07-29","07496321"
+"214","Private","SC430239",5,"TAMESIDE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"215","Private","SC456409",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"216","Private","SC456416",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"217","Private","SC456419",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"218","Private","SC456543",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"219","Local Authority","SC039070",5,"STOCKPORT","Stockport Council","Stockport Council",NA,NA,NA,NA
+"220","Local Authority","SC040926",6,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"221","Local Authority","SC042037",5,"MANCHESTER",NA,NA,NA,NA,"2017-03-08",NA
+"222","Private","SC063197",1,"ROCHDALE",NA,NA,NA,NA,"2017-05-18",NA
+"223","Private","SC067238",5,"STOCKPORT",NA,NA,NA,NA,"2017-06-30",NA
+"224","Private","SC069176",4,"TAMESIDE","Oakfields Children's Care Limited","Oakfields childrens Care Limited","OAKFIELDS CHILDREN'S CARE LIMITED",NA,NA,"05425280"
+"225","Private","SC357455",4,"BLACKBURN WITH DARWEN","Woodside House Care Ltd","Woodside House Care Ltd","WOODSIDE HOUSE CARE LTD",NA,NA,"04960062"
+"226","Local Authority","SC357979",3,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,NA,NA,NA
+"227","Local Authority","SC369857",5,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"228","Private","SC372117",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"229","Private","SC382807",2,"ROCHDALE",NA,NA,NA,NA,"2017-06-14",NA
+"230","Local Authority","SC387671",6,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"231","Private","SC403464",2,"ROCHDALE","Aspire Child Care Ltd","Aspire Child Care Ltd","ASPIRE CHILD CARE LTD",NA,NA,"06984654"
+"232","Private","SC411825",2,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED",NA,NA,"06968122"
+"233","Private","SC420388",4,"BURY","Alliance Care & Education Limited","Alliance Care & Education Limited","KEYS ACE LIMITED",NA,NA,"05556312"
+"234","Private","SC442864",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"235","Private","SC451174",2,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"236","Private","SC456418",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"237","Local Authority","SC034922",4,"ROCHDALE","Rochdale Metropolitan Borough Council","Rochdale Metropolitan Borough Council",NA,NA,NA,NA
+"238","Local Authority","SC040266",5,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"239","Local Authority","SC040982",5,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"240","Local Authority","SC051856",4,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"241","Private","SC064428",4,"WIGAN","Active 8 Care Ltd","Active 8 Care Ltd","KEYS ACTIVE 8 CARE LIMITED",NA,NA,"05107898"
+"242","Private","SC065617",1,"ROCHDALE",NA,NA,NA,NA,"2017-05-15",NA
+"243","Private","SC066560",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"244","Private","SC069198",3,"BURY","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"245","Private","SC381722",2,"BURY","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-02-26","03946050"
+"246","Private","SC389823",5,"BOLTON","Courtyard Care Limited","Courtyard Care Limited","COURTYARD CARE LIMITED",NA,NA,"04945227"
+"247","Local Authority","SC402508",5,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,"2020-01-22",NA
+"248","Private","SC413156",2,"ROCHDALE",NA,NA,NA,NA,"2016-09-13",NA
+"249","Local Authority","SC035339",6,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"250","Private","SC035657",7,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"251","Local Authority","SC063683",6,"MANCHESTER","Manchester City Council","Manchester City Council",NA,NA,NA,NA
+"252","Local Authority","SC064515",4,"OLDHAM",NA,NA,NA,NA,"2016-03-31",NA
+"253","Private","SC467268",5,"BLACKBURN WITH DARWEN","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"254","Voluntary","SC467796",3,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"255","Private","SC482410",2,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED","2014-11-12",NA,"06968122"
+"256","Private","SC065072",2,"ROCHDALE","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"257","Local Authority","SC066549",2,"TRAFFORD",NA,NA,NA,NA,"2016-04-30",NA
+"258","Private","SC357468",1,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"259","Private","SC366343",4,"TAMESIDE","Maple Leaf Care Limited","Maple Leaf Care Limited","MAPLE LEAF CARE LIMITED",NA,NA,"05951541"
+"260","Voluntary","SC373044",4,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"261","Private","SC387672",5,"MANCHESTER",NA,NA,NA,NA,"2016-11-30",NA
+"262","Private","SC389649",3,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2020-12-20","04280519"
+"263","Private","SC411030",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"264","Private","SC416267",2,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"265","Private","SC446325",2,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"266","Voluntary","SC451266",4,"BOLTON",NA,NA,NA,NA,"2016-03-18",NA
+"267","Private","SC485332",2,"WIGAN",NA,NA,NA,"2015-03-16","2017-10-27",NA
+"268","Private","1179497",1,"BLACKBURN WITH DARWEN",NA,NA,NA,"2015-09-11","2017-11-30",NA
+"269","Private","SC008600",6,"STOCKPORT","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"270","Local Authority","SC031015",6,"MANCHESTER",NA,NA,NA,NA,"2016-11-30",NA
+"271","Voluntary","SC008575",5,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"272","Private","SC008607",2,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"273","Private","SC021679",4,"MANCHESTER","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"274","Voluntary","SC025713",2,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"275","Local Authority","SC032475",5,"TRAFFORD","Trafford Borough Council","Trafford Borough Council",NA,NA,NA,NA
+"276","Private","SC472680",5,"MANCHESTER","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"277","Private","SC479647",6,"WIGAN","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-10-08",NA,"08885676"
+"278","Voluntary","SC483533",3,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW","2015-01-27",NA,"02978546"
+"279","Private","SC063054",1,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,"2018-05-30","05087886"
+"280","Private","SC064836",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"281","Private","SC357133",3,"STOCKPORT","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"282","Local Authority","SC372511",5,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,NA,NA
+"283","Private","SC386837",2,"STOCKPORT","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"284","Private","SC394463",3,"STOCKPORT","Cornerstone Children's Homes Limited","Cornerstone childrens Homes Limited","CORNERSTONE CHILDREN'S HOMES LIMITED",NA,NA,"06681557"
+"285","Private","SC394478",3,"STOCKPORT","Cornerstone Children's Homes Limited","Cornerstone childrens Homes Limited","CORNERSTONE CHILDREN'S HOMES LIMITED",NA,NA,"06681557"
+"286","Private","SC420066",8,"TRAFFORD",NA,NA,NA,NA,"2017-11-30",NA
+"287","Private","SC439116",2,"TRAFFORD","Aspireone Care Ltd","Aspireone Care Ltd","ASPIREONE CARE LIMITED",NA,NA,"07483842"
+"288","Local Authority","SC067052",4,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,"2021-08-09",NA
+"289","Private","SC356864",2,"BURY","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"290","Private","SC381339",6,"MANCHESTER","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,"2022-06-11","04460745"
+"291","Private","SC390577",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"292","Private","SC396104",6,"TAMESIDE","Full Circle Care","Full Circle Care","FULL CIRCLE CARE LTD",NA,NA,"06610632"
+"293","Private","SC407169",4,"STOCKPORT","Choices Home For Children Limited","Choices Home For Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"294","Private","SC426684",3,"MANCHESTER",NA,NA,NA,NA,"2016-06-30",NA
+"295","Private","SC436559",5,"STOCKPORT","Choices Home For Children Limited","Choices Home For Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"296","Private","SC479776",5,"TAMESIDE","Family Child Care Ltd","Family Child Care Ltd","HAPPY FAMILIES CHILD CARE LIMITED","2014-11-20","2020-07-01","03817658"
+"297","Voluntary","SC484789",3,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW","2015-01-27","2023-01-25","02978546"
+"298","Local Authority","SC034825",5,"ROCHDALE",NA,NA,NA,NA,"2016-05-01",NA
+"299","Voluntary","SC035518",28,"STOCKPORT","Sea Shell Trust Limited","Sea Shell Trust Limited","SEASHELL TRUST",NA,NA,"04216714"
+"300","Local Authority","SC040437",6,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,NA,NA
+"301","Private","SC067899",7,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"302","Private","SC068223",3,"WIGAN",NA,NA,NA,NA,"2018-01-15",NA
+"303","Private","SC456857",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"304","Private","SC469411",4,"BURY",NA,NA,NA,NA,"2017-10-27",NA
+"305","Private","SC479650",6,"ROCHDALE","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-10-08",NA,"08885676"
+"306","Local Authority","SC034108",6,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,NA,NA,NA
+"307","Local Authority","SC035492",5,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"308","Local Authority","SC040719",3,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"309","Private","SC043697",7,"TAMESIDE","Halliwell Homes Limited","Halliwell Homes Limited","HALLIWELL HOMES LIMITED",NA,NA,"03681826"
+"310","Private","SC046621",2,"ROCHDALE","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-02-26","03946050"
+"311","Private","SC051739",3,"BOLTON","Pathway Care Solutions Ii Ltd","Pathway Care Solutions Ii Ltd","PATHWAY CARE SOLUTIONS II LIMITED",NA,NA,"05047496"
+"312","Voluntary","SC057718",5,"BOLTON","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"313","Private","SC062309",6,"TAMESIDE","Courtyard Care Limited","Courtyard Care Limited","COURTYARD CARE LIMITED",NA,NA,"04945227"
+"314","Private","SC064530",2,"OLDHAM","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"315","Private","SC065189",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"316","Private","SC065374",5,"STOCKPORT","Care Haven (UK) Ltd","Care Haven (UK) Ltd","CARE HAVEN (UK) LTD",NA,NA,"03762420"
+"317","Private","SC456405",2,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2018-08-01","04280519"
+"318","Private","SC456539",1,"BOLTON","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"319","Private","SC483828",6,"STOCKPORT","Care Haven (UK) Ltd","Care Haven (UK) Ltd","CARE HAVEN (UK) LTD","2014-12-04",NA,"03762420"
+"320","Private","SC356817",4,"OLDHAM","Lifetime Opportunities Ltd","Lifetime Opportunities Ltd","LIFETIME OPPORTUNITIES LTD",NA,NA,"05040885"
+"321","Private","SC369144",6,"TAMESIDE","Progressive Care Ltd","Progressive Care Ltd","PROGRESSIVE CARE LIMITED",NA,"2018-07-31","03641345"
+"322","Private","SC378407",2,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"323","Private","SC387148",5,"TRAFFORD","Fairfield Residential Ltd","Fairfield Residential Ltd","FAIRFIELD RESIDENTIAL LIMITED",NA,NA,"06677877"
+"324","Private","SC398367",4,"WIGAN","Cherry Cottage Limited","Cherry Cottage Limited","CHERRY COTTAGE LIMITED",NA,"2020-04-23","05864035"
+"325","Private","SC416464",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"326","Private","SC433290",6,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2021-03-31","04280519"
+"327","Private","SC066072",3,"OLDHAM","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"328","Private","SC068277",6,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2018-07-10","04280519"
+"329","Voluntary","SC397344",4,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"330","Private","SC400355",3,"STOCKPORT","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"331","Private","SC456413",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"332","Private","SC456542",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"333","Private","SC456850",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"334","Private","SC457506",2,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2021-08-06","04280519"
+"335","Voluntary","SC470797",4,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"336","Private","SC477726",2,"WIGAN","Crystal Care Solutions Limited Company Number 05952454","Crystal Care Solutions Limited","CRYSTAL CARE SOLUTIONS LIMITED","2014-07-18",NA,"05952454"
+"337","Private","SC456532",2,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"338","Private","SC473473",3,"ROCHDALE","Nestlings Care Ltd","Nestlings Care Ltd","NESTLINGS CARE LTD",NA,NA,"07252721"
+"339","Private","SC477724",3,"WIGAN","Crystal Care Solutions Limited Company Number 05952454","Crystal Care Solutions Limited","CRYSTAL CARE SOLUTIONS LIMITED","2014-07-17",NA,"05952454"
+"340","Private","SC477939",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED","2014-06-03",NA,"05087886"
+"341","Private","SC479654",6,"ROCHDALE","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-09-05",NA,"08885676"
+"342","Private","SC480161",6,"TAMESIDE","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-09-10",NA,"08885676"
+"343","Private","1155775",1,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2015-09-24",NA,"04280519"
+"344","Private","1156098",3,"BOLTON","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2016-01-06",NA,"04280519"
+"345","Private","1159258",3,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2015-10-14",NA,"04280519"
+"346","Private","1185828",4,"WIGAN","Next Stage 4 Life","Next Stage 4 Life","NEXT STAGE 4 LIFE LTD","2016-02-08",NA,"08256389"
+"347","Private","1224251",2,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED","2016-01-06","2019-05-31","06968122"
+"348","Voluntary","1232380",6,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW","2016-03-17","2022-11-30","02978546"
+"349","Voluntary","1233310",3,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW","2016-08-08",NA,"02978546"
+"350","Local Authority","1237582",5,"ROCHDALE","Rochdale Metropolitan Borough Council","Rochdale Metropolitan Borough Council",NA,"2016-05-16",NA,NA
+"351","Private","1240801",2,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED","2016-06-27",NA,"06968122"
+"352","Private","1241634",2,"WIGAN","Future Focused Ltd","Future Focused Ltd","FUTURE FOCUSED LTD","2016-08-22",NA,"07408112"
+"353","Private","1241757",2,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED","2016-08-09",NA,"06968122"
+"354","Private","SC005553",5,"OLDHAM","Dalepeak Limited","Dalepeak Limited","DALEPEAK LIMITED",NA,NA,"03612944"
+"355","Local Authority","SC035339",7,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"356","Local Authority","SC035492",4,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"357","Local Authority","SC387671",7,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"358","Private","SC483828",5,"STOCKPORT","Care Haven (UK) Ltd","Care Haven (UK) Ltd","CARE HAVEN (UK) LTD","2014-12-04",NA,"03762420"
+"359","Private","1155775",1,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2015-09-24",NA,"04280519"
+"360","Private","1156098",3,"BOLTON","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2016-01-06",NA,"04280519"
+"361","Private","1159258",3,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2015-10-14",NA,"04280519"
+"362","Private","1185828",4,"WIGAN","Next Stage 4 Life","Next Stage 4 Life","NEXT STAGE 4 LIFE LTD","2016-02-08",NA,"08256389"
+"363","Private","1224251",2,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED","2016-01-06","2019-05-31","06968122"
+"364","Voluntary","1232380",6,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW","2016-03-17","2022-11-30","02978546"
+"365","Voluntary","1233310",3,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW","2016-08-08",NA,"02978546"
+"366","Local Authority","1237582",5,"ROCHDALE","Rochdale Metropolitan Borough Council","Rochdale Metropolitan Borough Council",NA,"2016-05-16",NA,NA
+"367","Private","1240801",3,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED","2016-06-27",NA,"06968122"
+"368","Private","1241634",2,"WIGAN","Future Focused Ltd","Future Focused Ltd","FUTURE FOCUSED LTD","2016-08-22",NA,"07408112"
+"369","Private","1241757",3,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED","2016-08-09",NA,"06968122"
+"370","Private","1244493",4,"TAMESIDE","Stepping Stone Children's Homes Ltd","Stepping Stone childrens Homes Ltd","STEPPING STONES CHILDRENS HOMES LIMITED","2017-02-10",NA,"09977747"
+"371","Private","1244881",2,"ROCHDALE","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED","2016-09-13",NA,"05033530"
+"372","Local Authority","1244946",2,"WIGAN","Wigan Council","Wigan Council",NA,"2016-10-04",NA,NA
+"373","Private","1247773",5,"MANCHESTER","Keys Care Limited","Keys Care Limited","KEYS CARE LIMITED","2016-11-30",NA,"NI053253"
+"374","Private","1250915",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED","2017-03-16",NA,"05087886"
+"375","Local Authority","1251073",5,"MANCHESTER","Manchester City Council","Manchester City Council",NA,"2017-02-24",NA,NA
+"376","Private","1256134",4,"OLDHAM","Roc Northwest Ltd","Roc Northwest Ltd","ROC NORTHWEST LIMITED","2017-06-07",NA,"05564417"
+"377","Private","1261138",5,"BURY","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD","2017-08-29",NA,"03431532"
+"378","Private","1263199",6,"WIGAN","Witherslack Group Ltd","Witherslack Group Ltd","WITHERSLACK GROUP LIMITED","2017-09-28",NA,"03579104"
+"379","Private","1264537",5,"WIGAN","Roc Northwest Ltd","Roc Northwest Ltd","ROC NORTHWEST LIMITED","2017-11-29",NA,"05564417"
+"380","Private","SC005553",5,"OLDHAM","Dalepeak Limited","Dalepeak Limited","DALEPEAK LIMITED",NA,NA,"03612944"
+"381","Private","SC005567",4,"TAMESIDE","Stepping Stones Children's Services Limited","Stepping Stones childrens Services Limited","STEPPING STONES CHILDREN'S SERVICES LTD",NA,NA,"15399498"
+"382","Private","SC005589",2,"TAMESIDE","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"383","Private","SC005751",1,"WIGAN","Doncaster Deaf Trust","Doncaster Deaf Trust","DONCASTER DEAF TRUST",NA,NA,"04105045"
+"384","Private","SC008435",4,"BURY","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-02-26","03946050"
+"385","Private","SC008484",6,"STOCKPORT","","",NA,NA,NA,NA
+"386","Private","SC008485",6,"STOCKPORT","Choices Home For Children Limited","Choices Home For Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"387","Private","SC008486",6,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"388","Private","SC008487",6,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"389","Private","SC008488",8,"STOCKPORT","Halliwell Homes Limited","Halliwell Homes Limited","HALLIWELL HOMES LIMITED",NA,NA,"03681826"
+"390","Private","SC008490",4,"STOCKPORT","Stepping Stones Children's Services Limited","Stepping Stones childrens Services Limited","STEPPING STONES CHILDREN'S SERVICES LTD",NA,NA,"15399498"
+"391","Voluntary","SC008575",5,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"392","Private","SC008600",6,"STOCKPORT","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"393","Private","SC008607",2,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"394","Private","SC008608",2,"STOCKPORT","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"395","Private","SC021677",4,"MANCHESTER","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"396","Private","SC021679",4,"MANCHESTER","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"397","Private","SC021683",4,"MANCHESTER","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"398","Private","SC021684",6,"MANCHESTER","Social Care Services Limited","Social Care Services Limited","SOCIAL CARE SERVICES LIMITED",NA,NA,"02428089"
+"399","Voluntary","SC025712",2,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"400","Voluntary","SC025713",2,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"401","Voluntary","SC025714",5,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"402","Voluntary","SC025715",3,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"403","Voluntary","SC025739",4,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"404","Voluntary","SC025740",6,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"405","Voluntary","SC025744",6,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"406","Voluntary","SC025745",5,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"407","Voluntary","SC025747",3,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"408","Local Authority","SC032475",5,"TRAFFORD","Trafford Borough Council","Trafford Borough Council",NA,NA,NA,NA
+"409","Local Authority","SC032496",6,"TRAFFORD","Trafford Borough Council","Trafford Borough Council",NA,NA,NA,NA
+"410","Local Authority","SC034012",3,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,NA,NA,NA
+"411","Local Authority","SC034108",6,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,NA,NA,NA
+"412","Local Authority","SC034851",5,"ROCHDALE","Rochdale Metropolitan Borough Council","Rochdale Metropolitan Borough Council",NA,NA,NA,NA
+"413","Local Authority","SC034922",4,"ROCHDALE","Rochdale Metropolitan Borough Council","Rochdale Metropolitan Borough Council",NA,NA,NA,NA
+"414","Local Authority","SC035339",7,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"415","Local Authority","SC035492",4,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"416","Voluntary","SC035518",28,"STOCKPORT","Sea Shell Trust Limited","Sea Shell Trust Limited","SEASHELL TRUST",NA,NA,"04216714"
+"417","Private","SC035657",7,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"418","Local Authority","SC039070",5,"STOCKPORT","Stockport Council","Stockport Council",NA,NA,NA,NA
+"419","Local Authority","SC040266",5,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"420","Local Authority","SC040437",6,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,NA,NA
+"421","Local Authority","SC040719",3,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"422","Local Authority","SC040723",4,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"423","Local Authority","SC040926",6,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"424","Local Authority","SC040982",5,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"425","Private","SC043697",7,"TAMESIDE","Halliwell Homes Limited","Halliwell Homes Limited","HALLIWELL HOMES LIMITED",NA,NA,"03681826"
+"426","Private","SC043972",5,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"427","Private","SC046621",2,"ROCHDALE","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-02-26","03946050"
+"428","Private","SC049189",3,"ROCHDALE","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"429","Local Authority","SC051856",4,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"430","Voluntary","SC057718",5,"BOLTON","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"431","Local Authority","SC059842",5,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"432","Local Authority","SC059853",6,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"433","Private","SC062263",1,"ROCHDALE","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"434","Private","SC062309",6,"TAMESIDE","Courtyard Care Limited","Courtyard Care Limited","COURTYARD CARE LIMITED",NA,NA,"04945227"
+"435","Private","SC063054",1,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,"2018-05-30","05087886"
+"436","Local Authority","SC063683",6,"MANCHESTER","Manchester City Council","Manchester City Council",NA,NA,NA,NA
+"437","Private","SC064428",4,"WIGAN","Active 8 Care Ltd","Active 8 Care Ltd","KEYS ACTIVE 8 CARE LIMITED",NA,NA,"05107898"
+"438","Private","SC064530",2,"OLDHAM","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"439","Private","SC064666",2,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"440","Private","SC064836",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"441","Private","SC065072",2,"ROCHDALE","Time-Out Children's Homes Limited","Time-Out childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"442","Private","SC065189",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"443","Private","SC065374",5,"STOCKPORT","Care Haven (UK) Ltd","Care Haven (UK) Ltd","CARE HAVEN (UK) LTD",NA,NA,"03762420"
+"444","Private","SC066072",3,"OLDHAM","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"445","Private","SC066560",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"446","Local Authority","SC067052",4,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,"2021-08-09",NA
+"447","Private","SC067899",7,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"448","Private","SC068277",6,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2018-07-10","04280519"
+"449","Private","SC069176",5,"TAMESIDE","Oakfields Children's Care Limited","Oakfields childrens Care Limited","OAKFIELDS CHILDREN'S CARE LIMITED",NA,NA,"05425280"
+"450","Private","SC069198",3,"BURY","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"451","Private","SC356817",4,"OLDHAM","Lifetime Opportunities Ltd","Lifetime Opportunities Ltd","LIFETIME OPPORTUNITIES LTD",NA,NA,"05040885"
+"452","Private","SC356864",2,"BURY","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"453","Private","SC357133",3,"STOCKPORT","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"454","Private","SC357159",2,"ROCHDALE","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-03-05","03946050"
+"455","Private","SC357455",4,"BLACKBURN WITH DARWEN","Woodside House Care Ltd","Woodside House Care Ltd","WOODSIDE HOUSE CARE LTD",NA,NA,"04960062"
+"456","Private","SC357468",1,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"457","Local Authority","SC357979",3,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,NA,NA,NA
+"458","Local Authority","SC360599",4,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,"2022-09-22",NA
+"459","Private","SC361811",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"460","Private","SC366343",4,"TAMESIDE","Maple Leaf Care Limited","Maple Leaf Care Limited","MAPLE LEAF CARE LIMITED",NA,NA,"05951541"
+"461","Private","SC369144",6,"TAMESIDE","Progressive Care Ltd","Progressive Care Ltd","PROGRESSIVE CARE LIMITED",NA,"2018-07-31","03641345"
+"462","Local Authority","SC369857",5,"BOLTON","Bolton Metropolitan Borough Council","Bolton Metropolitan Borough Council",NA,NA,NA,NA
+"463","Private","SC372117",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"464","Local Authority","SC372511",5,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,NA,NA
+"465","Voluntary","SC373044",4,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"466","Private","SC378407",2,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"467","Private","SC381339",4,"MANCHESTER","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,"2022-06-11","04460745"
+"468","Private","SC381722",2,"BURY","Pathfinders (childcare) Ltd","Pathfinders (childcare) Ltd","PATHFINDERS (CHILDCARE) LIMITED",NA,"2020-02-26","03946050"
+"469","Private","SC386837",2,"STOCKPORT","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"470","Private","SC387148",5,"TRAFFORD","Fairfield Residential Ltd","Fairfield Residential Ltd","FAIRFIELD RESIDENTIAL LIMITED",NA,NA,"06677877"
+"471","Local Authority","SC387671",7,"OLDHAM","Oldham Metropolitan Borough Council","Oldham Metropolitan Borough Council",NA,NA,NA,NA
+"472","Private","SC389649",3,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2020-12-20","04280519"
+"473","Private","SC389823",5,"BOLTON","Courtyard Care Limited","Courtyard Care Limited","COURTYARD CARE LIMITED",NA,NA,"04945227"
+"474","Private","SC390577",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"475","Private","SC394463",3,"STOCKPORT","Cornerstone Children's Homes Limited","Cornerstone childrens Homes Limited","CORNERSTONE CHILDREN'S HOMES LIMITED",NA,NA,"06681557"
+"476","Private","SC394478",3,"STOCKPORT","Cornerstone Children's Homes Limited","Cornerstone childrens Homes Limited","CORNERSTONE CHILDREN'S HOMES LIMITED",NA,NA,"06681557"
+"477","Private","SC396104",6,"TAMESIDE","Full Circle Care","Full Circle Care","FULL CIRCLE CARE LTD",NA,NA,"06610632"
+"478","Voluntary","SC397344",4,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"479","Private","SC398367",4,"WIGAN","Cherry Cottage Limited","Cherry Cottage Limited","CHERRY COTTAGE LIMITED",NA,"2020-04-23","05864035"
+"480","Private","SC400355",3,"STOCKPORT","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"481","Local Authority","SC402508",5,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,"2020-01-22",NA
+"482","Private","SC403464",2,"ROCHDALE","Aspire Child Care Ltd","Aspire Child Care Ltd","ASPIRE CHILD CARE LTD",NA,NA,"06984654"
+"483","Private","SC407169",4,"STOCKPORT","Choices Home For Children Limited","Choices Home For Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"484","Private","SC411030",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"485","Private","SC411825",2,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED",NA,NA,"06968122"
+"486","Private","SC413779",2,"ROCHDALE","Aspire Child Care Ltd","Aspire Child Care Ltd","ASPIRE CHILD CARE LTD",NA,NA,"06984654"
+"487","Private","SC416267",2,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"488","Private","SC416464",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"489","Private","SC420388",4,"BURY","Alliance Care & Education Limited","Alliance Care & Education Limited","KEYS ACE LIMITED",NA,NA,"05556312"
+"490","Private","SC429189",5,"MANCHESTER","R Place Limited","R Place Limited","R PLACE LIMITED",NA,"2020-07-29","07496321"
+"491","Private","SC430239",5,"TAMESIDE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"492","Private","SC433290",6,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2021-03-31","04280519"
+"493","Private","SC436559",5,"STOCKPORT","Choices Home For Children Limited","Choices Home For Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"494","Private","SC439116",2,"TRAFFORD","Aspireone Care Ltd","Aspireone Care Ltd","ASPIREONE CARE LIMITED",NA,NA,"07483842"
+"495","Private","SC442864",3,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"496","Private","SC446325",2,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"497","Private","SC451174",2,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"498","Private","SC456405",2,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2018-08-01","04280519"
+"499","Private","SC456409",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"500","Private","SC456413",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"501","Private","SC456416",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"502","Private","SC456418",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"503","Private","SC456419",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"504","Private","SC456532",2,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"505","Private","SC456539",1,"BOLTON","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"506","Private","SC456542",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"507","Private","SC456543",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"508","Private","SC456850",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"509","Private","SC456857",1,"ROCHDALE","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"510","Private","SC457506",2,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED",NA,"2021-08-06","04280519"
+"511","Private","SC467268",5,"BLACKBURN WITH DARWEN","The Partnership of Care Today Children's Services","Care Today Childrens Services childrens Services",NA,NA,NA,NA
+"512","Voluntary","SC467796",3,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"513","Voluntary","SC470797",4,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"514","Private","SC472680",5,"MANCHESTER","New Horizons (stockport) Ltd","New Horizons (stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"515","Private","SC473473",3,"ROCHDALE","Nestlings Care Ltd","Nestlings Care Ltd","NESTLINGS CARE LTD",NA,NA,"07252721"
+"516","Private","SC477724",3,"WIGAN","Crystal Care Solutions Limited Company Number 05952454","Crystal Care Solutions Limited","CRYSTAL CARE SOLUTIONS LIMITED","2014-07-17",NA,"05952454"
+"517","Private","SC477726",2,"WIGAN","Crystal Care Solutions Limited Company Number 05952454","Crystal Care Solutions Limited","CRYSTAL CARE SOLUTIONS LIMITED","2014-07-18",NA,"05952454"
+"518","Private","SC477939",2,"ROCHDALE","Meadows Care Ltd","Meadows Care Ltd","MEADOWS CARE LIMITED","2014-06-03",NA,"05087886"
+"519","Private","SC479647",6,"WIGAN","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-10-08",NA,"08885676"
+"520","Private","SC479650",6,"ROCHDALE","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-10-08",NA,"08885676"
+"521","Private","SC479654",6,"ROCHDALE","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-09-05",NA,"08885676"
+"522","Private","SC479776",5,"TAMESIDE","Family Child Care Ltd","Family Child Care Ltd","HAPPY FAMILIES CHILD CARE LIMITED","2014-11-20","2020-07-01","03817658"
+"523","Private","SC480161",6,"TAMESIDE","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2014-09-10",NA,"08885676"
+"524","Private","SC482410",3,"WIGAN","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED","2014-11-12",NA,"06968122"
+"525","Voluntary","SC483533",3,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW","2015-01-27",NA,"02978546"
+"526","Private","SC483828",5,"STOCKPORT","Care Haven (UK) Ltd","Care Haven (UK) Ltd","CARE HAVEN (UK) LTD","2014-12-04",NA,"03762420"
+"527","Voluntary","SC484789",3,"BOLTON","Birtenshaw - company number 02978546","Birtenshaw","BIRTENSHAW","2015-01-27","2023-01-25","02978546"
+"528","Private","SC489660",3,"BURY","Altum Residential Care Ltd","Altum Residential Care Ltd","ALTUM RESIDENTIAL CARE LTD","2016-11-22","2018-09-30","08232494"
+"529","Private","1255800",2,"MANCHESTER","Family Child Care Ltd","Family Child Care Ltd","HAPPY FAMILIES CHILD CARE LIMITED","2017-11-02","2019-10-04","03817658"
+"530","Private","1258975",3,"OLDHAM","Oasis Adolescent Services Limited","Oasis Adolescent Services Limited","OASIS ADOLESCENT SERVICES LIMITED","2017-10-16",NA,"10606038"
+"531","Local Authority","1263766",3,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,"2017-10-23",NA,NA
+"532","Local Authority","1263768",3,"TAMESIDE","Tameside Mbc","Tameside Mbc",NA,"2017-10-23",NA,NA
+"533","Private","1264696",2,"OLDHAM","Dynamic Childcare Limited","Dynamic Childcare Limited","HORIZON INDEPENDENT CARE LTD","2018-01-12","2021-08-08","09972851"
+"534","Private","1265092",7,"BOLTON","4pureheart Limited","4pureheart Limited","4PUREHEART LIMITED","2018-01-03",NA,"10057047"
+"535","Private","1270297",3,"BURY","Next Stage 4 Life","Next Stage 4 Life","NEXT STAGE 4 LIFE LTD","2017-11-24",NA,"08256389"
+"536","Local Authority","1271135",5,"STOCKPORT","Stockport Council","Stockport Council",NA,"2018-02-15",NA,NA
+"537","Private","1155775",1,"MANCHESTER","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED","2015-09-24",NA,"04280519"
+"538","Private","1156098",3,"BOLTON","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED","2016-01-06",NA,"04280519"
+"539","Private","1159258",3,"MANCHESTER","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED","2015-10-14",NA,"04280519"
+"540","Private","1244493",4,"TAMESIDE","Stepping Stones Childrens Homes Ltd","Stepping Stones Childrens Homes Ltd","STEPPING STONES CHILDRENS HOMES LIMITED","2017-02-10",NA,"09977747"
+"541","Private","1244881",2,"ROCHDALE","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED","2016-09-13",NA,"05033530"
+"542","Private","1247773",5,"MANCHESTER","Keys Group Progressive Care & Education Limited","Keys Group Progressive Care & Education Limited","KEYS GROUP PROGRESSIVE CARE & EDUCATION LIMITED","2016-11-30",NA,"03849567"
+"543","Private","1255800",2,"MANCHESTER","Proactive Care (Manchester) Ltd","Proactive Care (Manchester) Ltd","PROACTIVE CARE (MANCHESTER) LTD","2017-11-02","2019-10-04","08759855"
+"544","Private","1263425",2,"STOCKPORT","Social Care Services (clayton) Limited","Social Care Services (clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED","2018-09-25",NA,"04460745"
+"545","Local Authority","1263766",3,"TAMESIDE","Tameside Metropolitan Borough Council ","Tameside Metropolitan Borough Council",NA,"2017-10-23",NA,NA
+"546","Local Authority","1263768",3,"TAMESIDE","Tameside Metropolitan Borough Council ","Tameside Metropolitan Borough Council",NA,"2017-10-23",NA,NA
+"547","Local Authority","1271135",5,"STOCKPORT","Stockport Metropolitan Borough Council","Stockport Metropolitan Borough Council",NA,"2018-02-15",NA,NA
+"548","Private","1271581",2,"BOLTON","Nestlings Care Ltd","Nestlings Care Ltd","NESTLINGS CARE LTD","2018-04-04",NA,"07252721"
+"549","Private","1277049",2,"WIGAN","All Round Care Ltd","All Round Care Ltd","ALL ROUND CARE LTD","2018-07-26",NA,"10639802"
+"550","Private","1278753",3,"OLDHAM","Oasis Adolescent Services Limited","Oasis Adolescent Services Limited","OASIS ADOLESCENT SERVICES LIMITED","2018-09-06",NA,"10606038"
+"551","Private","1280370",2,"OLDHAM","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED","2018-07-16",NA,"05033530"
+"552","Private","1280371",2,"OLDHAM","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED","2018-07-16",NA,"05033530"
+"553","Private","1280412",4,"WIGAN","Apex Children's Services","Apex childrens Services","APEX CHILDRENS SERVICES LTD","2018-06-25",NA,"10344525"
+"554","Private","2484682",3,"BURY","Next Stage 4 Life","Next Stage 4 Life","NEXT STAGE 4 LIFE LTD","2018-08-06",NA,"08256389"
+"555","Private","2490784",4,"OLDHAM","Dynamic Childcare Limited","Dynamic Childcare Limited","HORIZON INDEPENDENT CARE LTD","2018-08-28","2020-07-29","09972851"
+"556","Private","SC005751",1,"WIGAN","Care Afloat Ltd","Care Afloat Ltd","CARE AFLOAT LTD.",NA,NA,"02578368"
+"557","Local Authority","SC034012",3,"TAMESIDE","Tameside Metropolitan Borough Council ","Tameside Metropolitan Borough Council",NA,NA,NA,NA
+"558","Local Authority","SC034108",6,"TAMESIDE","Tameside Metropolitan Borough Council ","Tameside Metropolitan Borough Council",NA,NA,NA,NA
+"559","Private","SC035657",7,"OLDHAM","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"560","Local Authority","SC039070",5,"STOCKPORT","Stockport Metropolitan Borough Council","Stockport Metropolitan Borough Council",NA,NA,NA,NA
+"561","Private","SC043972",5,"MANCHESTER","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"562","Private","SC062263",1,"ROCHDALE","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"563","Private","SC064530",2,"OLDHAM","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"564","Private","SC064666",2,"MANCHESTER","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"565","Private","SC065072",2,"ROCHDALE","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"566","Private","SC067899",7,"OLDHAM","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"567","Private","SC356864",2,"BURY","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"568","Private","SC357468",1,"ROCHDALE","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"569","Local Authority","SC357979",3,"TAMESIDE","Tameside Metropolitan Borough Council ","Tameside Metropolitan Borough Council",NA,NA,NA,NA
+"570","Local Authority","SC360599",5,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,"2022-09-22",NA
+"571","Private","SC378407",2,"ROCHDALE","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"572","Private","SC389649",3,"MANCHESTER","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,"2020-12-20","04280519"
+"573","Private","SC396104",6,"TAMESIDE","Full Circle Care Ltd","Full Circle Care Ltd","FULL CIRCLE CARE LTD",NA,NA,"06610632"
+"574","Private","SC416267",2,"ROCHDALE","Time-Out Children's Homes Ltd","Time-Out childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"575","Private","SC430239",5,"TAMESIDE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"576","Private","SC433290",6,"MANCHESTER","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,"2021-03-31","04280519"
+"577","Private","SC446325",2,"MANCHESTER","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"578","Private","SC451174",2,"MANCHESTER","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"579","Private","SC456409",1,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"580","Private","SC456413",1,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"581","Private","SC456416",1,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"582","Private","SC456418",1,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"583","Private","SC456419",1,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"584","Private","SC456532",2,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"585","Private","SC456539",1,"BOLTON","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"586","Private","SC456542",1,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"587","Private","SC456543",1,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"588","Private","SC456850",1,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"589","Private","SC456857",1,"ROCHDALE","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,NA,"04280519"
+"590","Private","SC457506",2,"OLDHAM","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED",NA,"2021-08-06","04280519"
+"591","Private","SC477724",3,"WIGAN","Crystal Care Solutions","Crystal Care Solutions","CRYSTAL CARE SOLUTIONS LIMITED","2014-07-17",NA,"05952454"
+"592","Private","SC477726",2,"WIGAN","Crystal Care Solutions","Crystal Care Solutions","CRYSTAL CARE SOLUTIONS LIMITED","2014-07-18",NA,"05952454"
+"593","Private","SC479776",4,"TAMESIDE","Proactive Care (Manchester) Ltd","Proactive Care (Manchester) Ltd","PROACTIVE CARE (MANCHESTER) LTD","2014-11-20","2020-07-01","08759855"
+"594","Private","1185828",4,"WIGAN","Next Stage 4 Life Ltd","Next Stage 4 Life Ltd","NEXT STAGE 4 LIFE LTD","2016-02-08",NA,"08256389"
+"595","Voluntary","1232380",6,"BOLTON","Birtenshaw ","Birtenshaw","BIRTENSHAW","2016-03-17","2022-11-30","02978546"
+"596","Voluntary","1233310",3,"BOLTON","Birtenshaw ","Birtenshaw","BIRTENSHAW","2016-08-08",NA,"02978546"
+"597","Private","1240801",3,"WIGAN","Inspire Childrens Services","Inspire Childrens Services","INSPIRE CHILDRENS SERVICES LIMITED","2016-06-27",NA,"06968122"
+"598","Private","1241757",3,"WIGAN","Inspire Childrens Services","Inspire Childrens Services","INSPIRE CHILDRENS SERVICES LIMITED","2016-08-09",NA,"06968122"
+"599","Private","1250915",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED","2017-03-16",NA,"05087886"
+"600","Private","1263425",2,"STOCKPORT","Social Care Services Ltd","Social Care Services Ltd","RESTORATIVE SOCIAL CARE SERVICES LTD.","2018-09-25",NA,"10413929"
+"601","Private","1265092",7,"BOLTON","4PureHeart Limited","4PureHeart Limited","4PUREHEART LIMITED","2018-01-03",NA,"10057047"
+"602","Private","1270297",3,"BURY","Next Stage 4 Life Ltd","Next Stage 4 Life Ltd","NEXT STAGE 4 LIFE LTD","2017-11-24",NA,"08256389"
+"603","Private","1280412",4,"WIGAN","Apex Childrens Services","Apex Childrens Services","APEX CHILDRENS SERVICES LTD","2018-06-25",NA,"10344525"
+"604","Private","2484682",3,"BURY","Next Stage 4 Life Ltd","Next Stage 4 Life Ltd","NEXT STAGE 4 LIFE LTD","2018-08-06",NA,"08256389"
+"605","Private","2490784",3,"OLDHAM","Dynamic Childcare Limited","Dynamic Childcare Limited","HORIZON INDEPENDENT CARE LTD","2018-08-28","2020-07-29","09972851"
+"606","Private","2498911",2,"MANCHESTER","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD","2018-12-17","2020-12-02","03576741"
+"607","Private","2509452",3,"WIGAN","Horizon Care And Education Group Limited","Horizon Care And Education Group Limited","HORIZON CARE AND EDUCATION GROUP LIMITED","2019-03-11",NA,"06454959"
+"608","Private","2509670",4,"STOCKPORT","Crystal Care Solutions Limited","Crystal Care Solutions Limited","CRYSTAL CARE SOLUTIONS LIMITED","2019-03-28",NA,"05952454"
+"609","Private","2509838",3,"BOLTON","Holistic Approach Ltd","Holistic Approach Ltd","HOLISTIC APPROACH LTD","2019-02-13",NA,"09365310"
+"610","Private","2510604",4,"BURY","Nestlings Care Ltd","Nestlings Care Ltd","NESTLINGS CARE LTD","2019-07-04",NA,"07252721"
+"611","Private","2519592",4,"TAMESIDE","Care 4 Children Residential Services Ltd","Care 4 Children Residential Services Ltd","YOUR CHAPTER LIMITED","2019-04-08",NA,"09097182"
+"612","Private","2525774",4,"OLDHAM","Stepping Stones Childrens Homes Ltd","Stepping Stones Childrens Homes Ltd","STEPPING STONES CHILDRENS HOMES LIMITED","2019-05-28",NA,"09977747"
+"613","Private","2536761",4,"WIGAN","Hexagon Care Services Limited","Hexagon Care Services Limited","HEXAGON CARE SERVICES LIMITED","2019-08-15",NA,"08885676"
+"614","Private","2541033",5,"TRAFFORD","Pure Care Homes Ltd","Pure Care Homes Ltd","PURE CARE HOMES LTD","2019-09-05",NA,"11667392"
+"615","Private","2542024",2,"MANCHESTER","Proactive Care","Proactive Care","PROACTIVE CARE SERVICES LIMITED","2019-08-30",NA,"03719907"
+"616","Private","2548528",4,"ROCHDALE","Octagon Care Ltd","Octagon Care Ltd","OCTAGON CARE LTD","2019-08-12",NA,"10988764"
+"617","Private","SC005567",4,"TAMESIDE","Keys Stepping Stones Limited","Keys Stepping Stones Limited","KEYS STEPPING STONES LIMITED",NA,NA,"03749791"
+"618","Private","SC005589",2,"TAMESIDE","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"619","Private","SC008486",6,"STOCKPORT","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"620","Private","SC008487",6,"STOCKPORT","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"621","Private","SC008490",4,"STOCKPORT","Keys Stepping Stones Limited","Keys Stepping Stones Limited","KEYS STEPPING STONES LIMITED",NA,NA,"03749791"
+"622","Private","SC008607",2,"STOCKPORT","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"623","Private","SC008608",2,"STOCKPORT","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"624","Private","SC021677",4,"MANCHESTER","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"625","Private","SC021679",4,"MANCHESTER","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"626","Private","SC021683",4,"MANCHESTER","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"627","Voluntary","SC035518",28,"STOCKPORT","Seashell Trust ","Seashell Trust","SEASHELL TRUST",NA,NA,"04216714"
+"628","Local Authority","SC040437",5,"BLACKBURN WITH DARWEN","Blackburn with Darwen Borough Council","Blackburn with Darwen Borough Council",NA,NA,NA,NA
+"629","Private","SC049189",3,"ROCHDALE","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"630","Private","SC064428",4,"WIGAN","Keys Active 8 Care Ltd","Keys Active 8 Care Ltd","KEYS ACTIVE 8 CARE LIMITED",NA,NA,"05107898"
+"631","Private","SC064836",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"632","Private","SC065189",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"633","Private","SC066072",3,"OLDHAM","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"634","Private","SC066560",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"635","Private","SC357133",3,"STOCKPORT","Social Care Services Ltd","Social Care Services Ltd","RESTORATIVE SOCIAL CARE SERVICES LTD.",NA,NA,"10413929"
+"636","Private","SC361811",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"637","Private","SC372117",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"638","Voluntary","SC373044",4,"BOLTON","Birtenshaw ","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"639","Private","SC381339",4,"MANCHESTER","Social Care Services Ltd","Social Care Services Ltd","RESTORATIVE SOCIAL CARE SERVICES LTD.",NA,"2022-06-11","10413929"
+"640","Private","SC390577",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"641","Voluntary","SC397344",4,"BOLTON","Birtenshaw ","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"642","Private","SC400355",3,"STOCKPORT","Social Care Services Ltd","Social Care Services Ltd","RESTORATIVE SOCIAL CARE SERVICES LTD.",NA,NA,"10413929"
+"643","Private","SC411030",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"644","Private","SC411825",2,"WIGAN","Inspire Childrens Services","Inspire Childrens Services","INSPIRE CHILDRENS SERVICES LIMITED",NA,NA,"06968122"
+"645","Private","SC416464",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"646","Private","SC420388",4,"BURY","Keys ACE Limited","Keys ACE Limited","KEYS ACE LIMITED",NA,NA,"05556312"
+"647","Private","SC442864",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"648","Private","SC467268",5,"BLACKBURN WITH DARWEN","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD",NA,NA,"03576741"
+"649","Voluntary","SC467796",3,"BOLTON","Birtenshaw ","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"650","Voluntary","SC470797",4,"BOLTON","Birtenshaw ","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"651","Private","SC477724",3,"WIGAN","Crystal Care Solutions Limited","Crystal Care Solutions Limited","CRYSTAL CARE SOLUTIONS LIMITED","2014-07-17",NA,"05952454"
+"652","Private","SC477726",2,"WIGAN","Crystal Care Solutions Limited","Crystal Care Solutions Limited","CRYSTAL CARE SOLUTIONS LIMITED","2014-07-18",NA,"05952454"
+"653","Private","SC477939",3,"ROCHDALE","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED","2014-06-03",NA,"05087886"
+"654","Private","SC479776",4,"TAMESIDE","Proactive Care","Proactive Care","PROACTIVE CARE SERVICES LIMITED","2014-11-20","2020-07-01","03719907"
+"655","Private","SC482410",3,"WIGAN","Inspire Childrens Services","Inspire Childrens Services","INSPIRE CHILDRENS SERVICES LIMITED","2014-11-12",NA,"06968122"
+"656","Voluntary","SC483533",3,"BOLTON","Birtenshaw ","Birtenshaw","BIRTENSHAW","2015-01-27",NA,"02978546"
+"657","Voluntary","SC484789",3,"BOLTON","Birtenshaw ","Birtenshaw","BIRTENSHAW","2015-01-27","2023-01-25","02978546"
+"658","Private","SC008488",8,"STOCKPORT","Halliwell Homes","Halliwell Homes","HALLIWELL HOMES LIMITED",NA,NA,"03681826"
+"659","Private","2598004",3,"OLDHAM","Strive To Care LTD","Strive To Care LTD","STRIVE TO CARE LTD","2020-10-05",NA,"12377099"
+"660","Private","2591888",4,"TAMESIDE","New Horizons-(stockport) Ltd","New Horizons-(stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD","2020-06-16",NA,"03431532"
+"661","Private","2594033",3,"BURY","Inspire Childrens Services","Inspire Childrens Services","INSPIRE CHILDRENS SERVICES LIMITED","2020-06-19",NA,"06968122"
+"662","Local Authority","SC034012",5,"TAMESIDE","Tameside Metropolitan Borough Council ","Tameside Metropolitan Borough Council",NA,NA,NA,NA
+"663","Private","SC069198",3,"BURY","Meadows Care Limited","Meadows Care Limited","MEADOWS CARE LIMITED",NA,NA,"05087886"
+"664","Private","1280412",4,"WIGAN","Apex Childrens Services Ltd","Apex Childrens Services Ltd","APEX CHILDRENS SERVICES LTD","2018-06-25",NA,"10344525"
+"665","Private","1264537",5,"WIGAN","ROC Northwest","ROC Northwest","ROC NORTHWEST LIMITED","2017-11-29",NA,"05564417"
+"666","Private","SC472680",5,"MANCHESTER","New Horizons-(stockport) Ltd","New Horizons-(stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"667","Private","2575432",2,"WIGAN","All Round Care Ltd","All Round Care Ltd","ALL ROUND CARE LTD","2020-05-01",NA,"10639802"
+"668","Private","2582250",2,"ROCHDALE","Sandcastle Care Ltd","Sandcastle Care Ltd","SANDCASTLE CARE LTD","2020-03-04",NA,"04922373"
+"669","Private","2582337",4,"BURY","Sandcastle Care Ltd","Sandcastle Care Ltd","SANDCASTLE CARE LTD","2020-03-04",NA,"04922373"
+"670","Voluntary","SC035518",24,"STOCKPORT","Seashell Trust","Seashell Trust","SEASHELL TRUST",NA,NA,"04216714"
+"671","Voluntary","SC397344",4,"BOLTON","Birtenshaw","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"672","Private","2484682",3,"BURY","Next Stage 4Life LTD","Next Stage 4 Life LTD","NEXT STAGE 4 LIFE LTD","2018-08-06",NA,"08256389"
+"673","Private","2553543",3,"WIGAN","Social Care Services ( clayton ) Ltd","Social Care Services ( clayton ) Ltd","SOCIAL CARE SERVICES (CLAYTON) LIMITED","2020-04-21",NA,"04460745"
+"674","Private","2591916",1,"WIGAN","Future Focused Ltd","Future Focused Ltd","FUTURE FOCUSED LTD","2020-07-20",NA,"07408112"
+"675","Private","1270297",3,"BURY","Next Stage 4Life LTD","Next Stage 4 Life LTD","NEXT STAGE 4 LIFE LTD","2017-11-24",NA,"08256389"
+"676","Private","2612810",3,"TAMESIDE","Pure Care Homes ltd","Pure Care Homes ltd","PURE CARE HOMES LTD","2021-01-19",NA,"11667392"
+"677","Private","2553536",4,"WIGAN","Apex Childrens Services Ltd","Apex Childrens Services Ltd","APEX CHILDRENS SERVICES LTD","2019-11-22",NA,"10344525"
+"678","Voluntary","SC484789",3,"BOLTON","Birtenshaw","Birtenshaw","BIRTENSHAW","2015-01-27","2023-01-25","02978546"
+"679","Voluntary","SC470797",4,"BOLTON","Birtenshaw","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"680","Private","SC065072",2,"ROCHDALE","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"681","Private","2620950",2,"BOLTON","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2021-03-22",NA,"04280519"
+"682","Local Authority","1271135",7,"STOCKPORT","Stockport Metropolitan Borough Council","Stockport Metropolitan Borough Council",NA,"2018-02-15",NA,NA
+"683","Private","SC043697",7,"TAMESIDE","Halliwell Homes","Halliwell Homes","HALLIWELL HOMES LIMITED",NA,NA,"03681826"
+"684","Private","1280370",2,"OLDHAM","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED","2018-07-16",NA,"05033530"
+"685","Private","2557152",3,"TAMESIDE","The Partnership Of Care Today","Care Today Childrens Services","CARE TODAY (CHILDRENS SERVICES) LTD","2019-11-19",NA,"03576741"
+"686","Voluntary","1233310",3,"BOLTON","Birtenshaw","Birtenshaw","BIRTENSHAW","2016-08-08",NA,"02978546"
+"687","Private","1256134",4,"OLDHAM","ROC Northwest","ROC Northwest","ROC NORTHWEST LIMITED","2017-06-07",NA,"05564417"
+"688","Private","1280371",2,"OLDHAM","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED","2018-07-16",NA,"05033530"
+"689","Private","SC356864",2,"BURY","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"690","Private","2581296",1,"ROCHDALE","Sandcastle Care Ltd","Sandcastle Care Ltd","SANDCASTLE CARE LTD","2020-03-04",NA,"04922373"
+"691","Voluntary","2590128",4,"STOCKPORT","Seashell Trust","Seashell Trust","SEASHELL TRUST","2020-05-22",NA,"04216714"
+"692","Private","2591400",3,"OLDHAM","Oasis Adolescent Services Limited","Oasis Adolescent Services Limited","OASIS ADOLESCENT SERVICES LIMITED","2020-05-06",NA,"10606038"
+"693","Private","2625182",2,"MANCHESTER","Care Today (Childrens Services) Ltd","Care Today (Childrens Services) Ltd","CARE TODAY (CHILDRENS SERVICES) LTD","2021-03-03",NA,"03576741"
+"694","Private","2623004",1,"BOLTON","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2021-03-01",NA,"04280519"
+"695","Private","2615395",2,"MANCHESTER","Care Today (Childrens Services) Ltd","Care Today (Childrens Services) Ltd","CARE TODAY (CHILDRENS SERVICES) LTD","2020-11-26",NA,"03576741"
+"696","Private","2541033",5,"TRAFFORD","Pure Care Homes ltd","Pure Care Homes ltd","PURE CARE HOMES LTD","2019-09-05",NA,"11667392"
+"697","Private","2597738",1,"WIGAN","Social Care Services ( clayton ) Ltd","Social Care Services ( clayton ) Ltd","SOCIAL CARE SERVICES (CLAYTON) LIMITED","2020-06-30",NA,"04460745"
+"698","Private","2606062",3,"MANCHESTER","Paramount Children's Services Ltd","Paramount childrens Services Ltd","PARAMOUNT CHILDREN'S SERVICES LTD","2021-01-11",NA,"12015758"
+"699","Private","2571031",2,"MANCHESTER","Onextra Care Ltd","Onextra Care Ltd","ONEXTRA CARE LTD","2020-05-27",NA,"11855426"
+"700","Private","SC064530",2,"OLDHAM","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"701","Private","SC357468",1,"ROCHDALE","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"702","Local Authority","1263766",4,"TAMESIDE","Tameside Metropolitan Borough Council ","Tameside Metropolitan Borough Council",NA,"2017-10-23",NA,NA
+"703","Private","1159258",4,"MANCHESTER","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2015-10-14",NA,"04280519"
+"704","Private","SC400355",3,"STOCKPORT","Social Care Services ( clayton ) Ltd","Social Care Services ( clayton ) Ltd","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"705","Voluntary","SC025713",3,"STOCKPORT","The Together Trust","The Together Trust","THE TOGETHER TRUST",NA,NA,"00301722"
+"706","Private","2509452",3,"WIGAN","Horizon Care and Education Group Limited","Horizon Care and Education Group Limited","HORIZON CARE AND EDUCATION GROUP LIMITED","2019-03-11",NA,"06454959"
+"707","Private","2525774",4,"OLDHAM","Stepping Stones Childrens Homes Limited","Stepping Stones Childrens Homes Limited","STEPPING STONES CHILDRENS HOMES LIMITED","2019-05-28",NA,"09977747"
+"708","Private","1261138",5,"BURY","New Horizons-(stockport) Ltd","New Horizons-(stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD","2017-08-29",NA,"03431532"
+"709","Private","2590109",3,"BURY","4 Pure Heart Limited","4PureHeart Limited","4PUREHEART LIMITED","2020-06-10",NA,"10057047"
+"710","Private","1185828",4,"WIGAN","Next Stage 4Life LTD","Next Stage 4 Life LTD","NEXT STAGE 4 LIFE LTD","2016-02-08",NA,"08256389"
+"711","Private","SC381339",4,"MANCHESTER","Social Care Services ( clayton ) Ltd","Social Care Services ( clayton ) Ltd","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,"2022-06-11","04460745"
+"712","Voluntary","1232380",6,"BOLTON","Birtenshaw","Birtenshaw","BIRTENSHAW","2016-03-17","2022-11-30","02978546"
+"713","Private","SC378407",2,"ROCHDALE","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"714","Private","SC416267",2,"ROCHDALE","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"715","Private","SC008600",6,"STOCKPORT","New Horizons-(stockport) Ltd","New Horizons-(stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"716","Private","2600119",2,"BURY","Castle Care Homes Ltd","Castle Care Homes Ltd","CASTLE CARE HOMES LTD","2020-10-02","2022-11-07","11804393"
+"717","Private","2600759",3,"WIGAN","Next Stage 4Life LTD","Next Stage 4 Life LTD","NEXT STAGE 4 LIFE LTD","2020-08-19",NA,"08256389"
+"718","Private","2582248",2,"BURY","Sandcastle Care Ltd","Sandcastle Care Ltd","SANDCASTLE CARE LTD","2020-03-04",NA,"04922373"
+"719","Voluntary","SC373044",4,"BOLTON","Birtenshaw","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"720","Private","SC386837",2,"STOCKPORT","New Horizons-(stockport) Ltd","New Horizons-(stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"721","Voluntary","SC467796",3,"BOLTON","Birtenshaw","Birtenshaw","BIRTENSHAW",NA,NA,"02978546"
+"722","Private","1244493",4,"TAMESIDE","Stepping Stones Childrens Homes Limited","Stepping Stones Childrens Homes Limited","STEPPING STONES CHILDRENS HOMES LIMITED","2017-02-10",NA,"09977747"
+"723","Private","2550622",6,"OLDHAM","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2020-06-01",NA,"04280519"
+"724","Private","1244881",2,"ROCHDALE","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED","2016-09-13",NA,"05033530"
+"725","Private","1263425",2,"STOCKPORT","Social Care Services ( clayton ) Ltd","Social Care Services ( clayton ) Ltd","SOCIAL CARE SERVICES (CLAYTON) LIMITED","2018-09-25",NA,"04460745"
+"726","Private","1265092",7,"BOLTON","4 Pure Heart Limited","4PureHeart Limited","4PUREHEART LIMITED","2018-01-03",NA,"10057047"
+"727","Local Authority","SC040926",5,"WIGAN","Wigan Council","Wigan Council",NA,NA,NA,NA
+"728","Private","SC357133",3,"STOCKPORT","Social Care Services ( clayton ) Ltd","Social Care Services ( clayton ) Ltd","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"729","Private","2605180",3,"MANCHESTER","Invigor Adolescent Care Limited","Invigor Adolescent Care Limited","INVIGOR ADOLESCENT CARE LIMITED","2020-12-15",NA,"11666234"
+"730","Private","SC062263",1,"ROCHDALE","Timeout Childrens Homes Ltd","Timeout Childrens Homes Ltd","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"731","Voluntary","SC483533",3,"BOLTON","Birtenshaw","Birtenshaw","BIRTENSHAW","2015-01-27",NA,"02978546"
+"732","Private","1159258",4,"MANCHESTER","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED","2015-10-14",NA,"04280519"
+"733","Private","1244881",2,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED","2016-09-13",NA,"05033530"
+"734","Private","1256134",4,"OLDHAM","ROC Northwest Limited ","ROC Northwest Limited","ROC NORTHWEST LIMITED","2017-06-07",NA,"05564417"
+"735","Private","1258975",3,"OLDHAM","Oasis Adolescent Services Ltd","Oasis Adolescent Services Ltd","OASIS ADOLESCENT SERVICES LIMITED","2017-10-16",NA,"10606038"
+"736","Private","1263199",6,"WIGAN","Witherslack Group","Witherslack Group","WITHERSLACK GROUP LIMITED","2017-09-28",NA,"03579104"
+"737","Private","1263425",2,"STOCKPORT","Social Care Services (Clayton) Limited","Social Care Services (Clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED","2018-09-25",NA,"04460745"
+"738","Private","1264537",5,"WIGAN","ROC Northwest Limited ","ROC Northwest Limited","ROC NORTHWEST LIMITED","2017-11-29",NA,"05564417"
+"739","Private","1278753",3,"OLDHAM","Oasis Adolescent Services Ltd","Oasis Adolescent Services Ltd","OASIS ADOLESCENT SERVICES LIMITED","2018-09-06",NA,"10606038"
+"740","Private","1280370",2,"OLDHAM","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED","2018-07-16",NA,"05033530"
+"741","Private","1280371",2,"OLDHAM","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED","2018-07-16",NA,"05033530"
+"742","Private","2519592",4,"TAMESIDE","Care 4 Children Residential Services Limited","Care 4 Children Residential Services Limited","YOUR CHAPTER LIMITED","2019-04-08",NA,"09097182"
+"743","Private","2536761",3,"WIGAN","Hexagon Care Services Ltd","Hexagon Care Services Ltd","HEXAGON CARE SERVICES LIMITED","2019-08-15",NA,"08885676"
+"744","Private","2542024",2,"MANCHESTER","Proactive Care (manchester) ltd","Proactive Care (manchester) ltd","PROACTIVE CARE (MANCHESTER) LTD","2019-08-30",NA,"08759855"
+"745","Private","2550622",6,"OLDHAM","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED","2020-06-01",NA,"04280519"
+"746","Private","2553543",3,"WIGAN","Social Care Services (Clayton) Limited","Social Care Services (Clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED","2020-04-21",NA,"04460745"
+"747","Private","2582337",2,"BURY","Sandcastle Care Ltd","Sandcastle Care Ltd","SANDCASTLE CARE LTD","2020-03-04",NA,"04922373"
+"748","Private","2591400",3,"OLDHAM","Oasis Adolescent Services Ltd","Oasis Adolescent Services Ltd","OASIS ADOLESCENT SERVICES LIMITED","2020-05-06",NA,"10606038"
+"749","Private","2594033",3,"BURY","Inspire Childrens Services Limited","Inspire Childrens Services Limited","INSPIRE CHILDRENS SERVICES LIMITED","2020-06-19",NA,"06968122"
+"750","Private","2597738",1,"WIGAN","Social Care Services (Clayton) Limited","Social Care Services (Clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED","2020-06-30",NA,"04460745"
+"751","Private","2598004",3,"OLDHAM","Strive To Care Ltd","Strive To Care Ltd","STRIVE TO CARE LTD","2020-10-05",NA,"12377099"
+"752","Private","2600119",2,"BURY","Castle Care Homes","Castle Care Homes","CASTLE CARE HOMES LIMITED","2020-10-02","2022-11-07","02862412"
+"753","Private","2615395",2,"MANCHESTER","Care Today ( Childrens Services ) Ltd","Care Today ( Childrens Services ) Ltd","CARE TODAY (CHILDRENS SERVICES) LTD","2020-11-26",NA,"03576741"
+"754","Private","2620950",2,"BOLTON","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED","2021-03-22",NA,"04280519"
+"755","Private","2621119",1,"WIGAN","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED","2021-04-23",NA,"04280519"
+"756","Private","2623004",1,"BOLTON","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED","2021-03-01",NA,"04280519"
+"757","Private","2625182",2,"MANCHESTER","Care Today ( Childrens Services ) Ltd","Care Today ( Childrens Services ) Ltd","CARE TODAY (CHILDRENS SERVICES) LTD","2021-03-03",NA,"03576741"
+"758","Private","2627737",2,"OLDHAM","Supreme Child Care ltd","Supreme Child Care ltd","SUPREME CHILD CARE LTD","2021-10-06",NA,"12497748"
+"759","Private","2628010",1,"WIGAN","Cambian Childcare Limited","Cambian Childcare Limited","CAMBIAN CHILDCARE LIMITED","2021-04-27",NA,"04280519"
+"760","Voluntary","2628534",1,"BOLTON","Birtenshaw","Birtenshaw","BIRTENSHAW","2021-04-21","2022-05-26","02978546"
+"761","Private","2630055",3,"BURY","4 Pure Heart Limited","4PureHeart Limited","4PUREHEART LIMITED","2022-01-10","2023-02-13","10057047"
+"762","Private","2641768",4,"TAMESIDE","Care 4 Every Child Ltd","Care 4 Every Child Ltd","CARE 4 EVERY CHILD LIMITED","2021-10-01",NA,"11769512"
+"763","Private","2642401",4,"TAMESIDE","Infinity Care Home Ltd","Infinity Care Home Ltd","INFINITY CARE HOME LTD","2021-11-05",NA,"12303401"
+"764","Private","2643338",3,"OLDHAM","Sankofa Specialist Care Ltd","Sankofa Specialist Care Ltd","SANKOFA SPECIALIST CARE LTD","2021-10-12",NA,"12913729"
+"765","Private","2645901",3,"BOLTON","Oasis Adolescent Services Ltd","Oasis Adolescent Services Ltd","OASIS ADOLESCENT SERVICES LIMITED","2021-09-13",NA,"10606038"
+"766","Private","2646248",3,"MANCHESTER","Paramount Children's Services Ltd","Paramount childrens Services Ltd","PARAMOUNT CHILDREN'S SERVICES LTD","2021-10-25",NA,"12015758"
+"767","Private","2651800",3,"MANCHESTER","Kids Inc Residential Services Ltd","Kids Inc Residential Services Ltd","KIDS INC RESIDENTIAL SERVICES LTD","2021-10-25",NA,"12722146"
+"768","Private","2653207",1,"WIGAN","All Round Care Ltd","All Round Care Ltd","ALL ROUND CARE LTD","2021-10-27",NA,"10639802"
+"769","Private","2657298",3,"MANCHESTER","RESILIENCE RESIDENTIAL SERVICES LTD","RESILIENCE RESIDENTIAL SERVICES LTD","RESILIENCE RESIDENTIAL SERVICES LTD","2021-11-15",NA,"12708214"
+"770","Private","2663770",3,"BURY","Castle Care Homes","Castle Care Homes","CASTLE CARE HOMES LIMITED","2022-01-25","2022-08-01","02862412"
+"771","Private","2664826",4,"MANCHESTER","Family Care Associates Limited","Family Care Associates Limited","FAMILY CARE ASSOCIATES LIMITED","2022-03-02",NA,"02252544"
+"772","Private","2674455",1,"STOCKPORT","Choices Home for Children Limited","Choices Home for Children Limited","CHOICES HOME FOR CHILDREN LIMITED","2022-01-27",NA,"04211653"
+"773","Private","SC008485",5,"STOCKPORT","Choices Home for Children Limited","Choices Home for Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"774","Private","SC062263",1,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"775","Private","SC064530",2,"OLDHAM","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"776","Private","SC065072",2,"ROCHDALE","Time-Out Childrens Homes Limited","Time-Out Childrens Homes Limited","TIMEOUT CHILDRENS HOMES LIMITED",NA,NA,"05033530"
+"777","Private","SC357133",3,"STOCKPORT","Social Care Services (Clayton) Limited","Social Care Services (Clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"778","Private","SC381339",4,"MANCHESTER","Social Care Services (Clayton) Limited","Social Care Services (Clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,"2022-06-11","04460745"
+"779","Private","SC400355",3,"STOCKPORT","Social Care Services (Clayton) Limited","Social Care Services (Clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED",NA,NA,"04460745"
+"780","Private","SC407169",4,"STOCKPORT","Choices Home for Children Limited","Choices Home for Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"781","Private","SC436559",5,"STOCKPORT","Choices Home for Children Limited","Choices Home for Children Limited","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"782","Private","SC479647",6,"WIGAN","Hexagon Care Services Ltd","Hexagon Care Services Ltd","HEXAGON CARE SERVICES LIMITED","2014-10-08",NA,"08885676"
+"783","Private","SC479650",6,"ROCHDALE","Hexagon Care Services Ltd","Hexagon Care Services Ltd","HEXAGON CARE SERVICES LIMITED","2014-10-08",NA,"08885676"
+"784","Private","SC479654",6,"ROCHDALE","Hexagon Care Services Ltd","Hexagon Care Services Ltd","HEXAGON CARE SERVICES LIMITED","2014-09-05",NA,"08885676"
+"785","Private","SC480161",6,"TAMESIDE","Hexagon Care Services Ltd","Hexagon Care Services Ltd","HEXAGON CARE SERVICES LIMITED","2014-09-10",NA,"08885676"
+"786","Private","SC386837",2,"STOCKPORT","New Horizons (Stockport) Ltd","New Horizons (Stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"787","Private","2628010",1,"WIGAN","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2021-04-27",NA,"04280519"
+"788","Private","2657298",3,"MANCHESTER","Resilience Residential Services Ltd ","Resilience Residential Services Ltd","RESILIENCE RESIDENTIAL SERVICES LTD","2021-11-15",NA,"12708214"
+"789","Private","2676372",2,"MANCHESTER","Resilience Residential Services Ltd ","Resilience Residential Services Ltd","RESILIENCE RESIDENTIAL SERVICES LTD","2022-04-19",NA,"12708214"
+"790","Private","2678673",3,"MANCHESTER","Parkwood Care","Parkwood Care","PARKWOOD CARE LIMITED","2022-05-25",NA,"12549974"
+"791","Private","2669033",2,"WIGAN","Proactive Care (manchester) ltd","Proactive Care (manchester) ltd","PROACTIVE CARE (MANCHESTER) LTD","2022-04-08",NA,"08759855"
+"792","Private","SC008600",6,"STOCKPORT","New Horizons (Stockport) Ltd","New Horizons (Stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"793","Private","2519592",4,"TAMESIDE","Your Chapter LTD","Your Chapter LTD","YOUR CHAPTER LIMITED","2019-04-08",NA,"09097182"
+"794","Private","2591888",4,"TAMESIDE","New Horizons (Stockport) Ltd","New Horizons (Stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD","2020-06-16",NA,"03431532"
+"795","Private","2612810",3,"TAMESIDE","Pure Care Homes Ltd","Pure Care Homes Ltd","PURE CARE HOMES LTD","2021-01-19",NA,"11667392"
+"796","Private","2685250",3,"BURY","Pure Care Homes Ltd","Pure Care Homes Ltd","PURE CARE HOMES LTD","2022-07-27",NA,"11667392"
+"797","Private","2672559",2,"MANCHESTER","Care Today (Children's Services) Ltd","Care Today (childrens Services) Ltd","CARE TODAY (CHILDRENS SERVICES) LTD","2022-04-21",NA,"03576741"
+"798","Private","SC472680",5,"MANCHESTER","New Horizons (Stockport) Ltd","New Horizons (Stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD",NA,NA,"03431532"
+"799","Private","SC005553",4,"OLDHAM","Dalepeak Limited","Dalepeak Limited","DALEPEAK LIMITED",NA,NA,"03612944"
+"800","Private","SC436559",5,"STOCKPORT","Choices Home for Children","Choices Home for Children","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"801","Private","2680502",2,"BOLTON","Social Care Services (Clayton) Limited","Social Care Services (Clayton) Limited","SOCIAL CARE SERVICES (CLAYTON) LIMITED","2022-05-21",NA,"04460745"
+"802","Private","1261138",5,"BURY","New Horizons (Stockport) Ltd","New Horizons (Stockport) Ltd","NEW HORIZONS (STOCKPORT) LTD","2017-08-29",NA,"03431532"
+"803","Private","2625182",2,"MANCHESTER","Care Today (Children's Services) Ltd","Care Today (childrens Services) Ltd","CARE TODAY (CHILDRENS SERVICES) LTD","2021-03-03",NA,"03576741"
+"804","Local Authority","1271135",2,"STOCKPORT","Stockport Metropolitan Borough Council","Stockport Metropolitan Borough Council",NA,"2018-02-15",NA,NA
+"805","Private","2680860",3,"BURY","Invigor Adolescent Care Limited","Invigor Adolescent Care Limited","INVIGOR ADOLESCENT CARE LIMITED","2022-09-16",NA,"11666234"
+"806","Private","2674455",1,"STOCKPORT","Choices Home for Children","Choices Home for Children","CHOICES HOME FOR CHILDREN LIMITED","2022-01-27",NA,"04211653"
+"807","Private","SC407169",4,"STOCKPORT","Choices Home for Children","Choices Home for Children","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"808","Private","SC008485",5,"STOCKPORT","Choices Home for Children","Choices Home for Children","CHOICES HOME FOR CHILDREN LIMITED",NA,NA,"04211653"
+"809","Private","2615395",2,"MANCHESTER","Care Today (Children's Services) Ltd","Care Today (childrens Services) Ltd","CARE TODAY (CHILDRENS SERVICES) LTD","2020-11-26",NA,"03576741"
+"810","Private","2621119",1,"WIGAN","Cambian Childcare Ltd","Cambian Childcare Ltd","CAMBIAN CHILDCARE LIMITED","2021-04-23",NA,"04280519"
+"811","Private","2511606",1,"WIGAN",NA,NA,NA,"2019-04-24","2020-03-11",NA
+"812","Private","2511608",1,"WIGAN",NA,NA,NA,"2019-04-24","2020-03-11",NA
+"813","Private","2511609",1,"BOLTON",NA,NA,NA,"2019-10-17","2020-03-11",NA
+"814","Private","2534233",1,"BOLTON",NA,NA,NA,"2019-06-27","2020-03-15",NA
+"815","Private","2571844",3,"MANCHESTER",NA,NA,NA,"2020-05-21","2020-08-12",NA
+"816","Private","2597754",3,"BOLTON",NA,NA,NA,"2020-08-10","2021-02-19",NA
+"817","Private","2624578",2,"BOLTON",NA,NA,NA,"2021-08-03","2022-01-25",NA
+"818","Private","2669905",3,"MANCHESTER",NA,NA,NA,"2022-05-23",NA,NA
+"819","Private","2693530",2,"WIGAN",NA,NA,NA,"2022-08-22",NA,NA
+"820","Private","2697331",3,"TRAFFORD",NA,NA,NA,"2022-11-09",NA,NA
+"821","Private","2709434",2,"BURY",NA,NA,NA,"2022-11-03",NA,NA
+"822","Private","2710431",5,"TAMESIDE",NA,NA,NA,"2023-02-21",NA,NA
+"823","Private","2710459",2,"WIGAN",NA,NA,NA,"2023-01-24",NA,NA
+"824","Private","2710735",4,"STOCKPORT",NA,NA,NA,"2022-11-23",NA,NA
+"825","Private","2711581",1,"OLDHAM",NA,NA,NA,"2023-01-27",NA,NA
+"826","Private","2711793",2,"BOLTON",NA,NA,NA,"2023-03-09",NA,NA
+"827","Private","2713287",1,"ROCHDALE",NA,NA,NA,"2023-01-27",NA,NA
+"828","Private","2717183",3,"MANCHESTER",NA,NA,NA,"2023-02-08",NA,NA
+"829","Private","2719474",3,"MANCHESTER",NA,NA,NA,"2023-02-24",NA,NA
