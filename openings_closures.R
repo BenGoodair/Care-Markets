@@ -5,7 +5,7 @@
 
 if (!require("pacman")) install.packages("pacman")
 
-pacman::p_load(devtools, dplyr,gt, gtsummary, tidyverse,rattle,glmnet,caret, rpart.plot,rpart, tidyr, mice, stringr,randomForest,  curl, plm, readxl, zoo, stringr, patchwork,  sf, clubSandwich, modelsummary, sjPlot)
+pacman::p_load(devtools,ggmap,googleway,hrbrthemes,viridis,jsonlite, httr, purrr, dplyr,gt, gtsummary, tidyverse,rattle,glmnet,caret, rpart.plot,rpart, tidyr, mice, stringr,randomForest,  curl, plm, readxl, zoo, stringr, patchwork,  sf, clubSandwich, modelsummary, sjPlot)
 
 
 ####proper dataset####
@@ -167,69 +167,88 @@ all <- all %>%
 df <-rbind( read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2015.csv"))%>%
               dplyr::mutate(year=2015,
                             Places= NA,
-                            Organisation = NA)%>%
-              dplyr::rename(Registration.status=Reg.Status)%>%
+                            Organisation = NA, 
+                            Registration.date = NA)%>%
+              dplyr::rename(Registration.status=Reg.Status,
+                            Overall.experiences.and.progress.of.children.and.young.people = Overall.effectiveness,
+                            Latest.full.inspection.date = Inspection.Date)%>%
               dplyr::filter(str_detect(Provision.type, "(?i)home")|
                               str_detect(Provision.type, "(?i)day"))%>%
-              dplyr::select(Sector, URN, Places, Local.authority, Organisation),
+              dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
             
             read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2016.csv"), skip=1)%>%
               dplyr::mutate(year=2016,
-                            Organisation = NA)%>%
+                            Organisation = NA,
+                            Registration.date = NA)%>%
+              dplyr::rename(Overall.experiences.and.progress.of.children.and.young.people = Overall.effectiveness,
+                            Latest.full.inspection.date = Inspection.date)%>%
               dplyr::filter(str_detect(Provision.type, "(?i)home"))%>%
-              dplyr::select(Sector, URN, Places, Local.authority, Organisation),
+              dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
             
             read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2017.csv"), skip=1)%>%
               dplyr::mutate(year=2017,
-                            Organisation = NA)%>%
+                            Organisation = NA,
+                            Registration.date = NA)%>%
+              dplyr::rename(Overall.experiences.and.progress.of.children.and.young.people = Overall.effectiveness,
+                            Latest.full.inspection.date = Inspection.date)%>%
               dplyr::filter(str_detect(Provision.type, "(?i)home"))%>%
-              dplyr::select(Sector, URN, Places, Local.authority, Organisation),
+              dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
             
             read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2018.csv"), skip=1)%>%
-              dplyr::mutate(year=2018)%>%
+              dplyr::mutate(year=2018,
+                            Registration.date = NA)%>%
+              dplyr::rename(Overall.experiences.and.progress.of.children.and.young.people = Overall.effectiveness,
+                            Latest.full.inspection.date = Inspection.date)%>%
               dplyr::filter(str_detect(Provision.type, "(?i)home"))%>%
-              dplyr::select(Sector, URN, Places, Local.authority, Organisation),
+              dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
             
             read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2018_part2.csv"))%>%
-              dplyr::mutate(year=2018)%>%
+              dplyr::mutate(year=2018,
+                            Registration.date = NA,
+                            Overall.experiences.and.progress.of.children.and.young.people = NA,
+                            Latest.full.inspection.date = NA)%>%
               dplyr::filter(str_detect(Provision.type, "(?i)home"))%>%
               dplyr::rename(Organisation = Organisation.name)%>%
-              dplyr::select(Sector, URN, Places, Local.authority, Organisation),
+              dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
             
             
             read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2019.csv"), skip=1)%>%
               dplyr::mutate(year=2019)%>%
-              dplyr::rename(Organisation = Organisation.which.owns.the.provider)%>%
+              dplyr::rename(Organisation = Organisation.which.owns.the.provider,
+                            Latest.full.inspection.date = Inspection.date)%>%
               dplyr::filter(str_detect(Provision.type, "(?i)home"))%>%
-              dplyr::select(Sector, URN, Places, Local.authority, Organisation),
+              dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
             
             
            read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2020.csv"), skip=1)%>%
               dplyr::mutate(year=2020)%>%
              dplyr::filter(str_detect(Provision.type, "(?i)home"))%>%
-             dplyr::rename(Organisation = Organisation.which.owns.the.provider)%>%
-             dplyr::select(Sector, URN, Places, Local.authority, Organisation),
+             dplyr::rename(Organisation = Organisation.which.owns.the.provider,
+                           Latest.full.inspection.date = Inspection.date)%>%
+             dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
            
             
            read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2021.csv"), skip=1)%>%
               dplyr::mutate(year=2021)%>%
              dplyr::filter(str_detect(Provision.type, "(?i)home"))%>%
-             dplyr::rename(Organisation = Organisation.which.owns.the.provider)%>%
-             dplyr::select(Sector, URN, Places, Local.authority, Organisation),
+             dplyr::rename(Organisation = Organisation.which.owns.the.provider,
+                           Latest.full.inspection.date = Inspection.date)%>%
+             dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
            
             
             read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2022_yep.csv"), skip=4)%>%
               dplyr::mutate(year=2022)%>%
              dplyr::filter(str_detect(Provision.type, "(?i)home"))%>%
-             dplyr::rename(Organisation = Organisation.which.owns.the.provider)%>%
-             dplyr::select(Sector, URN, Places, Local.authority, Organisation),
+             dplyr::rename(Organisation = Organisation.which.owns.the.provider,
+                           Overall.experiences.and.progress.of.children.and.young.people =    Latest.full.inspection.overall.experiences.and.progress.of.children.and.young.people)%>%
+             dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
            
             
             read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/Raw/provider_at_march_2023.csv"), skip=3)%>%
               dplyr::mutate(year=2023)%>%
              dplyr::filter(str_detect(Provision.type, "(?i)home"))%>%
              dplyr::rename(Organisation = Organisation.which.owns.the.provider)%>%
-              dplyr::select(Sector, URN, Places, Local.authority, Organisation))%>%
+              dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people,Latest.full.inspection.date))%>%
   dplyr::mutate(Sector= ifelse(Sector=="Health Authority"|Sector=="Local authority"|Sector=="Health authority", "Local Authority", Sector),
                 Homes=1)%>%
   dplyr::distinct(.keep_all = T)%>%
@@ -268,7 +287,18 @@ df <-rbind( read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Mar
                      dplyr::filter(as.Date(Leave)>="2015-04-01"|
                                      is.na(Leave))%>%
                      dplyr::filter(as.Date(Join)<"2023-04-01"|
-                                     is.na(Join)), by=c("URN"))
+                                     is.na(Join)), by=c("URN"))%>%
+  group_by(URN) %>%
+  mutate(
+    Registration.date = if_else(
+      is.na(Registration.date), 
+      NA_character_,  # Use NA_character_ for character type
+      Registration.date
+    )
+  ) %>%
+  fill(Registration.date, .direction = "down") %>%  # Fill downwards within each group
+  fill(Registration.date, .direction = "up") %>%    # Fill upwards within each group
+  ungroup()
   
 
 yes <- df %>% dplyr::filter(is.na(Local.authority))%>%
@@ -280,7 +310,17 @@ yes <- df %>% dplyr::filter(is.na(Local.authority))%>%
 
 df <- df%>% dplyr::filter(!is.na(Local.authority))%>%
   bind_rows(., yes%>%
-              dplyr::mutate(Places = as.numeric(Places)))
+              dplyr::mutate(Places = as.numeric(Places)))%>%
+  dplyr::mutate(Latest.full.inspection.date = as.Date(Latest.full.inspection.date, format = "%d/%m/%Y")) %>%
+  group_by(URN) %>%
+  filter( all(is.na(Latest.full.inspection.date)) |  # Keep if all dates in the group are NA
+   Latest.full.inspection.date == max(Latest.full.inspection.date, na.rm = TRUE)) %>%
+  ungroup()%>%
+  dplyr::mutate(Overall.experiences.and.progress.of.children.and.young.people = ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Requires improvement", "Requires improvement to be good",
+                                                                                       ifelse(Overall.experiences.and.progress.of.children.and.young.people == "", NA,
+                                                                                              ifelse(Overall.experiences.and.progress.of.children.and.young.people =="Satisfactory", NA,
+                                                                                                     ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Adequate", NA,
+                                                                                                            Overall.experiences.and.progress.of.children.and.young.people)))))
 
 ####needs to be in 3 docs for 500 max in fame####
 
@@ -410,7 +450,1023 @@ full_look <- df_bind %>% dplyr::filter(Sector != "Local Authority")%>%
   dplyr::filter(Organisation!="")%>%
   dplyr::mutate(Registered.number = as.character(Registered.number))
 
-write.csv(full_look, "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/lookup_fame_search_final.csv")
+#write.csv(full_look, "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/lookup_fame_search_final.csv")
+
+
+####foreign owned####
+
+fame <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/foreign_investment.csv")%>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>%
+  fill(Company.name, .direction = "down") 
+
+lookup <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/lookup_fame_search_clean_manual.csv")%>%
+  dplyr::mutate(Organisation_fame_search = Organisation_fame_search %>%
+                  gsub("Selected", "", .),
+                Company.name = Company.name %>%
+                  gsub(" In liquidation", "", .)%>%
+                  gsub(" Dissolved", "",.)%>%
+                  str_trim())%>%
+  dplyr::distinct(Organisation_fame_search, .keep_all = T)%>%
+  dplyr::bind_rows(., data.frame(Organisation_fame_search = "BEACON CHILDCARE LTD", Company.name = "BEACON CHILDCARE LTD", stringsAsFactors = FALSE))
+
+shareholders_foreign <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/shareholders.csv") %>%
+  dplyr::select(Company.name,SH...Name, SH...Country.ISO.code, SH...Direct.., SH...Type,SH...City)%>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+  fill(Company.name, .direction = "down") %>%
+  dplyr::filter(SH...Type!="One or more named individuals or families",
+                SH...Type!="Other unnamed shareholders, aggregated",
+                SH...Country.ISO.code!="GB"|str_detect(SH...City, regex("helier", ignore_case = TRUE)),
+                SH...Country.ISO.code!="n.a."|str_detect(SH...City, regex("helier", ignore_case = TRUE)),
+                SH...Country.ISO.code!=""|str_detect(SH...City, regex("helier", ignore_case = TRUE)),
+                SH...Country.ISO.code!="-"|str_detect(SH...City, regex("helier", ignore_case = TRUE)))%>%
+  dplyr::mutate(foreign_share=1)%>%
+  dplyr::select(Company.name, foreign_share)
+
+
+
+GUO_foreign <- fame %>%
+  dplyr::select(Company.name,GUO...Name, GUO...City, GUO...Country.ISO.code, GUO...Type,GUO...NAICS..text.description)%>%
+  dplyr::filter(Company.name!="",
+                GUO...Type!="One or more named individuals or families",
+                GUO...Type!="",
+                GUO...Country.ISO.code!="GB"|str_detect(GUO...City, regex("helier", ignore_case = TRUE)),
+                GUO...Country.ISO.code!="n.a."|str_detect(GUO...City, regex("helier", ignore_case = TRUE)),
+                GUO...Country.ISO.code!=""|str_detect(GUO...City, regex("helier", ignore_case = TRUE)),
+                GUO...Country.ISO.code!="-"|str_detect(GUO...City, regex("helier", ignore_case = TRUE))
+  )%>%
+  dplyr::mutate(foreign=1)%>%
+  dplyr::select(GUO...Name, foreign)
+
+GUO_holding_foreign <- fame %>%
+  dplyr::select(Company.name,GUO...Name, GUO...City, GUO...Country.ISO.code, GUO...Type,GUO...NAICS..text.description, GUO...NACE.text.description)%>%
+  dplyr::filter(Company.name!="",
+                GUO...NACE.text.description=="Activities of holding companies",
+                GUO...Country.ISO.code=="GB")
+
+#write.csv(GUO_holding_foreign, "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/holding_cos.csv")
+
+fame_holdings <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/shareholders_GUOs.csv")%>%
+  dplyr::select(Company.name,SH...Name, SH...Country.ISO.code, SH...Type,SH...City)%>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+  fill(Company.name, .direction = "down") %>%
+  dplyr::filter(SH...Type!="One or more named individuals or families",
+                SH...Type!="Other unnamed shareholders, aggregated",
+                SH...Country.ISO.code!="GB"|str_detect(SH...City, regex("helier", ignore_case = TRUE))|str_detect(SH...City, regex("Jersey", ignore_case = TRUE)),
+                SH...Country.ISO.code!="n.a.",
+                SH...Country.ISO.code!="",
+                SH...Country.ISO.code!="-")%>%
+  dplyr::mutate(foreign_holds=1)%>%
+  dplyr::select(Company.name, foreign_holds)%>%
+  dplyr::rename(GUO...Name = Company.name)
+
+
+
+
+
+fame_duo <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/domestic_ultimate_owners.csv")
+
+# write.csv(fame_duo %>%
+#             dplyr::filter(DUO...Name!="") %>%
+#             dplyr::select(DUO...Name, DUO...BvD.ID.number)%>%
+#             dplyr::distinct(), 
+#           "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/duo_list.csv")
+
+fame_duo <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/domestic_ultimate_owners.csv")
+
+
+# # Set up your Google API Key
+# register_google(key = "AIzaSyBT9so9XIK1_HlHnu9AIBQg3xL2De4Qh5c")
+# 
+# 
+# 
+# 
+# duo_pscs <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/duo_pscs_address.csv")%>%
+#   mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+#   fill(Company.name, .direction = "down")%>%
+#   dplyr::filter(PSC...Type!="Individual",
+#                 PSC...Type!="",
+#                 PSC...Type!="Legal person")%>%
+#   rowwise() %>%
+#   mutate(
+#     geocode_result = list(geocode(PSC...Address, output = "all", source = "google")),
+#     City = if (!is.null(geocode_result$results)) {
+#       geocode_result$results[[1]]$address_components %>%
+#         map_chr(~ if ("locality" %in% .x$types) .x$long_name else NA_character_) %>%
+#         na.omit() %>%
+#         unique() %>%
+#         .[1] # First valid result
+#     } else {
+#       NA
+#     },
+#     Country = if (!is.null(geocode_result$results)) {
+#       geocode_result$results[[1]]$address_components %>%
+#         map_chr(~ if ("country" %in% .x$types) .x$long_name else NA_character_) %>%
+#         na.omit() %>%
+#         unique() %>%
+#         .[1] # First valid result
+#     } else {
+#       NA
+#     }
+#   ) %>%
+#   ungroup() %>%
+#   select(-geocode_result) # Remove intermediate column
+
+
+
+
+
+  
+#write.csv(duo_pscs, "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/duo_corporate_pscs_locations.csv")
+
+duo_pscs <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/duo_corporate_pscs_locations.csv")%>%
+  dplyr::mutate(foreign_psc = ifelse(Country == "United Kingdom", 0,1))%>%
+  dplyr::select(Company.name, foreign_psc)%>%
+  dplyr::rename(DUO...Name= Company.name)
+
+fame_bind <- merge(fame, GUO_foreign, by="GUO...Name", all=T)
+fame_bind <- merge(fame_bind, fame_holdings, by="GUO...Name", all=T)
+fame_bind <- merge(fame_bind, shareholders_foreign, by= "Company.name", all=T)
+fame_bind <- merge(fame_bind, duo_pscs, by= "DUO...Name", all=T)
+
+fame_bind <- fame_bind %>%
+  dplyr::mutate(
+    foreign_any = ifelse(foreign == 1 | foreign_holds == 1 | foreign_share == 1 | foreign_psc == 1, 1, 0)
+  )%>%
+  dplyr::select(Company.name, foreign_any)%>%
+  dplyr::group_by(Company.name)%>%
+  dplyr::summarise(foreign_any = sum(foreign_any, na.rm=T))%>%
+  dplyr::ungroup()%>%
+  dplyr::mutate(
+    foreign_any = ifelse(foreign_any>0, 1,0 ))%>%
+  dplyr::filter(!is.na(Company.name))
+
+
+df_bind <- df %>% dplyr::full_join(., lookup, by="Organisation_fame_search")
+
+df_bind <- df_bind %>% dplyr::full_join(., fame_bind, by="Company.name")
+df_bind <- df_bind%>%
+  dplyr::distinct(URN, .keep_all=T)
+
+
+missing_obs <- df_bind[!is.na(df_bind$Organisation)&is.na(df_bind$Company.name) & df_bind$Sector!="Local Authority",]%>% 
+  dplyr::distinct(URN, .keep_all=T)
+
+wuut <- df_bind[!is.na(df_bind$Organisation),]%>% 
+  dplyr::distinct(URN, .keep_all=T)
+
+
+
+df_bind <- df_bind %>%
+  dplyr::mutate(foreign_any = ifelse(is.na(foreign_any),0,foreign_any),
+  left = ifelse(is.na(Leave),0,1))
+
+
+#### investment owned ####
+
+fame <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/foreign_investment.csv")%>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>%
+  fill(Company.name, .direction = "down") 
+
+lookup <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/lookup_fame_search_clean_manual.csv")%>%
+  dplyr::mutate(Organisation_fame_search = Organisation_fame_search %>%
+                  gsub("Selected", "", .),
+                Company.name = Company.name %>%
+                  gsub(" In liquidation", "", .)%>%
+                  gsub(" Dissolved", "",.)%>%
+                  str_trim())%>%
+  dplyr::distinct(Organisation_fame_search, .keep_all = T)%>%
+  dplyr::bind_rows(., data.frame(Organisation_fame_search = "BEACON CHILDCARE LTD", Company.name = "BEACON CHILDCARE LTD", stringsAsFactors = FALSE))
+
+
+duo_sector <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/DUO_sectors.csv") %>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+  fill(Company.name, .direction = "down") %>%
+  mutate(All.NACE.Rev..2.codes = as.character(All.NACE.Rev..2.codes)) %>%
+  dplyr::filter(
+    str_starts(All.NACE.Rev..2.codes, "64") |
+      str_starts(All.NACE.Rev..2.codes, "65") |
+      str_starts(All.NACE.Rev..2.codes, "66") |
+      (is.na(All.UK.SIC..2003..codes) & is.na(All.NACE.Rev..2.codes) & is.na(All.NAICS.2017.codes))
+  ) %>%
+  filter(All.NACE.Rev..2.codes != "6420"|
+  (is.na(All.UK.SIC..2003..codes) & is.na(All.NACE.Rev..2.codes) & is.na(All.NAICS.2017.codes)))%>%
+  dplyr::filter(Company.status!="Active (dormant)")%>%
+  dplyr::mutate(invest_duo=1)%>%
+  dplyr::select(Company.name, invest_duo)%>%
+  dplyr::rename(DUO...Name= Company.name)
+
+
+
+shareholders_list <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/shareholders.csv") %>%
+  dplyr::select(Company.name,SH...Name, SH...Country.ISO.code, SH...Direct.., SH...Type,SH...City)%>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+  fill(Company.name, .direction = "down") %>%
+  dplyr::filter(SH...Type!="One or more named individuals or families",
+                SH...Type!="Other unnamed shareholders, aggregated",
+                SH...Type!="")
+
+
+#write.csv(shareholders_list, "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/shareholderss_list.csv")
+
+
+shareholders_sector <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/shareholders_sectors.csv") %>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+  fill(Company.name, .direction = "down") %>%
+  dplyr::mutate(All.NACE.Rev..2.codes = as.character(All.NACE.Rev..2.codes))%>%
+  dplyr::filter(
+    str_starts(All.NACE.Rev..2.codes, "64") |
+      str_starts(All.NACE.Rev..2.codes, "65") |
+      str_starts(All.NACE.Rev..2.codes, "66") |
+      (is.na(All.UK.SIC..2003..codes) & is.na(All.NACE.Rev..2.codes) & is.na(All.NAICS.2017.codes))
+  ) %>%
+  filter(All.NACE.Rev..2.codes != "6420"|
+           (is.na(All.UK.SIC..2003..codes) & is.na(All.NACE.Rev..2.codes) & is.na(All.NAICS.2017.codes)))%>%
+  dplyr::filter(Company.status!="Active (dormant)")%>%
+  dplyr::mutate(invest_SH=1)%>%
+  dplyr::select(Company.name, invest_SH)%>%
+  dplyr::rename(SH...Name= Company.name)%>%
+  dplyr::full_join(., shareholders_list%>%
+                     dplyr::mutate(SH...Name = toupper(SH...Name)), by="SH...Name" )%>%####ERRORS here matching SH names #####
+  dplyr::select(Company.name, invest_SH)%>%
+  dplyr::filter(invest_SH==1)
+
+# shareholders_core_sector <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/shareholders_core_sectors.csv") %>%
+#   mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+#   fill(Company.name, .direction = "down") %>%
+#   dplyr::mutate(SH...NACE.Core.code = as.character(SH...NACE.Core.code))%>%
+#   dplyr::filter(SH...Name!="")%>%
+#   dplyr::filter(
+#     str_starts(SH...NACE.Core.code, "64") |
+#       str_starts(SH...NACE.Core.code, "65") |
+#       str_starts(SH...NACE.Core.code, "66") |
+#       (SH...NACE.Core.code=="")
+#   ) %>%
+#   filter(SH...NACE.Core.code != "6420"|
+#            (SH...NACE.Core.code==""))%>%
+#   dplyr::mutate(invest_SH_core=1)%>%
+#   dplyr::select(Company.name,SH...Name, invest_SH_core)
+#   
+
+
+
+duo_pscs_invest_link <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/duo_pscs_address.csv")%>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+     fill(Company.name, .direction = "down")
+
+psc_sector <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/psc_sectors.csv") %>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+  fill(Company.name, .direction = "down") %>%
+  dplyr::mutate(All.NACE.Rev..2.codes = as.character(All.NACE.Rev..2.codes)) %>%
+  dplyr::filter(
+    str_starts(All.NACE.Rev..2.codes, "64") |
+      str_starts(All.NACE.Rev..2.codes, "65") |
+      str_starts(All.NACE.Rev..2.codes, "66") |
+      (is.na(All.UK.SIC..2003..codes) & is.na(All.NACE.Rev..2.codes) & is.na(All.NAICS.2017.codes))
+  ) %>%
+  filter(All.NACE.Rev..2.codes != "6420"|
+  (is.na(All.UK.SIC..2003..codes) & is.na(All.NACE.Rev..2.codes) & is.na(All.NAICS.2017.codes)))%>%
+  dplyr::filter(Company.status!="Active (dormant)")%>%
+  dplyr::mutate(invest_psc=1)%>%
+  dplyr::rename(PSC...Name = Company.name)%>%
+  dplyr::select(PSC...Name, invest_psc)%>%
+  dplyr::full_join(., duo_pscs_invest_link%>%
+                     dplyr::mutate(PSC...Name = toupper(PSC...Name)), by="PSC...Name")%>%
+  dplyr::select(Company.name, invest_psc)%>%
+  dplyr::rename(DUO...Name= Company.name)
+
+  
+
+
+GUO_sector <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/GUO_sectors.csv") %>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+  fill(Company.name, .direction = "down") %>%
+  dplyr::mutate(All.NACE.Rev..2.codes = as.character(All.NACE.Rev..2.codes))%>%
+  dplyr::filter(
+    str_starts(All.NACE.Rev..2.codes, "64") |
+      str_starts(All.NACE.Rev..2.codes, "65") |
+      str_starts(All.NACE.Rev..2.codes, "66") |
+      (is.na(All.UK.SIC..2003..codes) & is.na(All.NACE.Rev..2.codes) & is.na(All.NAICS.2017.codes))
+  ) %>%
+  filter(All.NACE.Rev..2.codes != "6420"|
+           (is.na(All.UK.SIC..2003..codes) & is.na(All.NACE.Rev..2.codes) & is.na(All.NAICS.2017.codes)))%>%
+  dplyr::filter(Company.status!="Active (dormant)")%>%
+  dplyr::mutate(invest_guo = 1)%>%
+  dplyr::select(Company.name, invest_guo)%>%
+  dplyr::rename(GUO...Name = Company.name)
+
+
+
+# GUO_shareholders_list <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/shareholders_GUOs.csv") %>%
+#   dplyr::select(Company.name,SH...Name, SH...Country.ISO.code, SH...Type,SH...City)%>%
+#   mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+#   fill(Company.name, .direction = "down") %>%
+#   dplyr::filter(SH...Type!="One or more named individuals or families",
+#                 SH...Type!="Other unnamed shareholders, aggregated",
+#                 SH...Type!="")
+# 
+
+
+# write.csv(GUO_shareholders_list, "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/GUO_shareholderss_list.csv")
+
+GUO_shareholders <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/shareholders_GUOs.csv") %>%
+   mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+   fill(Company.name, .direction = "down") %>%
+   dplyr::filter(SH...Type!="One or more named individuals or families",
+                 SH...Type!="Other unnamed shareholders, aggregated",
+                 SH...Type!="")%>%
+  dplyr::mutate(SH...NACE.Core.code = as.character(SH...NACE.Core.code))%>%
+  dplyr::filter(
+    str_starts(SH...NACE.Core.code, "64") |
+      str_starts(SH...NACE.Core.code, "65") |
+      str_starts(SH...NACE.Core.code, "66") |
+      ((SH...NACE.Core.code==""))
+  ) %>%
+  filter(SH...NACE.Core.code != "6420"|
+           ((SH...NACE.Core.code=="")))%>%
+  dplyr::mutate(invest_guo_sh = 1)%>%
+  dplyr::select(Company.name, invest_guo_sh)%>%
+  dplyr::rename(GUO...Name = Company.name)
+  
+
+
+####okay come back here, I think we re-run searches for shareholders with ID's not names pls benny boi####
+GUO_shareholders_two <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/shareholders_GUOs_sector.csv")%>%
+  mutate(Company.name = ifelse(Company.name == "", NA, Company.name)) %>% # Replace blanks with NA
+  fill(Company.name, .direction = "down") %>%
+  dplyr::filter(SH...Type!="One or more named individuals or families",
+                SH...Type!="Other unnamed shareholders, aggregated",
+                SH...Type!="")%>%
+  dplyr::filter()
+
+
+
+
+
+invest_fame_bind <- merge(fame, duo_sector, by="DUO...Name", all=T)
+invest_fame_bind <- merge(invest_fame_bind, shareholders_sector, by="Company.name", all=T)
+invest_fame_bind <- merge(invest_fame_bind, psc_sector, by= "DUO...Name", all=T)
+invest_fame_bind <- merge(invest_fame_bind, GUO_sector, by= "GUO...Name", all=T)
+invest_fame_bind <- merge(invest_fame_bind, GUO_shareholders, by= "GUO...Name", all=T)
+
+invest_fame_bind <- invest_fame_bind %>%
+  dplyr::mutate(
+    invest_any = ifelse(invest_guo_sh == 1 | invest_guo == 1 | invest_psc == 1 | invest_duo == 1 | invest_SH == 1, 1, 0)
+  )%>%
+  dplyr::select(Company.name, invest_any)%>%
+  dplyr::group_by(Company.name)%>%
+  dplyr::summarise(invest_any = sum(invest_any, na.rm=T))%>%
+  dplyr::ungroup()%>%
+  dplyr::mutate(
+    invest_any = ifelse(invest_any>0, 1,0 ))%>%
+  dplyr::filter(!is.na(Company.name))
+
+
+
+df_bind <- df_bind %>% dplyr::full_join(., invest_fame_bind, by="Company.name")
+df_bind <- df_bind%>%
+  dplyr::distinct(URN, .keep_all=T)
+
+
+missing_obs <- df_bind[!is.na(df_bind$Organisation)&is.na(df_bind$Company.name) & df_bind$Sector!="Local Authority",]%>% 
+  dplyr::distinct(URN, .keep_all=T)
+
+wuut <- df_bind[!is.na(df_bind$Organisation),]%>% 
+  dplyr::distinct(URN, .keep_all=T)
+
+
+
+df_bind <- df_bind %>%
+  dplyr::mutate(invest_any = ifelse(is.na(invest_any),0,invest_any))
+
+
+
+obvious_misses <- df_bind %>%
+  dplyr::filter(invest_any==0,
+                foreign_any==1)
+
+obvious_success <- df_bind %>%
+  dplyr::filter(invest_any==1,
+                foreign_any==0)
+
+
+df_bind <- df_bind %>%
+  dplyr::full_join(., read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/corporate_group_no.csv"), by="Company.name")
+  
+df_bind <- df_bind %>%
+  dplyr::full_join(., read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/profit_ratios.csv"), by="Company.name")
+
+
+
+#### Analysis####
+
+#### Descriptive rate of openings, closures, churn, by ownership ####
+
+#### likelihood of being in low need area ####
+
+low_need <- df_bind %>%
+  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>%
+                     # dplyr::filter(!LA_Name=="Dorset"&!LA_Code=="E10000009")%>%
+                     dplyr::filter(variable=="Net gain of children by responsible LA"&year==2023)%>%
+                     dplyr::rename(Local.authority = LA_Name),
+                   by="Local.authority")%>%
+  dplyr::left_join(.,read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>% 
+                     dplyr::filter(variable=="Total" &subcategory=="Placement"&year==2023) %>%
+                     dplyr::rename(Local.authority = LA_Name,
+                                   children_in_care = number)%>%
+                     dplyr::select(Local.authority, year, children_in_care), 
+                   by="Local.authority")%>%
+  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>%
+                     # dplyr::filter(!LA_Name=="Dorset"&!LA_Code=="E10000009")%>%
+                     dplyr::filter(variable=="Placed outside the local authority boundary"&year==2023)%>%
+                     dplyr::rename(Local.authority = LA_Name,
+                                   outside=percent,
+                                   outsideno=number),
+                   by="Local.authority")%>%
+  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>%
+                     # dplyr::filter(!LA_Name=="Dorset"&!LA_Code=="E10000009")%>%
+                     dplyr::filter(variable=="1. Children who are the responsibility of other LAs placed within this LA boundary"&year==2023)%>%
+                     dplyr::rename(Local.authority = LA_Name,
+                                   others_inside=number),
+                   by="Local.authority")%>%
+  dplyr::left_join(.,  read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/enter_exit.csv"))%>%
+                     dplyr::select(Local.authority, IMD.2019...Extent, Average_house_price)%>%
+                     dplyr::distinct(.keep_all = T), by="Local.authority")%>%
+  dplyr::distinct(URN, .keep_all=T)%>%
+  dplyr::mutate(net_gain = as.numeric(number),
+                high_net_gain = ifelse(net_gain>(as.numeric(children_in_care)/2),1,0),
+                high_need_areas = ifelse(outside>50,1,0),
+                low_cost_areas = ifelse(Average_house_price<150000,1,0))%>%
+  dplyr::mutate(  joined = ifelse(is.na(Join),0,1))%>%
+  dplyr::mutate(
+    age = as.Date(Registration.date, format = "%d/%m/%Y"),
+    month = format(age, "%m/%y"),
+    year = format(age, "%Y"),
+    age_months = time_length(difftime(as.Date("2021-06-01"), age), "months"),
+    age_years = time_length(difftime(as.Date("2021-06-01"), age), "years")
+  )%>%
+  dplyr::mutate(rating_numeric = ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Outstanding", 4,
+                                        ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Good", 3,
+                                               ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Requires improvement to be good", 2,
+                                                      ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Inadequate", 1,NA
+                                                      )))))
+  
+
+
+
+forlow <- ggplot(
+  low_need %>% filter(foreign_any == 1), 
+  aes(x = as.factor(foreign_any), y = as.numeric(outside))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Foreign Owned") +
+  xlab("") +
+  ylab("Outside of area placements %")+
+  coord_cartesian(ylim = c(0,85))
+
+investlow <- ggplot(
+  low_need %>% filter(invest_any == 1), 
+  aes(x = as.factor(invest_any), y = as.numeric(outside))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Investment Owned") +
+  xlab("") +
+  ylab("Outside of area placements %")+
+  coord_cartesian(ylim = c(0,85))
+
+
+lalow <- ggplot(
+  low_need %>% filter(Sector=="Local Authority"), 
+  aes(x = as.factor(Sector), y = as.numeric(outside))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Local Authority") +
+  xlab("") +
+  ylab("Outside of area placements %")+
+  coord_cartesian(ylim = c(0,85))
+
+vollow <- ggplot(
+  low_need %>% filter(Sector=="Voluntary"), 
+  aes(x = as.factor(Sector), y = as.numeric(outside))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Third Sector") +
+  xlab("") +
+  ylab("Outside of area placements %")+
+  coord_cartesian(ylim = c(0,85))
+
+fplow <- ggplot(
+  low_need %>% filter(Sector=="Private"), 
+  aes(x = as.factor(Sector), y = as.numeric(outside))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("All for-profit") +
+  xlab("") +
+  ylab("Outside of area placements %")+
+  coord_cartesian(ylim = c(0,85))
+
+
+
+cowplot::plot_grid(lalow, vollow, fplow, investlow, forlow, nrow=1)
+
+
+
+forlow <- ggplot(
+  low_need %>% filter(foreign_any == 1), 
+  aes(x = as.factor(foreign_any), y = as.numeric(Profit.margin.Last.avail..yr))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Foreign Owned") +
+  xlab("") +
+  ylab("Profit margin %")+
+  coord_cartesian(ylim = c(0,85))
+
+investlow <- ggplot(
+  low_need %>% filter(invest_any == 1), 
+  aes(x = as.factor(invest_any), y = as.numeric(Profit.margin.Last.avail..yr))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Investment Owned") +
+  xlab("") +
+  ylab("Profit margin %")+
+  coord_cartesian(ylim = c(0,85))
+
+
+lalow <- ggplot(
+  low_need %>% filter(Sector=="Local Authority"), 
+  aes(x = as.factor(Sector), y = as.numeric(Profit.margin.Last.avail..yr))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Local Authority") +
+  xlab("") +
+  ylab("Profit margin %")+
+  coord_cartesian(ylim = c(0,85))
+
+vollow <- ggplot(
+  low_need %>% filter(Sector=="Voluntary"), 
+  aes(x = as.factor(Sector), y = as.numeric(Profit.margin.Last.avail..yr))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Third Sector") +
+  xlab("") +
+  ylab("Profit margin %")+
+  coord_cartesian(ylim = c(0,85))
+
+fplow <- ggplot(
+  low_need %>% filter(Sector=="Private",
+                      foreign_any==0,
+                      invest_any==0), 
+  aes(x = as.factor(Sector), y = as.numeric(Profit.margin.Last.avail..yr))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Other for-profit") +
+  xlab("") +
+  ylab("Profit margin %")+
+  coord_cartesian(ylim = c(0,85))
+
+
+
+cowplot::plot_grid(lalow, vollow,fplow, investlow, forlow, nrow=1)
+
+
+
+
+forlow <- ggplot(
+  low_need %>% filter(foreign_any == 1), 
+  aes(x = as.factor(foreign_any), y = as.numeric(log(Average_house_price)))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Foreign Owned") +
+  xlab("") +
+  ylab("Average house price (logged)")+
+  coord_cartesian(ylim = c(11.5,14))
+
+investlow <- ggplot(
+  low_need %>% filter(invest_any == 1), 
+  aes(x = as.factor(invest_any), y = as.numeric(log(Average_house_price)))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Investment Owned") +
+  xlab("") +
+  ylab("Average house price (logged)")+
+  coord_cartesian(ylim = c(11.5,14))
+
+
+lalow <- ggplot(
+  low_need %>% filter(Sector=="Local Authority"), 
+  aes(x = as.factor(Sector), y = as.numeric(log(Average_house_price)))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Local Authority") +
+  xlab("") +
+  ylab("Average house price (logged)")+
+  coord_cartesian(ylim = c(11.5,14))
+
+vollow <- ggplot(
+  low_need %>% filter(Sector=="Voluntary"), 
+  aes(x = as.factor(Sector), y = as.numeric(log(Average_house_price)))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("Third Sector") +
+  xlab("") +
+  ylab("Average house price (logged)")+
+  coord_cartesian(ylim = c(11.5,14))
+
+fplow <- ggplot(
+  low_need %>% filter(Sector=="Private"), 
+  aes(x = as.factor(Sector), y = as.numeric(log(Average_house_price)))
+) +
+  geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+  geom_boxplot(width = 0.1, color = "grey") +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 11),
+    axis.text.x = element_blank()
+  ) +
+  ggtitle("All for-profit") +
+  xlab("") +
+  ylab("Average house price (logged)")+
+  coord_cartesian(ylim = c(11.5,14))
+
+
+
+cowplot::plot_grid(lalow, vollow, fplow, investlow, forlow, nrow=1)
+
+
+
+
+
+
+cowplot::plot_grid(lalow, vollow, fplow, investlow, forlow, nrow=1)
+
+
+
+#ERROR HERE INVESTMENT AND FOREIGN EXCLUSIve
+low_need_plot <- low_need %>%
+  mutate(
+    Ownership = case_when(
+      Sector == "Local Authority" ~ "Local Authority",
+      Sector == "Voluntary" ~ "Third Sector",
+      foreign_any == 1 ~ "Foreign Owned",
+      invest_any == 1 ~ "Investment Owned",
+      TRUE ~ "Other private"
+    )
+  ) %>%
+  mutate(Ownership = factor(Ownership, levels = c("Local Authority", "Third Sector", "Other private", "Investment Owned", "Foreign Owned")))%>%
+  group_by(Ownership) %>%
+  summarise(
+    Total = n(),  # Total number of homes
+    HighNeed = sum(high_need_areas, na.rm=T),
+    lowcost= sum(low_cost_areas, na.rm=T)  # Homes in high-need areas
+  ) %>%
+  mutate(Percentage = (HighNeed / Total) * 100,
+         Percentage_low_cose = (lowcost / Total) * 100)  # Percentage in high-need areas
+
+# Create a bar plot
+ggplot(low_need_plot, aes(x = Ownership, y = Percentage, fill = Ownership)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Percentage of Each Ownership Type Located in High-Need Areas",
+    x = "Ownership Type",
+    y = "Percentage of homes located in areas >50% sent out of area (%)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_brewer(palette = "Set3")
+
+# Create a bar plot
+ggplot(low_need_plot, aes(x = Ownership, y = Percentage_low_cose, fill = Ownership)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Percentage of Each Ownership Type Located in Low-Cost Areas",
+    x = "Ownership Type",
+    y = "Percentage of homes located in areas with low housing cost (%)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_brewer(palette = "Set3")
+
+####regressions####
+
+summary(lm(as.numeric(outside)~Places+factor(left)+foreign_any+rating_numeric+age_months, data=low_need))
+summary(lm(as.numeric(high_need_areas)~Sector, data=low_need))
+
+
+summary(lm(as.numeric(others_inside)~Sector+Places+factor(left)+foreign_any+rating_numeric+age_months, data=low_need))
+
+
+
+ggplot(unique(low_need[c("others_inside", "outside")]), aes(x=as.numeric(others_inside), y=as.numeric(outside)))+
+  geom_point()
+
+
+summary(lm(as.numeric(net_gain)~as.numeric(outside) +IMD.2019...Extent+Average_house_price, data=unique(low_need[c("net_gain", "outside", "IMD.2019...Extent", "Average_house_price")])))
+summary(lm(as.numeric(net_gain)~as.numeric(outside) , data=unique(low_need[c("net_gain", "outside", "IMD.2019...Extent", "Average_house_price")])))
+
+summary(lm(as.numeric(high_net_gain)~Sector+Places+factor(left)+foreign_any+rating_numeric+age_months, data=low_need))
+
+v
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ggplot(low_need, aes(x=factor(invest_any), y=as.numeric(number)))+
+  geom_violin(width=1.4) +
+  geom_boxplot(width=0.1, color="grey", alpha=0.2) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Distribution of Children's Homes by LA Net Gain") +
+  xlab("Investment-Backed")+
+  ylab("Net Gain of LA")
+
+ggplot(low_need%>%dplyr::filter(!is.na(Sector)), aes(x=factor(Sector), y=as.numeric(number)))+
+  geom_violin(width=1.4)+
+  geom_boxplot(width=0.1, color="grey", alpha=0.2) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Distribution of Children's Homes by LA Net Gain") +
+  xlab("")+
+  ylab("Net Gain of LA")
+
+ggplot(low_need, aes(x=No.of.companies.in.corporate.group, y=log(as.numeric(number))))+
+  geom_point()+
+  scale_fill_viridis(discrete = TRUE) +
+  theme_ipsum() +
+  geom_smooth(method="lm")+
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Distribution of Children's Homes by LA Net Gain") +
+  xlab("Size of Corporate Group")+
+  ylab("Net Gain of LA")
+
+
+ggplot(low_need, aes(x=factor(invest_any), y=as.numeric(Salaries..Turnover.Last.avail..yr)))+
+  geom_violin(width=1.4) +
+  geom_boxplot(width=0.1, color="grey", alpha=0.2) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Distribution of Children's Homes by LA Net Gain") +
+  xlab("Investment-Backed")+
+  ylab("Salaries per Turnover")
+
+ggplot(low_need, aes(x=factor(invest_any), y=as.numeric(EBITDA.margin.Last.avail..yr)))+
+  geom_violin(width=1.4) +
+  geom_boxplot(width=0.1, color="grey", alpha=0.2) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Distribution of Children's Homes by LA Net Gain") +
+  xlab("Investment-Backed")+
+  ylab("EBITDA Margin")
+
+ggplot(low_need, aes(x=factor(invest_any), y=as.numeric(Profit.margin.Last.avail..yr)))+
+  geom_violin(width=1.4) +
+  geom_boxplot(width=0.1, color="grey", alpha=0.2) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Distribution of Children's Homes by LA Net Gain") +
+  xlab("Investment-Backed")+
+  ylab("Profit Margin")
+
+ggplot(low_need, aes(x=factor(foreign_any), y=as.numeric(Salaries..Turnover.Last.avail..yr)))+
+  geom_violin(width=1.4) +
+  geom_boxplot(width=0.1, color="grey", alpha=0.2) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Distribution of Children's Homes by LA Net Gain") +
+  xlab("Foreign-Backed")+
+  ylab("Salaries per turnover")
+
+summary(lm((as.numeric(number))~factor(foreign_any)+factor(invest_any)+factor(Sector), data=low_need%>%dplyr::filter(is.na(Leave))))
+
+summary(lm(as.numeric(number)~factor(foreign_any)+factor(invest_any), data=low_need%>%dplyr::filter(Sector=="Private")))
+
+
+summary(glm((factor(joined))~factor(foreign_any)+factor(invest_any)+factor(Sector), data=low_need%>%dplyr::filter(is.na(Leave)), family="binomial"))
+summary(glm((factor(joined))~factor(foreign_any)+factor(invest_any)+factor(Sector), data=low_need%>%dplyr::filter(is.na(Leave)), family="binomial"))
+summary(glm((factor(left))~factor(foreign_any)+factor(invest_any)+factor(Sector), data=low_need%>%dplyr::filter(!is.na(Organisation)), family="binomial"))
+
+
+
+
+
+
+
+
+inspections <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/refs/heads/main/Final_Data/outputs/Provider_data.csv"))
+
+inspections <-unique(inspections %>% full_join(., df_bind, by="URN"))
+
+#inspections <- inspections %>% distinct(Event.number, .keep_all = T)
+
+inspections <- inspections %>%
+  dplyr::mutate(rating_numeric = ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Outstanding", 4,
+                                        ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Good", 3,
+                                               ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Requires improvement to be good", 2,
+                                                      ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Inadequate", 1,NA
+                                                      )))))
+
+summary(lm(rating_numeric~factor(foreign_any)+factor(invest_any)+factor(Sector.x)+factor(left), data=inspections))
+summary(lm(rating_numeric~No.of.companies.in.corporate.group+factor(foreign_any)+factor(invest_any)+Places.x, data=inspections))
+
+
+check_LA = df_bind %>%
+  dplyr::filter(Sector=="Local Authority")%>%
+  dplyr::select(Local.authority,Organisation, URN)%>%
+  dplyr::mutate(ifelse(Local.authority!= Organisation, 1,0))
+
+
+
+
+
+
+
+
+
+
+#
+
+
+
+
+
+
+
+
+
 
 
 
@@ -441,12 +1497,12 @@ df_bind <- df_bind %>% dplyr::full_join(., fame, by="Company.name")
 missing_obs <- df_bind[!is.na(df_bind$Organisation)&is.na(df_bind$Company.name) & df_bind$Sector!="Local Authority",]%>% 
   dplyr::distinct(URN, .keep_all=T)
 
-global_owners <- df_bind %>%
-  dplyr::select(GUO...Name)%>%
-  dplyr::distinct()%>%
-  dplyr::filter(!is.na(GUO...Name),
-                GUO...Name!="")%>%
-  write.csv(., "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/global_owners.csv")
+# global_owners <- df_bind %>%
+#   dplyr::select(GUO...Name)%>%
+#   dplyr::distinct()%>%
+#   dplyr::filter(!is.na(GUO...Name),
+#                 GUO...Name!="")%>%
+#   write.csv(., "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/global_owners.csv")
 
 df_bind <- df_bind %>% 
   dplyr::mutate(joined = ifelse(is.na(Join),0,1),
@@ -1238,5 +2294,8 @@ unstable_map <- ggplot(data = map) +
     name = "Residential placements per children's home place", na.value="grey")+
   theme(text=element_text(size=10), legend.key.size = unit(0.65, "cm"), legend.title = element_text(size=9))
 
-
+miles <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>%
+  # dplyr::filter(!LA_Name=="Dorset"&!LA_Code=="E10000009")%>%
+  dplyr::filter(variable=="Placed outside the local authority boundary")%>%
+  dplyr::rename(Local.authority = LA_Name)
 
