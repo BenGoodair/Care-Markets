@@ -322,7 +322,6 @@ df <- df%>% dplyr::filter(!is.na(Local.authority))%>%
                                                                                                      ifelse(Overall.experiences.and.progress.of.children.and.young.people=="Adequate", NA,
                                                                                                             Overall.experiences.and.progress.of.children.and.young.people)))))
 
-####needs to be in 3 docs for 500 max in fame####
 
 
 
@@ -394,19 +393,19 @@ df <- df %>%
                   str_trim(.)%>%
                   gsub("Southend on Sea Young Mens Christian Association", "SOUTHEND-ON-SEA YOUNG MEN'S CHRISTIAN ASSOCIATION", ., ignore.case = TRUE)  )
 
-
-
-greatermanchester <- df %>%
-  dplyr::filter(Local.authority=="MANCHESTER"|
-                  Local.authority=="WIGAN"|
-                  Local.authority=="SALFORD"|
-                  Local.authority=="STOCKPORT"|
-                  Local.authority=="BURY"|
-                  Local.authority=="BOLTON"|
-                  Local.authority=="ROCHDALE"|
-                  Local.authority=="OLDHAM"|
-                  Local.authority=="TRAFFORD"|
-                  Local.authority=="TAMESIDE")
+# 
+# 
+# greatermanchester <- df %>%
+#   dplyr::filter(Local.authority=="MANCHESTER"|
+#                   Local.authority=="WIGAN"|
+#                   Local.authority=="SALFORD"|
+#                   Local.authority=="STOCKPORT"|
+#                   Local.authority=="BURY"|
+#                   Local.authority=="BOLTON"|
+#                   Local.authority=="ROCHDALE"|
+#                   Local.authority=="OLDHAM"|
+#                   Local.authority=="TRAFFORD"|
+#                   Local.authority=="TAMESIDE")
 
 save_df <- df %>% dplyr::filter(Sector!="Local Authority")%>%
   dplyr::select(Organisation_fame_search)%>%
@@ -827,6 +826,21 @@ df_bind <- df_bind%>%
   dplyr::distinct(URN, .keep_all=T)
 
 
+####indiv owned ####
+
+#I'm coding here that individual owned are any cos with a DUO of an individual or companies without a DUO
+
+indiv <- fame %>%dplyr::distinct(Company.name, .keep_all = T)%>%
+  dplyr::filter(DUO...Type=="One or more named individuals or families"|
+                  DUO...Type=="")%>%
+  dplyr::mutate(individuals=1)%>%
+  dplyr::select(Company.name, individuals)
+
+df_bind <- df_bind %>% dplyr::full_join(., indiv, by="Company.name")%>%
+  dplyr::mutate(individuals = ifelse(is.na(individuals), 0, individuals))
+
+
+
 missing_obs <- df_bind[!is.na(df_bind$Organisation)&is.na(df_bind$Company.name) & df_bind$Sector!="Local Authority",]%>% 
   dplyr::distinct(URN, .keep_all=T)
 
@@ -861,13 +875,381 @@ df_bind <- df_bind %>%
 
 #### Descriptive rate of openings, closures, churn, by ownership ####
 
+chome_netgain <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/FOI%202024-0040813%20part%201.csv"), skip=13)%>%
+  dplyr::rename(Local.authority=la_name,
+                year=time_period,
+                net_gain = number)%>%
+  dplyr::filter(geographic_level=="Local authority")%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())%>%
+  dplyr::select(Local.authority,year, net_gain)
+
+
+chom_out_of_area <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/FOI%202024-0040813%20part%202.csv"), skip=13)%>%
+  dplyr::filter(geographic_level=="Local authority")%>%
+  dplyr::rename(Local.authority=la_name,
+                year=time_period,
+                out_of_area=number,
+                out_of_area_per = percentage)%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())%>%
+  dplyr::select(Local.authority,year, out_of_area, out_of_area_per)
+  
+
+data <- full_join(chom_out_of_area, chome_netgain, by=c("Local.authority", "year"))
+
+data <- data %>%
+  dplyr::full_join(., df_bind, by="Local.authority")%>%
+  dplyr::mutate(joined = ifelse(is.na(Join),0,1))
+  
+
+
+
+# Define a reusable function for ggplot generation
+create_plot <- function(data, filter_col, filter_val, title) {
+  ggplot(
+    data %>% filter({{ filter_col }} == filter_val), 
+    aes(x = as.factor({{ filter_col }}), y = as.numeric(net_gain))
+  ) +
+    geom_violin(width = 0.8, fill = "blue", alpha = 0.5) +
+    geom_boxplot(width = 0.1, color = "grey") +
+    scale_fill_viridis(discrete = TRUE) +
+    theme_bw() +
+    theme(
+      legend.position = "none",
+      plot.title = element_text(size = 11),
+      axis.text.x = element_blank()
+    ) +
+    ggtitle(title) +
+    xlab("") +
+    ylab("net gain, n") +
+    coord_cartesian(ylim = c(0, 85))
+}
+
+# Generate plots using the reusable function
+forlow <- create_plot(data, foreign_any, 1, "Foreign Owned")
+investlow <- create_plot(data, invest_any, 1, "Investment Owned")
+lalow <- create_plot(data, Sector, "Local Authority", "Local Authority")
+vollow <- create_plot(data, Sector, "Voluntary", "Third Sector")
+fplow <- create_plot(data, Sector, "Private", "All for-profit")
+
+# # Combine plots
+# cowplot::plot_grid(lalow, vollow, fplow, investlow, forlow, nrow = 1)
+# 
+
+
+
+
+data <- data %>%
+  dplyr::mutate(Sector2 = ifelse(Sector=="Local Authority", "Local Authority",
+                                ifelse(Sector=="Voluntary", "Third sector",
+                                       ifelse(invest_any==1, "Investment/Foreign",
+                                              ifelse(foreign_any==1, "Investment/Foreign",
+                                                     ifelse(individuals==1,"Individual", "Corporate"))))))
+
+
+####Analysis real####
+
+####Figure 1####
+
+
+
+# Create a full sequence of times
+all_times <- tibble(time = -238:0)
+
+# Process the start dataset
+carehomesstart <- data %>%
+  mutate(
+    Registration.date = as.Date(Registration.date, format = "%d/%m/%Y"),
+    Join = as.Date(Join),
+    location_start = coalesce(Registration.date, Join, as.Date("2014-03-15")),
+    date = location_start,
+    time = as.integer(time_length(difftime(date, as.Date("2023-12-01")), "months"))
+  ) %>%
+  distinct(URN, .keep_all = TRUE) %>%
+  select(time, Sector2, URN)
+
+# Count observations by group
+nobsByIdih <- carehomesstart %>%
+  count(time, Sector2, name = "nobs")
+
+# **Ensure all time periods exist for each Sector2**
+nobsBySector <- nobsByIdih %>%
+  complete(Sector2, time = all_times$time, fill = list(nobs = 0)) %>%
+  group_by(Sector2) %>%
+  mutate(cumulative = cumsum(nobs)) %>%
+  ungroup()
+
+# Process the end dataset
+carehomesend <- data %>%
+  filter(Leave != "") %>%
+  mutate(
+    date = as.Date(Leave, format = "%d%b%Y"),
+    time = as.integer(time_length(difftime(date, as.Date("2023-12-01")), "months"))
+  ) %>%
+  distinct(URN, .keep_all = TRUE) %>%
+  select(time, Sector2, URN)
+
+# Count observations by group
+nobsEndByIdih <- carehomesend %>%
+  count(time, Sector2, name = "nobs")
+
+# **Ensure all time periods exist for each Sector2**
+nobsEndBySector <- nobsEndByIdih %>%
+  complete(Sector2, time = all_times$time, fill = list(nobs = 0)) %>%
+  group_by(Sector2) %>%
+  mutate(cumulative_end = cumsum(nobs)) %>%
+  ungroup()
+
+# Merge start and end datasets
+nobser <- full_join(nobsBySector, nobsEndBySector, by = c("Sector2", "time")) %>%
+  mutate(
+    cumulative = replace_na(cumulative, 0),
+    cumulative_end = replace_na(cumulative_end, 0),
+    runningsum = cumulative - cumulative_end
+  )
+
+
+d <- ggplot(nobser[which(nobser$time>-155),], aes(x=time, y=runningsum, group=Sector2,fill=Sector2,  colour = Sector2, alpha=Sector2))+
+  geom_point()+
+  #geom_smooth(method="loess", span = 0.3)+
+  theme_minimal()+
+  scale_color_manual(values=c("#FF5E5E", "#E4007C","#5B0000","#F0AB00", "#008F5D" ))+
+  scale_alpha_manual(values=c( 1,1,1,0.2,0.2))+
+  # theme(legend.position="left")+
+  labs(x="Year", y="Number of children homes", title = "Number of profit-motivated children's homes", fill="Ownership", color="Ownership", alpha = "Ownership")+
+  scale_x_continuous(breaks=c(-12,-24,-36,-48,-60,-72,-84,-96,-108,-120,-132,-144,-156),
+                     labels=c("2023","2022","2021","2020","2019","2018",  "2017", "2016", "2015","2014", "2013", "2012", "2011"))+
+  theme_bw()+
+  coord_cartesian(xlim=c(-110,-12))
+
+ggsave(plot=d, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/home_rise.jpeg", width=8, height=7, dpi=600)
+
+
+
+
+e <- ggplot(data%>%distinct(Local.authority, year, .keep_all = T), aes(x=as.numeric(year), y=as.numeric(out_of_area_per)))+
+  geom_point(aes(color = "#2A6EBB"), alpha = 0.2, size = 2) +  # Move color inside aes()
+  geom_smooth(method = "loess", se = T)+
+  labs(
+    x = "Year",
+    y = "Children placed in homes outside their area (%)",
+    title = "Out of area children home places")+
+  theme_bw()+
+  scale_x_continuous(breaks=c(2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024))+
+  scale_color_identity()  # Ensures custom color is used
+
+  
+
+f <- ggplot(data%>%distinct(Local.authority, year, .keep_all = T), aes(x=as.numeric(year), y=sqrt(as.numeric(net_gain)^2)))+
+  geom_point(aes(color = "#2A6EBB"), alpha = 0.2, size = 2) +  # Move color inside aes()
+  geom_smooth(method = "loess", se = T)+
+  labs(
+    x = "Year",
+    y = "Net gain of children's home places (sqrt n^2)",
+    title = "Aboslute value of Net gain/loss of children home places")+
+  theme_bw()+
+  scale_x_continuous(breaks=c(2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024))+
+  scale_color_identity()  # Ensures custom color is used
+
+
+yes <- cowplot::plot_grid(e,f, ncol=2)
+
+yes <- cowplot::plot_grid(d,yes, ncol=1)
+ggsave(plot=yes, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_1.jpeg", width=12, height=12, dpi=600)
+
+
+
+#### Table 2####
+
+# Create a full sequence of years
+all_years <- tibble(year = seq(2004, 2023))
+
+# Process the start dataset
+carehomesstart <- data %>%
+  mutate(
+    Registration.date = as.Date(Registration.date, format = "%d/%m/%Y"),
+    Join = as.Date(Join),
+    location_start = coalesce(Registration.date, Join, as.Date("2014-03-15")),
+    year = lubridate::year(location_start)
+  ) %>%
+  distinct(URN, .keep_all = TRUE) %>%
+  select(year, Sector2, URN, Local.authority)
+
+# Count observations by group
+nobsByIdih <- carehomesstart %>%
+  count(year, Sector2, Local.authority, name = "nobs")
+
+# Ensure all years exist for each Sector2
+nobsBySector <- nobsByIdih %>%
+  complete(Sector2, Local.authority, year = all_years$year, fill = list(nobs = 0)) %>%
+  group_by(Sector2, Local.authority) %>%
+  mutate(cumulative = cumsum(nobs)) %>%
+  ungroup()
+
+# Process the end dataset
+carehomesend <- data %>%
+  filter(Leave != "") %>%
+  mutate(
+    date = as.Date(Leave, format = "%d%b%Y"),
+    year = lubridate::year(date)
+  ) %>%
+  distinct(URN, .keep_all = TRUE) %>%
+  select(year, Sector2, URN, Local.authority)
+
+# Count observations by group
+nobsEndByIdih <- carehomesend %>%
+  count(year, Sector2, Local.authority, name = "nobs")
+
+# Ensure all years exist for each Sector2
+nobsEndBySector <- nobsEndByIdih %>%
+  complete(Sector2, Local.authority, year = all_years$year, fill = list(nobs = 0)) %>%
+  group_by(Sector2, Local.authority) %>%
+  mutate(cumulative_end = cumsum(nobs)) %>%
+  ungroup()
+
+# Merge start and end datasets
+nobser <- full_join(nobsBySector, nobsEndBySector, by = c("Sector2", "year", "Local.authority")) %>%
+  mutate(
+    cumulative = replace_na(cumulative, 0),
+    cumulative_end = replace_na(cumulative_end, 0),
+    runningsum = cumulative - cumulative_end
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+regdata <- data %>%
+  dplyr::mutate(total_children = as.numeric(out_of_area)/as.numeric(out_of_area_per)*100)%>%
+  dplyr::select(URN, Sector2, out_of_area_per,net_gain, Local.authority, Places, joined, left, Overall.experiences.and.progress.of.children.and.young.people, total_children)%>%
+  dplyr::group_by(URN, Sector2, Local.authority,total_children, Places, joined, left, Overall.experiences.and.progress.of.children.and.young.people)%>%
+  dplyr::summarise(out_of_area_per = mean(as.numeric(out_of_area_per), na.rm=T),
+                   net_gain = mean(as.numeric(net_gain), na.rm=T))%>%
+  dplyr::ungroup()%>%
+  dplyr::mutate(Sector2 = factor(Sector2, levels = c("Local Authority", "Individual", "Corporate", "Investment/Foreign", "Third sector")),
+                Overall_rating = factor(Overall.experiences.and.progress.of.children.and.young.people, levels = c("Inadequate", "Requires improvement to be good", "Good", "Outstanding")))
+  
+
+
+one <- lm(as.numeric(out_of_area_per)~Sector2+factor(joined)+total_children+Places+Overall_rating, data=regdata)
+two <- lm(as.numeric(net_gain)~Sector2+factor(joined)+total_children+Places+Overall_rating, data=regdata)
+
+
+one <- (glm(factor(joined)~Sector2*net_gain+total_children+Places+Overall_rating, data=regdata, family="binomial"))
+one <- (glm(factor(left)~Sector2*net_gain+total_children+Places+Overall_rating, data=regdata, family="binomial"))
+
+sjPlot::plot_model(one, "int")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ggplot(chome_netgain, aes(x=as.numeric(number.x), y=as.numeric(number.y)))+
+  geom_point(size = 2, color = "#B4CFEE", alpha = 0.3) +
+  geom_smooth(method = "lm", se = T)+
+  labs(
+    x = "Children home net gain",
+    y = "All net gain",
+    title = "comparing all net gain vs children home netgain")+
+  theme_bw()+
+  coord_cartesian(xlim=c(-150,300))
+
+ggplot(chome_netgain, aes(x=time_period, y=as.numeric(number)))+
+  geom_point(size = 2, color = "#B4CFEE", alpha = 0.3) +
+  geom_smooth(method = "loess", se = FALSE) +
+  labs(
+    x = "Year",
+    y = "Net gain (n)",
+    title = "Children's home placements net gain")+
+  theme_bw()+
+  theme(text = element_text(size=20),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        axis.ticks.length=unit(.28, "cm"),
+        axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        axis.line.y = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        axis.line = element_line(colour = "black"),
+        axis.title = element_text(size=24),
+        axis.text.x = element_text(size=18),
+        axis.text.y = element_text(size=20),
+        legend.title = element_blank(),
+        legend.box.background = element_rect(colour = "black", size = 1),
+        legend.text = element_text(size=20),
+        legend.position = "top",
+        strip.background = element_rect(fill="gray90", colour="black", size=1),
+        strip.text = element_text(face="bold", size=16),
+        title=element_text(face="bold")) +
+  scale_fill_manual(values=c("#2A6EBB","#B4CFEE", "#1F5189" ))
+
+
+
+
 #### likelihood of being in low need area ####
 
 low_need <- df_bind %>%
-  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>%
+  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/FOI%202024-0040813%20part%201.csv"), skip=13)%>%
                      # dplyr::filter(!LA_Name=="Dorset"&!LA_Code=="E10000009")%>%
                      dplyr::filter(variable=="Net gain of children by responsible LA"&year==2023)%>%
-                     dplyr::rename(Local.authority = LA_Name),
+                     dplyr::rename(Local.authority = la_name),
                    by="Local.authority")%>%
   dplyr::left_join(.,read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>% 
                      dplyr::filter(variable=="Total" &subcategory=="Placement"&year==2023) %>%
@@ -2298,4 +2680,197 @@ miles <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_s
   # dplyr::filter(!LA_Name=="Dorset"&!LA_Code=="E10000009")%>%
   dplyr::filter(variable=="Placed outside the local authority boundary")%>%
   dplyr::rename(Local.authority = LA_Name)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Final output
+nobser
+
+
+
+
+
+
+
+
+
+
+
+
+
+####DELETED care home counting code#####
+
+
+
+
+carehomesstart <- data %>%
+  dplyr::mutate(
+    Registration.date = as.Date(Registration.date, format = "%d/%m/%Y"),
+    Join = as.Date(Join),
+    location_start = dplyr::coalesce(Registration.date, Join),
+    location_start = dplyr::if_else(
+      is.na(location_start),
+      as.Date("2014-03-15"),
+      location_start
+    )
+  ) %>%
+  dplyr::select(location_start, Join, Registration.date, Leave, Sector2, URN, foreign_any, invest_any) %>%
+  dplyr::distinct(URN, .keep_all = TRUE)
+
+
+carehomesstart$date <- as.Date(carehomesstart$location_start, format =  "%d%b%Y")
+carehomesstart$month <- format(carehomesstart$date,"%m/%y")
+carehomesstart$time <- as.integer(time_length(difftime( as.Date(carehomesstart$date), as.Date("2023-12-01")), "months"))
+Providernobs <- unique(carehomesstart[c("time", "Sector2", "URN")])
+nobsByIdih <- Providernobs %>% dplyr::group_by(time, Sector2) %>% dplyr::summarize(nobs = n())
+nobsprive <- nobsByIdih[which(nobsByIdih$Sector2=="Corporate"),]
+nobsvol <- nobsByIdih[which(nobsByIdih$Sector2=="Third sector"),]
+nobsla <- nobsByIdih[which(nobsByIdih$Sector2=="Local Authority"),]
+nobsfor <- nobsByIdih[which(nobsByIdih$Sector2=="Investment/Foreign"),]
+nobsind <- nobsByIdih[which(nobsByIdih$Sector2=="Individual"),]
+
+
+
+all <- unique(nobsprive[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsprive <- merge(nobsprive, all,by=c("Sector2", "time"), all=T)
+nobsprive[is.na(nobsprive$nobs),]$nobs <- 0
+nobsprive$cumulative <- cumsum(nobsprive$nobs)
+
+all <- unique(nobsla[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsla <- merge(nobsla, all,by=c("Sector2", "time"), all=T)
+nobsla[is.na(nobsla$nobs),]$nobs <- 0
+nobsla$cumulative <- cumsum(nobsla$nobs)
+
+all <- unique(nobsvol[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsvol <- merge(nobsvol, all,by=c("Sector2", "time"), all=T)
+nobsvol[is.na(nobsvol$nobs),]$nobs <- 0
+nobsvol$cumulative <- cumsum(nobsvol$nobs)
+
+
+all <- unique(nobsind[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsind <- merge(nobsind, all,by=c("Sector2", "time"), all=T)
+nobsind[is.na(nobsind$nobs),]$nobs <- 0
+nobsind$cumulative <- cumsum(nobsind$nobs)
+
+all <- unique(nobsfor[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsfor <- merge(nobsfor, all,by=c("Sector2", "time"), all=T)
+nobsfor[is.na(nobsfor$nobs),]$nobs <- 0
+nobsfor$cumulative <- cumsum(nobsfor$nobs)
+
+
+nobs <- rbind(nobsla, nobsvol,nobsprive, 
+              nobsfor, nobsind)
+
+
+carehomesend <- data %>%dplyr::distinct(URN, .keep_all=T) %>%
+  dplyr::select(Leave,Sector2, URN, foreign_any, invest_any )%>%
+  filter(Leave!="")
+
+
+
+carehomesend$date <- as.Date(carehomesend$Leave, format =  "%d%b%Y")
+carehomesend$month <- format(carehomesend$date,"%m/%y")
+carehomesend$time <- as.integer(time_length(difftime( as.Date(carehomesend$date), as.Date("2023-12-01")), "months"))
+Providernobs <- unique(carehomesend[c("time", "Sector2", "URN", "foreign_any", "invest_any")])
+nobsByIdih <- Providernobs %>% dplyr::group_by(time, Sector2) %>% dplyr::summarize(nobs = n())
+nobsprive <- nobsByIdih[which(nobsByIdih$Sector2=="Corporate"),]
+nobsvol <- nobsByIdih[which(nobsByIdih$Sector2=="Third sector"),]
+nobsla <- nobsByIdih[which(nobsByIdih$Sector2=="Local Authority"),]
+nobsfor <- nobsByIdih[which(nobsByIdih$Sector2=="Investment/Foreign"),]
+nobsind <- nobsByIdih[which(nobsByIdih$Sector2=="Individual"),]
+
+all <- unique(nobsprive[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsprive <- merge(nobsprive, all,by=c("Sector2", "time"), all=T)
+nobsprive[is.na(nobsprive$nobs),]$nobs <- 0
+nobsprive$cumulative <- cumsum(nobsprive$nobs)
+
+all <- unique(nobsla[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsla <- merge(nobsla, all,by=c("Sector2", "time"), all=T)
+nobsla[is.na(nobsla$nobs),]$nobs <- 0
+nobsla$cumulative <- cumsum(nobsla$nobs)
+
+all <- unique(nobsvol[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsvol <- merge(nobsvol, all,by=c("Sector2", "time"), all=T)
+nobsvol[is.na(nobsvol$nobs),]$nobs <- 0
+nobsvol$cumulative <- cumsum(nobsvol$nobs)
+
+
+all <- unique(nobsfor[c("foreign_any")])
+
+all <- unique(nobsind[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsind <- merge(nobsind, all,by=c("Sector2", "time"), all=T)
+nobsind[is.na(nobsind$nobs),]$nobs <- 0
+nobsind$cumulative <- cumsum(nobsind$nobs)
+
+all <- unique(nobsfor[c("Sector2")])
+all<-all[rep(seq_len(nrow(all)), each = 239), ]  # Base R
+all$time <- seq(from =-238, to=0)
+all$er <- 1
+nobsfor <- merge(nobsfor, all,by=c("Sector2", "time"), all=T)
+nobsfor[is.na(nobsfor$nobs),]$nobs <- 0
+nobsfor$cumulative <- cumsum(nobsfor$nobs)
+
+
+nobsend <- rbind(nobsla, nobsvol,nobsprive, nobsfor, nobsind)
+
+
+nobsend$cumulative_end <- nobsend$cumulative
+
+nobser <- merge(nobs, nobsend[c("Sector2", "time", "cumulative_end")], by= c("Sector2", "time"), all=T)
+nobser$runningsum <- nobser$cumulative-nobser$cumulative_end
 
