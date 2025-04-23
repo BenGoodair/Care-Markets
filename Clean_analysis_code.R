@@ -1801,12 +1801,51 @@ LA_panel_data <- LA_panel_data %>%
                    by=c("Local.authority", "year"))
 
 LA_panel_data <- LA_panel_data %>%
+  dplyr::left_join(.,read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>% 
+                   dplyr::filter(variable == "Unaccompanied asylum-seeking children"&subcategory=="Unaccompanied asylum-seeking children"&category=="child characteristic at 31st March") %>%
+                   dplyr::mutate(LA_Name = ifelse(LA_Name=="COUNTY DURHAM", "DURHAM", LA_Name))%>%
+                     dplyr::rename(Local.authority = LA_Name,
+                                   Asylum_per = percent,
+                                   Asylum_no = number)%>%
+                     dplyr::select(Local.authority, year, Asylum_per, Asylum_no), by=c("Local.authority", "year"))
+
+LA_panel_data <- LA_panel_data %>%
   dplyr::mutate(all_change = All_homes-all_lagged,
                 third_change = Homes_Third_sector-third_lagged,
                 la_change = Homes_Local_Authority-LA_lagged,
                 invest_change = Homes_Investment_owned-invest_lagged,
                 corp_change = Homes_Corporate_owned-corp_lagged,
                 ind_change = Homes_Individual_owned-ind_lagged)
+
+
+
+LA_panel_data <- LA_panel_data %>%
+  dplyr::left_join(.,
+                   read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/FOI_2024-0014264_part_1.csv", skip=15) %>%
+  dplyr::rename(Local.authority = la_name,
+                unregulated = number,
+                year= time_period)%>%
+  dplyr::filter(new_la_code!="E10000009")%>%
+  dplyr::select(Local.authority,unregulated, year )%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim()),
+  by=c("Local.authority", "year"))
+
 
 
 LA_panel_data <- pdata.frame(LA_panel_data%>%
@@ -1847,8 +1886,35 @@ nbm$non_indiv = scale(as.numeric(nbm$All_homes-nbm$Homes_Individual_owned))
 nbm$non_la = scale(as.numeric(nbm$All_homes-nbm$Homes_Local_Authority))
 nbm$non_3rd = scale(as.numeric(nbm$All_homes-nbm$Homes_Third_sector))
 
+reg1 <- plm(residential_expenditure_s ~  net_loss_s  + median_house_price_detached_s +median_wage_s +Unemployment.rate...aged.16.64._s + white_s+ occupancy_rate_fte_s+claimant_count_rate_s + children_in_care_s  +  Region.Country.name, 
+            index = c("Local.authority", "year"), data = nbm%>%
+              dplyr::filter(Region.Country.name!="London"), model = "pooling")
+ coef_test(reg1, vcov = "CR2", cluster = nbm%>%
+             dplyr::filter(Region.Country.name!="London")$Local.authority, test = "Satterthwaite")
+ 
+ nbm_filtered <- nbm %>% dplyr::filter(Region.Country.name != "London")
+ 
+ # Run the PLM model
+ reg1 <- plm(residential_expenditure_s ~ net_loss_s + median_house_price_detached_s + 
+               median_wage_s + Unemployment.rate...aged.16.64._s + white_s + 
+               occupancy_rate_fte_s + claimant_count_rate_s + children_in_care_s + 
+               Region.Country.name, 
+             index = c("Local.authority", "year"), 
+             data = nbm_filtered, 
+             model = "pooling")
+ 
+ # Run coefficient test with clustering
+ coef_test(reg1, vcov = "CR2", cluster = nbm_filtered$Local.authority, test = "Satterthwaite")
+ 
+ reg1 <- plm(as.numeric(unregulated) ~  net_loss_s+ as.numeric(Asylum_per)  + median_house_price_detached_s +median_wage_s +Unemployment.rate...aged.16.64._s + white_s+ occupancy_rate_fte_s+claimant_count_rate_s + children_in_care_s  +  Region.Country.name, 
+             index = c("Local.authority", "year"), data = nbm, model = "pooling")
+ coef_test(reg1, vcov = "CR2", cluster = nbm$Local.authority, test = "Satterthwaite")
+ 
 
-
+ 
+ 
+ 
+ 
 # Check its length
 length(nbm$net_loss_s)  # Should match nrow(nbm)
 
@@ -2098,7 +2164,6 @@ summary(lmerTest::lmer (profit_margin_average~net_loss_s + Places+ age + childre
                           Region.Country.name +(1|Local.authority), data = brmdata_profit))
 
 
-
 #### BRMS ####
 
 ### Prepare Data for Multinomial BRMS Model ###
@@ -2217,7 +2282,7 @@ brmdata_profit <- mlm %>%
 
 # Model for overall.average
 model_overall <- brm(
-  formula = overall.average ~ net_loss_s + Places +number_of_inspections+ age+ children_in_care_s +
+  formula = overall.average ~ net_loss_s +Sector_merge + Places +number_of_inspections+ age+ children_in_care_s +
     residential_expenditure_s + median_house_price_detached_s + median_wage_s +
     Region.Country.name + (1 | Local.authority),
   data = brmdata_overall,
