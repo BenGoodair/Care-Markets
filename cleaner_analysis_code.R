@@ -766,7 +766,6 @@ controls <- read.csv(curl("https://www.nomisweb.co.uk/api/v01/dataset/NM_17_5.da
 
 
 
-
 source("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Code/provider_cleaning_function.R")
 inspection_data <- create_provider_data()%>%
   dplyr::select(URN, Overall.experiences.and.progress.of.children.and.young.people, Inspection.date)%>%
@@ -906,10 +905,13 @@ LA_panel_data <- LA_panel_data %>%
                 Local.authority!="DORSET")
 
 
+
+
 LA_panel_data$net_loss <- as.numeric(LA_panel_data$net_gain)*-1
 LA_panel_data$occupancy_rate_fte <- 100-as.numeric(LA_panel_data$vacancy_rate_fte)
 LA_panel_data$median_house_price_detached <- as.numeric(LA_panel_data$median_house_price_detached)/10000
-LA_panel_data$children_in_care <- as.numeric(LA_panel_data$children_in_care)
+LA_panel_data$children_in_care <- as.numeric((as.numeric(LA_panel_data$out_of_area)/as.numeric(LA_panel_data$out_of_area_per)*100))
+
 LA_panel_data$net_loss_same_year <- as.numeric(scale(as.numeric(LA_panel_data$net_loss)))
 LA_panel_data$All_homes <- LA_panel_data$Homes_Local_Authority+
   LA_panel_data$Homes_LA_owned_company+
@@ -1098,7 +1100,18 @@ mlm <- df %>%
   dplyr::distinct(URN, .keep_all = T)
 
 
+res_care_n <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>% 
+  dplyr::filter(subcategory=="Placement", category=="child characteristic at 31st March", 
+                variable=="Secure units children's homes and semi-independent living accommodation"|variable=="Secure homes and children's homes")%>%
+  dplyr::mutate(children_in_care = as.numeric(number))%>%
+  dplyr::rename(Local.authority = LA_Name)%>%
+  dplyr::group_by(Local.authority)%>%
+  dplyr::summarise(children_in_care = mean(children_in_care, na.rm=T))%>%
+  dplyr::ungroup()
 
+mlm <- mlm %>%
+  dplyr::select(-children_in_care)%>%
+  dplyr::left_join(., res_care_n)
 
 mlm$net_loss <- as.numeric(mlm$net_loss)
 mlm$median_wage <- as.numeric(mlm$median_wage)
@@ -1828,12 +1841,18 @@ LA_panel_data <- LA_panel_data %>%
 
 
 # Prepare the data: calculate children_in_care and the ratio, then filter for 2023
-LA_2023 <- as.data.frame(LA_panel_data) %>%
+LA_2023 <- as.data.frame(LA_panel_data)%>%
+  mutate(Local.authority = as.character(Local.authority))%>%
+  filter(year == 2023) %>%
+  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>% 
+                     dplyr::filter(variable=="Secure homes and children's homes", category=="child characteristic at 31st March", year==2023)%>%
+                     dplyr::select(LA_Name, number)%>%
+                     dplyr::rename(Local.authority= LA_Name)
+  )%>%
   mutate(
-    children_in_care = as.numeric(out_of_area) / as.numeric(out_of_area_per) * 100,
+    children_in_care = as.numeric(number),
     ratio = children_in_care / all_places
-  ) %>%
-  filter(year == 2023)
+  ) 
 
 # # Identify the local authorities with the highest and lowest ratios
 # max_ratio_LA <- LA_2023 %>% filter(ratio == max(ratio, na.rm = TRUE))
@@ -1881,10 +1900,10 @@ a <- ggplot(LA_2023, aes(x = children_in_care, y = all_places)) +
   # Add text labels for outliers only
   geom_text_repel(data = filter(LA_2023, outlier),
                   aes(label = Local.authority),
-                  size = 3.5,
+                  size = 2.5,
                   fontface = "bold",
                   color = "black",
-                  box.padding = 0.35,
+                  box.padding = 0.15,
                   point.padding = 0.5,
                   segment.color = "grey50") +
   # Customize color scale for points (outliers vs. others)
@@ -1992,7 +2011,6 @@ gt_table%>%
 #### Table 2####
 
 
-####REMOVE CHAINSIZE YOU MELT?####
 # Install necessary packages if not installed
 if (!require(stargazer)) install.packages("stargazer", dependencies = TRUE)
 if (!require(htmltools)) install.packages("htmltools", dependencies = TRUE)
@@ -2013,21 +2031,21 @@ library(estimatr)  # For clustering standard errors
 
 # Fit models with clustered standard errors
 reg1 <- lm_robust(overall.average ~ Sector_merge + number_of_inspections + Local.authority, data = mlm, clusters = Organisation)
-reg2 <- lm_robust(overall.average ~ Sector_merge + Places + number_of_inspections + age_years + factor(left)+chain_size_0s + Local.authority, data = mlm, clusters = Organisation)
+reg2 <- lm_robust(overall.average ~ Sector_merge + Places + number_of_inspections + age_years + factor(left) + Local.authority, data = mlm, clusters = Organisation)
 reg3 <- lm_robust(overall.average ~ profit_margin_average + number_of_inspections + Local.authority, data = mlm, clusters = Organisation)
-reg4 <- lm_robust(overall.average ~ profit_margin_average + Places + number_of_inspections +factor(left)+ age_years + chain_size_0s + Local.authority, data = mlm, clusters = Organisation)
+reg4 <- lm_robust(overall.average ~ profit_margin_average + Places + number_of_inspections +factor(left)+ age_years  + Local.authority, data = mlm, clusters = Organisation)
 reg5 <- lm_robust(ever_outstanding ~ Sector_merge + number_of_inspections + Local.authority, data = mlm, clusters = Organisation)
-reg6 <- lm_robust(ever_outstanding ~ Sector_merge + Places + number_of_inspections + age_years +factor(left)+ chain_size_0s + Local.authority, data = mlm, clusters = Organisation)
+reg6 <- lm_robust(ever_outstanding ~ Sector_merge + Places + number_of_inspections + age_years +factor(left) + Local.authority, data = mlm, clusters = Organisation)
 reg7 <- lm_robust(ever_outstanding ~ profit_margin_average + number_of_inspections + Local.authority, data = mlm, clusters = Organisation)
-reg8 <- lm_robust(ever_outstanding ~ profit_margin_average + Places + number_of_inspections + age_years +factor(left)+ chain_size_0s + Local.authority, data = mlm, clusters = Organisation)
+reg8 <- lm_robust(ever_outstanding ~ profit_margin_average + Places + number_of_inspections + age_years +factor(left) + Local.authority, data = mlm, clusters = Organisation)
 reg11 <- lm_robust(reqs_per ~ Sector_merge + number_of_inspections + Local.authority, data = mlm, clusters = Organisation)
-reg21 <- lm_robust(reqs_per ~ Sector_merge + Places + number_of_inspections + age_years + factor(left)+chain_size_0s + Local.authority, data = mlm, clusters = Organisation)
+reg21 <- lm_robust(reqs_per ~ Sector_merge + Places + number_of_inspections + age_years + factor(left) + Local.authority, data = mlm, clusters = Organisation)
 reg31 <- lm_robust(reqs_per ~ profit_margin_average + number_of_inspections + Local.authority, data = mlm, clusters = Organisation)
-reg41 <- lm_robust(reqs_per ~ profit_margin_average + Places + number_of_inspections +factor(left)+ age_years + chain_size_0s + Local.authority, data = mlm, clusters = Organisation)
+reg41 <- lm_robust(reqs_per ~ profit_margin_average + Places + number_of_inspections +factor(left)+ age_years  + Local.authority, data = mlm, clusters = Organisation)
 reg51 <- lm_robust(recs_per ~ Sector_merge + number_of_inspections + Local.authority, data = mlm, clusters = Organisation)
-reg61 <- lm_robust(recs_per ~ Sector_merge + Places + number_of_inspections + age_years +factor(left)+ chain_size_0s + Local.authority, data = mlm, clusters = Organisation)
+reg61 <- lm_robust(recs_per ~ Sector_merge + Places + number_of_inspections + age_years +factor(left) + Local.authority, data = mlm, clusters = Organisation)
 reg71 <- lm_robust(recs_per ~ profit_margin_average + number_of_inspections + Local.authority, data = mlm, clusters = Organisation)
-reg81 <- lm_robust(recs_per ~ profit_margin_average + Places + number_of_inspections + age_years +factor(left)+ chain_size_0s + Local.authority, data = mlm, clusters = Organisation)
+reg81 <- lm_robust(recs_per ~ profit_margin_average + Places + number_of_inspections + age_years +factor(left) + Local.authority, data = mlm, clusters = Organisation)
 
 library(modelsummary)
 library(kableExtra)
@@ -2065,7 +2083,7 @@ table_html <- modelsummary(
   output = "gt"
 ) %>%
   tab_header(
-    title = "Regression Models of Inspection Ratings and Outstanding Status"
+    title = "Regression Models of Regulatory Outcomes"
   ) %>%
   tab_spanner(
     label = "Average Inspection Rating",
@@ -2462,27 +2480,32 @@ regression_table %>%
 
 #I had to remove chain size because you can't set it to a reasonable overlap between individual and investment owned.#
 
+fig3data <- mlm %>%
+  tidyr::drop_na(Sector_merge, net_loss, average_house_price_per_sq_m_s, Local.authority) %>%
+  dplyr::select(Sector_merge, net_loss,average_house_price_per_sq_m, Local.authority) %>%
+  dplyr::mutate(Sector_merge = factor(Sector_merge),
+                Local.authority = factor(Local.authority))
 
 ### Fit the Hierarchical Multinomial Model ###
 model_multilevel_house_price <- brm(
-  formula = Sector_merge ~ age_years*average_house_price_per_sq_m+
-     (1 | Local.authority),
-  data = mlm,
+  formula = Sector_merge ~ average_house_price_per_sq_m^2 +
+    (1 | Local.authority),
+  data = fig3data,
   family = categorical(),
   cores = 4,
   iter = 2000
 )
-
 
 ### Fit the Hierarchical Multinomial Model ###
 model_multilevel_need <- brm(
-  formula = Sector_merge ~ age_years*net_loss+
+  formula = Sector_merge ~ net_loss^2 +
     (1 | Local.authority),
-  data = mlm,
+  data = fig3data,
   family = categorical(),
   cores = 4,
   iter = 2000
 )
+
 
 summary(model_multilevel_house_price)
 
@@ -2497,10 +2520,9 @@ library(scales)
 library(ggtext)
 
 # Create a prediction function for continuous variables
-predict_sectors <- function(model, age_range, var_name, var_range) {
+predict_sectors <- function(model, var_name, var_range) {
   # Set up grid for predictions
   newdata <- expand_grid(
-    age_years = age_range,
     Local.authority = "average" # For population-level predictions
   )
   
@@ -2539,7 +2561,6 @@ predict_sectors <- function(model, age_range, var_name, var_range) {
 }
 
 # Create ranges for predictions
-age_range <- seq(0, 40, by = 1)
 house_price_range <- seq(1000, 19000, by = 1000)
 need_range <- seq(-230, 50, by = 10)
 
@@ -2548,7 +2569,6 @@ house_price_preds_list <- list()
 for(hp in house_price_range) {
   temp_preds <- predict_sectors(
     model_multilevel_house_price, 
-    age_range, 
     "average_house_price_per_sq_m", 
     hp
   )
@@ -2562,7 +2582,6 @@ need_preds_list <- list()
 for(nd in need_range) {
   temp_preds <- predict_sectors(
     model_multilevel_need, 
-    age_range, 
     "net_loss", 
     nd
   )
@@ -2576,7 +2595,6 @@ house_price_preds <- house_price_preds %>%
   mutate(
     investment_owned = sector == "Investment Owned"
   )
-
 need_preds <- need_preds %>%
   mutate(
     investment_owned = sector == "Investment Owned"
@@ -2585,122 +2603,122 @@ need_preds <- need_preds %>%
 # Extract just the investment owned predictions
 investment_house_price <- house_price_preds %>%
   filter(sector == "Investment Owned")
-
 investment_need <- need_preds %>%
   filter(sector == "Investment Owned")
 
-# Color scheme
-sector_colors <- c(
-  "Local Authority" = "#022a5e",
-  "Third Sector" = "#3B9AB2",
-  "Individual Owned" = "#E1AF00",
-  "Corporate Owned" = "#EB783A",
-  "Investment Owned" = "#F21A00"
-)
 
-# Figure 1: Investment owned probability by house price and age
-fig1 <- ggplot(investment_house_price, 
-               aes(x = age_years, y = probability, color = factor(house_price_value))) +
-  geom_line(size = 1.2) +
-  scale_color_viridis_d(
-    name = "House Price\n(£ per sq. m)",
-    option = "plasma",
-    end = 0.9,
-    direction = -1
-  ) +
-  scale_y_continuous(
-    labels = percent_format(),
-    limits = c(0, 1)
-  ) +
-  labs(
-    title = "Probability of Investment Ownership by House Price",
-    x = "Age of Children's Home (years)",
-    y = "Probability of Investment Ownership"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    panel.grid.minor = element_blank(),
-    legend.position = "right",
-    axis.title = element_text(face = "bold")
-  )
-
-# Figure 2: Investment owned probability by need and age
-fig2 <- ggplot(investment_need, 
-               aes(x = age_years, y = probability, color = factor(need_value))) +
-  geom_line(size = 1.2) +
-  scale_color_viridis_d(
-    name = "Area Need\n(Net Loss)",
-    option = "viridis",
-    end = 0.9
-  ) +
-  scale_y_continuous(
-    labels = percent_format(),
-    limits = c(0, 1)
-  ) +
-  labs(
-    title = "Probability of Investment Ownership by Area Need",
-    x = "Age of Children's Home (years)",
-    y = "Probability of Investment Ownership"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    panel.grid.minor = element_blank(),
-    legend.position = "right",
-    axis.title = element_text(face = "bold")
-  )
-
-# Figure 3: Heatmap of investment owned probability by house price and age
-fig3 <- ggplot(investment_house_price, 
-               aes(x = age_years, y = house_price_value, fill = probability)) +
-  geom_tile(interpolate = TRUE) +
-  scale_fill_viridis_c(
-    name = "Probability of\nInvestment Ownership",
-    option = "magma",
-    labels = percent_format()
-  ) +
-  scale_y_continuous(
-    name = "House Price (£ per sq. m)",
-    labels = scales::comma
-  ) +
-  labs(
-    title = "Investment Owned Children's Homes Concentration",
-    subtitle = "By house price and age of establishment",
-    x = "Age of Children's Home (years)"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    plot.subtitle = element_text(size = 12, color = "gray40"),
-    panel.grid = element_blank(),
-    legend.position = "right",
-    axis.title = element_text(face = "bold")
-  )
-
-# Figure 4: Heatmap of investment owned probability by need and age
-fig4 <- ggplot(investment_need, 
-               aes(x = age_years, y = need_value, fill = probability)) +
-  geom_tile(interpolate = TRUE) +
-  scale_fill_viridis_c(
-    name = "Probability of\nInvestment Ownership",
-    option = "viridis",
-    labels = percent_format()
-  ) +
-  labs(
-    title = "Investment Owned Children's Homes Concentration",
-    subtitle = "By area need and age of establishment",
-    x = "Age of Children's Home (years)",
-    y = "Area Need (Net Loss)"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    plot.subtitle = element_text(size = 12, color = "gray40"),
-    panel.grid = element_blank(),
-    legend.position = "right",
-    axis.title = element_text(face = "bold")
-  )
+# # Color scheme
+# sector_colors <- c(
+#   "Local Authority" = "#022a5e",
+#   "Third Sector" = "#3B9AB2",
+#   "Individual Owned" = "#E1AF00",
+#   "Corporate Owned" = "#EB783A",
+#   "Investment Owned" = "#F21A00"
+# )
+# 
+# # Figure 1: Investment owned probability by house price and age
+# fig1 <- ggplot(investment_house_price, 
+#                aes(x = age_years, y = probability, color = factor(house_price_value))) +
+#   geom_line(size = 1.2) +
+#   scale_color_viridis_d(
+#     name = "House Price\n(£ per sq. m)",
+#     option = "plasma",
+#     end = 0.9,
+#     direction = -1
+#   ) +
+#   scale_y_continuous(
+#     labels = percent_format(),
+#     limits = c(0, 1)
+#   ) +
+#   labs(
+#     title = "Probability of Investment Ownership by House Price",
+#     x = "Age of Children's Home (years)",
+#     y = "Probability of Investment Ownership"
+#   ) +
+#   theme_minimal(base_size = 14) +
+#   theme(
+#     plot.title = element_text(face = "bold", size = 16),
+#     panel.grid.minor = element_blank(),
+#     legend.position = "right",
+#     axis.title = element_text(face = "bold")
+#   )
+# 
+# # Figure 2: Investment owned probability by need and age
+# fig2 <- ggplot(investment_need, 
+#                aes(x = age_years, y = probability, color = factor(need_value))) +
+#   geom_line(size = 1.2) +
+#   scale_color_viridis_d(
+#     name = "Area Need\n(Net Loss)",
+#     option = "viridis",
+#     end = 0.9
+#   ) +
+#   scale_y_continuous(
+#     labels = percent_format(),
+#     limits = c(0, 1)
+#   ) +
+#   labs(
+#     title = "Probability of Investment Ownership by Area Need",
+#     x = "Age of Children's Home (years)",
+#     y = "Probability of Investment Ownership"
+#   ) +
+#   theme_minimal(base_size = 14) +
+#   theme(
+#     plot.title = element_text(face = "bold", size = 16),
+#     panel.grid.minor = element_blank(),
+#     legend.position = "right",
+#     axis.title = element_text(face = "bold")
+#   )
+# 
+# # Figure 3: Heatmap of investment owned probability by house price and age
+# fig3 <- ggplot(investment_house_price, 
+#                aes(x = age_years, y = house_price_value, fill = probability)) +
+#   geom_tile(interpolate = TRUE) +
+#   scale_fill_viridis_c(
+#     name = "Probability of\nInvestment Ownership",
+#     option = "magma",
+#     labels = percent_format()
+#   ) +
+#   scale_y_continuous(
+#     name = "House Price (£ per sq. m)",
+#     labels = scales::comma
+#   ) +
+#   labs(
+#     title = "Investment Owned Children's Homes Concentration",
+#     subtitle = "By house price and age of establishment",
+#     x = "Age of Children's Home (years)"
+#   ) +
+#   theme_minimal(base_size = 14) +
+#   theme(
+#     plot.title = element_text(face = "bold", size = 16),
+#     plot.subtitle = element_text(size = 12, color = "gray40"),
+#     panel.grid = element_blank(),
+#     legend.position = "right",
+#     axis.title = element_text(face = "bold")
+#   )
+# 
+# # Figure 4: Heatmap of investment owned probability by need and age
+# fig4 <- ggplot(investment_need, 
+#                aes(x = age_years, y = need_value, fill = probability)) +
+#   geom_tile(interpolate = TRUE) +
+#   scale_fill_viridis_c(
+#     name = "Probability of\nInvestment Ownership",
+#     option = "viridis",
+#     labels = percent_format()
+#   ) +
+#   labs(
+#     title = "Investment Owned Children's Homes Concentration",
+#     subtitle = "By area need and age of establishment",
+#     x = "Age of Children's Home (years)",
+#     y = "Area Need (Net Loss)"
+#   ) +
+#   theme_minimal(base_size = 14) +
+#   theme(
+#     plot.title = element_text(face = "bold", size = 16),
+#     plot.subtitle = element_text(size = 12, color = "gray40"),
+#     panel.grid = element_blank(),
+#     legend.position = "right",
+#     axis.title = element_text(face = "bold")
+#   )
 
 # Figure 5: Newest homes (<=5 years) probability by house price
 newest_homes_house <- investment_house_price %>%
@@ -2765,55 +2783,55 @@ fig6 <- ggplot(newest_homes_need,
     axis.title = element_text(face = "bold")
   )
 
-# Create combined figure for publications
-# Create a summary figure that emphasizes the key findings
-# Calculate contrasts for annotations (low vs high)
-house_price_lowest <- min(house_price_range)
-house_price_highest <- max(house_price_range)
-need_lowest <- min(need_range)
-need_highest <- max(need_range)
-
-# Get probabilities for these extremes
-hp_low_prob <- newest_homes_house$avg_prob[newest_homes_house$house_price_value == house_price_lowest]
-hp_high_prob <- newest_homes_house$avg_prob[newest_homes_house$house_price_value == house_price_highest]
-need_low_prob <- newest_homes_need$avg_prob[newest_homes_need$need_value == need_lowest]
-need_high_prob <- newest_homes_need$avg_prob[newest_homes_need$need_value == need_highest]
-
-# Calculate percentage differences
-hp_pct_diff <- (hp_low_prob / hp_high_prob - 1) * 100
-need_pct_diff <- (need_low_prob / need_high_prob - 1) * 100
+# # Create combined figure for publications
+# # Create a summary figure that emphasizes the key findings
+# # Calculate contrasts for annotations (low vs high)
+# house_price_lowest <- min(house_price_range)
+# house_price_highest <- max(house_price_range)
+# need_lowest <- min(need_range)
+# need_highest <- max(need_range)
+# 
+# # Get probabilities for these extremes
+# hp_low_prob <- newest_homes_house$avg_prob[newest_homes_house$house_price_value == house_price_lowest]
+# hp_high_prob <- newest_homes_house$avg_prob[newest_homes_house$house_price_value == house_price_highest]
+# need_low_prob <- newest_homes_need$avg_prob[newest_homes_need$need_value == need_lowest]
+# need_high_prob <- newest_homes_need$avg_prob[newest_homes_need$need_value == need_highest]
+# 
+# # Calculate percentage differences
+# hp_pct_diff <- (hp_low_prob / hp_high_prob - 1) * 100
+# need_pct_diff <- (need_low_prob / need_high_prob - 1) * 100
 
 # Main publication-ready figure
 main_fig_title <- "**Investment-owned children's homes: Concentration in lower-priced areas with lower need**"
 
 
 
-# Alternative version with heatmaps
-fig_heatmaps <- (fig3 / fig4) + 
-  plot_annotation(
-    title = main_fig_title,
-    subtitle = main_fig_subtitle,
-    caption = "Data source: Multilevel multinomial regression model of children's home ownership patterns",
-    theme = theme(
-      plot.title = element_markdown(size = 18, face = "bold"),
-      plot.subtitle = element_text(size = 14, color = "gray40"),
-      plot.caption = element_text(size = 10, color = "gray40", hjust = 0)
-    )
-  )
-
-# Create a list of all figures for export if needed
-figure_list <- list(
-  fig1 = fig1,
-  fig2 = fig2,
-  fig3 = fig3,
-  fig4 = fig4,
-  fig5 = fig5,
-  fig6 = fig6,
-  fig_publication = fig_publication,
-  fig_heatmaps = fig_heatmaps
-)
-
-
+# # Alternative version with heatmaps
+# fig_heatmaps <- (fig3 / fig4) + 
+#   plot_annotation(
+#     title = main_fig_title,
+#     subtitle = main_fig_subtitle,
+#     caption = "Data source: Multilevel multinomial regression model of children's home ownership patterns",
+#     theme = theme(
+#       plot.title = element_markdown(size = 18, face = "bold"),
+#       plot.subtitle = element_text(size = 14, color = "gray40"),
+#       plot.caption = element_text(size = 10, color = "gray40", hjust = 0)
+#     )
+#   )
+# 
+# # Create a list of all figures for export if needed
+# figure_list <- list(
+#   fig1 = fig1,
+#   fig2 = fig2,
+#   fig3 = fig3,
+#   fig4 = fig4,
+#   fig5 = fig5,
+#   fig6 = fig6,
+#   fig_publication = fig_publication,
+#   fig_heatmaps = fig_heatmaps
+# )
+# 
+# 
 
 
 
@@ -2952,7 +2970,7 @@ fig_publication <- (fig5 + plot2) / (fig6 + plot1) +
   )
 
 
-ggsave(plot=fig_publication, filename="Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/figures/figure_3_attempt.png", width=16.5, height=10, dpi=600)
+ggsave(plot=fig_publication, filename="Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/figures/figure_3_attempt2.png", width=16.5, height=10, dpi=600)
 
 
 
@@ -2960,15 +2978,6 @@ ggsave(plot=fig_publication, filename="Library/CloudStorage/OneDrive-Nexus365/Do
 ####APPENDIX####
 
 ####Simple MLM####
-model_multilevel <- brm(
-  formula = Sector_merge ~ needQuint + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-    residential_expenditure_s + median_house_price_detached_s + median_wage_s +
-    Region.Country.name + (1 | Local.authority),
-  data = brmdata_multinom,
-  family = categorical(),
-  cores = 4,
-  iter = 2000
-)
 
 mlm$sector_third <- ifelse(mlm$Sector_merge=="Local Authority", 0,
                            ifelse(mlm$Sector_merge=="Third sector", 1, NA
@@ -3025,7 +3034,7 @@ outcomes <- c("sector_third", "sector_indiv", "sector_corp",
 # Define the potential control variables (to be varied)
 controls <- c("Places", "age_years", "closed", "chain_size_0s", 
               "children_in_care_s", "residential_expenditure_s", 
-              "median_house_price_detached_s", "median_wage_s", 
+              "average_house_price_per_sq_m_s", "median_wage_s", 
               "Region.Country.name")
 
 # A list to collect results from all specifications
@@ -4064,6 +4073,113 @@ table_html <- modelsummary(
 # Save the table as HTML
 table_html %>%
   gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Appendix/Table2_quality_others.html")
+
+####percent of beds in top 5 LAs####
+LA_panel_data$all_places <- LA_panel_data$Places_Individual_owned+
+  
+  LA_panel_data$Places_Corporate_owned+
+  
+  LA_panel_data$Places_Investment_owned+
+  
+  LA_panel_data$Places_Third_sector+
+  
+  LA_panel_data$Places_Local_Authority+
+  
+  LA_panel_data$Places_Unidentified_for_profit+
+  
+  LA_panel_data$Places_LA_owned_company
+
+LA_panel_data %>%
+  dplyr::filter(year == 2023) %>%
+  dplyr::distinct(Local.authority, .keep_all = TRUE) %>%
+  dplyr::filter(all_places > 300) %>%
+  dplyr::summarise(total_all_places = sum(all_places, na.rm = TRUE)) %>%
+  dplyr::pull(total_all_places)
+
+LA_panel_data %>%
+  dplyr::filter(year == 2023) %>%
+  dplyr::distinct(Local.authority, .keep_all = TRUE) %>%
+  dplyr::filter(all_places < 300) %>%
+  dplyr::summarise(total_all_places = sum(all_places, na.rm = TRUE)) %>%
+  dplyr::pull(total_all_places)
+
+2308/10127
+
+LA_panel_data %>%
+  dplyr::filter(year == 2023) %>%
+  dplyr::distinct(Local.authority, .keep_all = TRUE) %>%
+  dplyr::filter(all_places > 300) %>%
+  dplyr::summarise(children_in_care = sum(children_in_care, na.rm = TRUE)) %>%
+  dplyr::pull(children_in_care)
+
+LA_panel_data %>%
+  dplyr::filter(year == 2023) %>%
+  dplyr::distinct(Local.authority, .keep_all = TRUE) %>%
+  dplyr::filter(all_places < 300) %>%
+  dplyr::summarise(children_in_care = sum(children_in_care, na.rm = TRUE)) %>%
+  dplyr::pull(children_in_care)
+
+605/6042
+
+
+
+
+as.data.frame(LA_panel_data)%>%
+  mutate(Local.authority = as.character(Local.authority))%>%
+  filter(year == 2023) %>%
+  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Final_Data/outputs/dashboard_data.csv"))%>% 
+                     dplyr::filter(variable=="Secure homes and children's homes", category=="child characteristic at 31st March", year==2023)%>%
+                     dplyr::select(LA_Name, number)%>%
+                     dplyr::rename(Local.authority= LA_Name)
+  )%>%
+  mutate(
+    children_in_care = as.numeric(number),
+    ratio = children_in_care / all_places
+  ) %>%
+  dplyr::filter(ratio>1)
+
+
+####changing the comparison to invest firm####
+
+mlm$sector_third <- ifelse(mlm$Sector_merge=="Investment owned", 0,
+                           ifelse(mlm$Sector_merge=="Third sector", 1, NA
+                           ))
+
+mlm$sector_la <- ifelse(mlm$Sector_merge=="Local Authority", 1,
+                            ifelse(mlm$Sector_merge=="Investment owned", 0, NA
+                            ))
+
+mlm$sector_corp <- ifelse(mlm$Sector_merge=="Investment owned", 0,
+                          ifelse(mlm$Sector_merge=="Corporate owned", 1, NA
+                          ))
+
+mlm$sector_indiv <- ifelse(mlm$Sector_merge=="Investment owned", 0,
+                           ifelse(mlm$Sector_merge=="Individual owned", 1, NA
+                           ))
+
+
+reg1 <- lmerTest::lmer(sector_third ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
+                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
+                         Region.Country.name + (1 | Local.authority),data = mlm )
+reg2 <- lmerTest::lmer(sector_indiv ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
+                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
+                         Region.Country.name + (1 | Local.authority),data = mlm )
+reg3 <- lmerTest::lmer(sector_corp ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
+                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
+                         Region.Country.name + (1 | Local.authority),data = mlm )
+reg4 <- lmerTest::lmer(sector_la ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
+                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
+                         Region.Country.name + (1 | Local.authority),data = mlm )
+reg5 <- lmerTest::lmer(overall.average ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
+                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
+                         Region.Country.name + (1 | Local.authority), data = mlm)
+reg6 <- lmerTest::lmer(profit_margin_average ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
+                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
+                         Region.Country.name + (1 | Local.authority), data = mlm)
+
+
+modelsummary(list(reg1, reg2, reg3, reg4, reg5, reg6))
+
 
 
 ####to delete no evidence#####
