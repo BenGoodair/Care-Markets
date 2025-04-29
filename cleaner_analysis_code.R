@@ -723,6 +723,48 @@ workforce <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub
 data <- data %>%
   dplyr::full_join(., workforce)
 
+pov <- read.csv(curl("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/csww_indicators_2017_to_2024.csv"))%>%
+  dplyr::filter(geographic_level=="Local authority")%>%
+  dplyr::select(time_period, la_name, vacancy_rate_fte)%>%
+  dplyr::rename(year=time_period,
+                Local.authority = la_name)%>%
+  dplyr::mutate(vacancy_rate_fte = as.numeric(vacancy_rate_fte))%>%
+  dplyr::bind_rows(., read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/SFR07_2016_UD.csv")%>%
+                     dplyr::select(LA_name, A3_FTE_VacancyRate_2015)%>%
+                     dplyr::mutate(year=2015)%>%
+                     dplyr::rename(Local.authority= LA_name,
+                                   vacancy_rate_fte = A3_FTE_VacancyRate_2015)%>%
+                     dplyr::filter(Local.authority!="")%>%
+                     dplyr::mutate(vacancy_rate_fte = as.numeric(vacancy_rate_fte)))%>%
+  dplyr::bind_rows(., read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/SFR07_2016_UD.csv")%>%
+                     dplyr::select(LA_name, A3_FTE_VacancyRate_2015)%>%
+                     dplyr::mutate(year=2016)%>%
+                     dplyr::rename(Local.authority= LA_name,
+                                   vacancy_rate_fte = A3_FTE_VacancyRate_2015)%>%
+                     dplyr::filter(Local.authority!="")%>%
+                     dplyr::mutate(vacancy_rate_fte = as.numeric(vacancy_rate_fte)))%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())
+
+
+data <- data %>%
+  dplyr::full_join(., workforce)
+
 controls <- read.csv(curl("https://www.nomisweb.co.uk/api/v01/dataset/NM_17_5.data.csv?geography=1774190593...1774190597,1774190637,1774190646,1774190675...1774190678,1774190691,1774190598...1774190601,1774190638,1774190639,1774190652,1774190653,1774190656...1774190670,1774190734,1774190602...1774190606,1774190654,1774190671...1774190674,1774190686...1774190690,1774190607...1774190610,1774190650,1774190651,1774190726,1774190735,1774190736,1774190738,1774190611...1774190613,1774190640,1774190679...1774190685,1774190740,1774190743,1774190745,1774190621...1774190624,1774190644,1774190645,1774190725,1774190729,1774190732,1774190737,1774190741,1774190692...1774190724,1774190625...1774190636,1774190649,1774190728,1774190731,1774190733,1774190739,1774190742,1774190744,1774190614...1774190620,1774190641...1774190643,1774190647,1774190648,1774190655,1774190727,1774190730,1774190746...1774190799&date=latestMINUS40,latestMINUS36,latestMINUS32,latestMINUS28,latestMINUS24,latestMINUS20,latestMINUS16,latestMINUS12,latestMINUS8,latestMINUS4,latest&variable=557,84,2011&measures=20599,21001,21002,21003"))%>%
   dplyr::filter(MEASURES_NAME == "Variable")%>%
   dplyr::select(DATE, GEOGRAPHY_NAME, VARIABLE_NAME, OBS_VALUE)%>%
