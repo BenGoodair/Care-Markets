@@ -723,27 +723,26 @@ workforce <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub
 data <- data %>%
   dplyr::full_join(., workforce)
 
-pov <- read.csv(curl("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/csww_indicators_2017_to_2024.csv"))%>%
-  dplyr::filter(geographic_level=="Local authority")%>%
-  dplyr::select(time_period, la_name, vacancy_rate_fte)%>%
-  dplyr::rename(year=time_period,
-                Local.authority = la_name)%>%
-  dplyr::mutate(vacancy_rate_fte = as.numeric(vacancy_rate_fte))%>%
-  dplyr::bind_rows(., read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/SFR07_2016_UD.csv")%>%
-                     dplyr::select(LA_name, A3_FTE_VacancyRate_2015)%>%
-                     dplyr::mutate(year=2015)%>%
-                     dplyr::rename(Local.authority= LA_name,
-                                   vacancy_rate_fte = A3_FTE_VacancyRate_2015)%>%
-                     dplyr::filter(Local.authority!="")%>%
-                     dplyr::mutate(vacancy_rate_fte = as.numeric(vacancy_rate_fte)))%>%
-  dplyr::bind_rows(., read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/SFR07_2016_UD.csv")%>%
-                     dplyr::select(LA_name, A3_FTE_VacancyRate_2015)%>%
-                     dplyr::mutate(year=2016)%>%
-                     dplyr::rename(Local.authority= LA_name,
-                                   vacancy_rate_fte = A3_FTE_VacancyRate_2015)%>%
-                     dplyr::filter(Local.authority!="")%>%
-                     dplyr::mutate(vacancy_rate_fte = as.numeric(vacancy_rate_fte)))%>%
-  dplyr::mutate(Local.authority = Local.authority %>%
+
+poplookup <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/two_child_limit/refs/heads/main/Data/Raw/Lower_Tier_Local_Authority_to_Upper_Tier_Local_Authority_(December_2022)_Lookup_in_England_and_Wales.csv"))%>%
+  dplyr::mutate(Location = LTLA22NM %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim(),
+                Local.authority = UTLA22NM %>%
                   gsub('&', 'and', .) %>%
                   gsub('[[:punct:] ]+', ' ', .) %>%
                   gsub('[0-9]', '', .)%>%
@@ -761,9 +760,82 @@ pov <- read.csv(curl("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/
                   gsub("N E SOM", "NORTH EAST SOM", .)%>%
                   str_trim())
 
+pov <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/children_in_rel_pov.csv"), skip=12)%>%
+  dplyr::select(-Year)%>%
+  dplyr::rename(Local.authority=X)%>%
+  pivot_longer(      cols = starts_with("X"),
+                     names_to = "year",
+                     values_to = "child_rel_pov_n")%>%
+  mutate(year = as.numeric(str_extract(year, "\\d{4}")),
+         Local.authority = Local.authority %>%
+           gsub('&', 'and', .) %>%
+           gsub('[[:punct:] ]+', ' ', .) %>%
+           gsub('[0-9]', '', .)%>%
+           toupper() %>%
+           gsub("CITY OF", "",.)%>%
+           gsub("UA", "",.)%>%
+           gsub("COUNTY OF", "",.)%>%
+           gsub("ROYAL BOROUGH OF", "",.)%>%
+           gsub("LEICESTER CITY", "LEICESTER",.)%>%
+           gsub("UA", "",.)%>%
+           gsub("DARWIN", "DARWEN", .)%>%
+           gsub("COUNTY DURHAM", "DURHAM", .)%>%
+           gsub("AND DARWEN", "WITH DARWEN", .)%>%
+           gsub("NE SOM", "NORTH EAST SOM", .)%>%
+           gsub("N E SOM", "NORTH EAST SOM", .)%>%
+           str_trim())%>%
+  dplyr::left_join(read.csv(curl("https://raw.githubusercontent.com/BenGoodair/two_child_limit/refs/heads/main/Data/Raw/myebtablesenglandwales20112023.csv"), skip=1)%>%
+                     dplyr::filter(age<19)%>%
+                     tidyr::pivot_longer(cols = c("population_2011",
+                                                  "population_2012",
+                                                  "population_2013",
+                                                  "population_2014",
+                                                  "population_2015",
+                                                  "population_2016",
+                                                  "population_2017",
+                                                  "population_2018",
+                                                  "population_2019",
+                                                  "population_2020",
+                                                  "population_2021",
+                                                  "population_2022",
+                                                  "population_2023"), names_to = "year", values_to = "under_19_population")%>%
+                     dplyr::select(-age, -sex, -ladcode23, -country)%>%
+                     dplyr::mutate(under_19_population = gsub(",", "", under_19_population))%>%
+                     dplyr::group_by(year, laname23)%>%
+                     dplyr::summarise(under_19_population = sum(as.numeric(under_19_population), na.rm=T))%>%
+                     dplyr::ungroup()%>%
+                     dplyr::mutate(year = as.numeric(gsub("population_", "", year)),
+                                   Location = laname23 %>%
+                                     gsub('&', 'and', .) %>%
+                                     gsub('[[:punct:] ]+', ' ', .) %>%
+                                     gsub('[0-9]', '', .)%>%
+                                     toupper() %>%
+                                     gsub("CITY OF", "",.)%>%
+                                     gsub("UA", "",.)%>%
+                                     gsub("COUNTY OF", "",.)%>%
+                                     gsub("ROYAL BOROUGH OF", "",.)%>%
+                                     gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                                     gsub("UA", "",.)%>%
+                                     gsub("DARWIN", "DARWEN", .)%>%
+                                     gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                                     gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                                     gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                                     gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                                     str_trim())%>%
+                     dplyr::full_join(., poplookup, by="Location")%>%
+                     dplyr::select(Local.authority, year, under_19_population)%>%
+                     dplyr::group_by(Local.authority, year)%>%
+                     dplyr::summarise(under_19_population = sum(under_19_population, na.rm=T))%>%
+                     dplyr::ungroup()
+)%>%
+  dplyr::mutate(rel_pov_per = as.numeric(child_rel_pov_n)/ under_19_population *100)
+
+
+
+
 
 data <- data %>%
-  dplyr::full_join(., workforce)
+  dplyr::full_join(., pov)
 
 controls <- read.csv(curl("https://www.nomisweb.co.uk/api/v01/dataset/NM_17_5.data.csv?geography=1774190593...1774190597,1774190637,1774190646,1774190675...1774190678,1774190691,1774190598...1774190601,1774190638,1774190639,1774190652,1774190653,1774190656...1774190670,1774190734,1774190602...1774190606,1774190654,1774190671...1774190674,1774190686...1774190690,1774190607...1774190610,1774190650,1774190651,1774190726,1774190735,1774190736,1774190738,1774190611...1774190613,1774190640,1774190679...1774190685,1774190740,1774190743,1774190745,1774190621...1774190624,1774190644,1774190645,1774190725,1774190729,1774190732,1774190737,1774190741,1774190692...1774190724,1774190625...1774190636,1774190649,1774190728,1774190731,1774190733,1774190739,1774190742,1774190744,1774190614...1774190620,1774190641...1774190643,1774190647,1774190648,1774190655,1774190727,1774190730,1774190746...1774190799&date=latestMINUS40,latestMINUS36,latestMINUS32,latestMINUS28,latestMINUS24,latestMINUS20,latestMINUS16,latestMINUS12,latestMINUS8,latestMINUS4,latest&variable=557,84,2011&measures=20599,21001,21002,21003"))%>%
   dplyr::filter(MEASURES_NAME == "Variable")%>%
@@ -927,6 +999,11 @@ LA_panel_data <- LA_panel_data %>%
 
 LA_panel_data <- LA_panel_data %>%
   dplyr::full_join(., workforce,
+                   by=c("Local.authority", "year"))%>%
+  dplyr::filter(Local.authority!="LONDON")
+
+LA_panel_data <- LA_panel_data %>%
+  dplyr::full_join(., pov,
                    by=c("Local.authority", "year"))%>%
   dplyr::filter(Local.authority!="LONDON")
 
@@ -1121,7 +1198,7 @@ mlm <- df %>%
     by = "Company.name"
   )%>%
   dplyr::left_join(., LA_panel_data %>%
-                     dplyr::select(Local.authority,net_loss, claimant_count_rate,average_house_price_per_sq_m, Unemployment.rate...aged.16.64., occupancy_rate_fte, X..of.white...aged.16., median_house_price_detached, median_wage, residential_expenditure, out_of_area_per, out_of_area, Region.Country.name)%>%
+                     dplyr::select(Local.authority,net_loss, claimant_count_rate,average_house_price_per_sq_m,rel_pov_per, Unemployment.rate...aged.16.64., occupancy_rate_fte, X..of.white...aged.16., median_house_price_detached, median_wage, residential_expenditure, out_of_area_per, out_of_area, Region.Country.name)%>%
                      dplyr::mutate(children_in_care = as.numeric((as.numeric(out_of_area)/as.numeric(out_of_area_per)*100)))%>%
                      dplyr::group_by(Local.authority, Region.Country.name)%>%
                      dplyr::summarise(net_loss = mean(as.numeric(net_loss), na.rm=T),
@@ -1133,7 +1210,8 @@ mlm <- df %>%
                                       Unemployment.rate...aged.16.64. = mean(as.numeric(Unemployment.rate...aged.16.64.), na.rm=T),
                                       occupancy_rate_fte = mean(as.numeric(occupancy_rate_fte), na.rm=T),
                                       X..of.white...aged.16. = mean(as.numeric(X..of.white...aged.16.), na.rm=T),
-                                      claimant_count_rate = mean(as.numeric(claimant_count_rate), na.rm=T))%>%
+                                      claimant_count_rate = mean(as.numeric(claimant_count_rate), na.rm=T),
+                                      rel_pov_per = mean(as.numeric(rel_pov_per), na.rm=T))%>%
                      dplyr::ungroup(),
                    by="Local.authority")%>%
   dplyr::filter(Sector_merge!="Unidentified for-profit",
@@ -1164,6 +1242,7 @@ mlm$claimant_count_rate <- as.numeric(mlm$claimant_count_rate)
 mlm$X..of.white...aged.16. <- as.numeric(mlm$X..of.white...aged.16.)
 mlm$Unemployment.rate...aged.16.64. <- as.numeric(mlm$Unemployment.rate...aged.16.64.)
 mlm$occupancy_rate_fte <- as.numeric(mlm$occupancy_rate_fte)
+mlm$rel_pov_per <- as.numeric(mlm$rel_pov_per)
 
 
 # Create a scaled version in the data frame
@@ -1177,6 +1256,7 @@ mlm$claimant_count_rate_s <- scale(mlm$claimant_count_rate)
 mlm$X..of.white...aged.16._s <- scale(mlm$X..of.white...aged.16.)
 mlm$Unemployment.rate...aged.16.64._s <- scale(mlm$Unemployment.rate...aged.16.64.)
 mlm$occupancy_rate_fte_s <- scale(mlm$occupancy_rate_fte)
+mlm$rel_pov_per_s <- scale(mlm$rel_pov_per)
 
 mlm$net_loss_s <- as.numeric(mlm$net_loss_s)
 mlm$median_wage_s <- as.numeric(mlm$median_wage_s)
@@ -1188,6 +1268,7 @@ mlm$claimant_count_rate <- as.numeric(mlm$claimant_count_rate)
 mlm$X..of.white...aged.16. <- as.numeric(mlm$X..of.white...aged.16.)
 mlm$Unemployment.rate...aged.16.64. <- as.numeric(mlm$Unemployment.rate...aged.16.64.)
 mlm$occupancy_rate_fte <- as.numeric(mlm$occupancy_rate_fte)
+mlm$rel_pov_per <- as.numeric(mlm$rel_pov_per)
 
 
 
@@ -1350,7 +1431,32 @@ ProviderData <- create_provider_data() %>%
 
 
 mlm <- mlm %>%
-  dplyr::left_join(., ProviderData, by="URN")
+  dplyr::left_join(., ProviderData, by="URN")%>%
+  dplyr::distinct(URN,.keep_all = T)
+
+
+mlm <- mlm %>%
+  dplyr::left_join(.,  read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/priceperareadata.csv", skip=2)%>%
+                     dplyr::mutate(Local.authority =  LA.name %>%
+                                     gsub('&', 'and', .) %>%
+                                     gsub('[[:punct:] ]+', ' ', .) %>%
+                                     gsub('[0-9]', '', .)%>%
+                                     toupper() %>%
+                                     gsub("CITY OF", "",.)%>%
+                                     gsub("UA", "",.)%>%
+                                     gsub("COUNTY OF", "",.)%>%
+                                     gsub("ROYAL BOROUGH OF", "",.)%>%
+                                     gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                                     gsub("UA", "",.)%>%
+                                     gsub("DARWIN", "DARWEN", .)%>%
+                                     gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                                     gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                                     gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                                     gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                                     str_trim())%>%
+                     dplyr::select(Local.authority, X2014)%>%
+                     dplyr::rename(house_price_2014 = X2014)
+  )
 
 ####ANALYSIS####
 
@@ -1995,10 +2101,11 @@ library(gt)
 
 # Create the summary table with renamed variables
 summary_table <- mlm %>%
+  dplyr::distinct(URN, .keep_all = T)%>%
   dplyr::mutate(residential_expenditure = residential_expenditure/1000000)%>%
   mutate(Sector_merge = droplevels(Sector_merge)) %>%
   select(Sector_merge,
-         overall.average, ever_outstanding, reqs_per, recs_per, age, Places, left, profit_margin_average,
+         overall.average, ever_outstanding, reqs_per, age, Places, left, profit_margin_average,
          chain_size) %>%
   tbl_summary(
     by = Sector_merge,              # split table by ownership type
@@ -2012,7 +2119,6 @@ summary_table <- mlm %>%
       overall.average ~ "Quality (average inspection score)",
       ever_outstanding ~ "Quality (ever rated Outstanding)",
       reqs_per ~ "Number of Requirements (per inspection)",
-      recs_per ~ "Number of Recommendations (per inspection)",
       age ~ "Age of Home (months)",
       Places ~ "Places (n)",
       left ~ "Closed",
@@ -2166,352 +2272,378 @@ table_html <- modelsummary(
 table_html %>%
   gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table2_quality.html")
 
-#### Table 3####
+#### Table 3 new ####
 
 
-### Prepare Data for Multinomial BRMS Model ###
+
+
+priors <- c(
+  # Slopes for each category
+  prior(normal(0, 1), class = "b", dpar = "muCorporateowned"),
+  prior(normal(0, 1), class = "b", dpar = "muIndividualowned"),
+  prior(normal(0, 1), class = "b", dpar = "muInvestmentowned"),
+  prior(normal(0, 1), class = "b", dpar = "muThirdsector"),
+  
+  # Intercepts
+  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muCorporateowned"),
+  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muIndividualowned"),
+  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muInvestmentowned"),
+  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muThirdsector"),
+  
+  # Random effect SDs
+  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muCorporateowned"),
+  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muIndividualowned"),
+  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muInvestmentowned"),
+  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muThirdsector")
+)
+
 
 brmdata_multinom <- mlm %>%
-  tidyr::drop_na(Sector_merge, net_loss_s,age, Places, children_in_care_s,
-                 residential_expenditure_s, average_house_price_per_sq_m_s, median_wage_s,
-                 Region.Country.name, Local.authority) %>%
-  dplyr::select(Sector_merge,age_years, net_loss_s,closed, chain_size_0s, Places, children_in_care_s,
-                residential_expenditure_s, average_house_price_per_sq_m_s, median_wage_s,
-                Region.Country.name, Local.authority) %>%
-  dplyr::mutate(Region.Country.name = factor(Region.Country.name),
+  tidyr::drop_na(Sector_merge, net_loss_s, children_in_care_s,  Local.authority) %>%
+  dplyr::select(Sector_merge, net_loss_s, children_in_care_s,
+                Local.authority, closed) %>%
+  dplyr::mutate(
                 Sector_merge = factor(Sector_merge),
-                Local.authority = factor(Local.authority))
+                Local.authority = factor(Local.authority),
+                closed = factor(closed))
+
+brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
+levels(brmdata_multinom$Sector_merge) 
+
+
+
+
+
+
+### Fit the Hierarchical Multinomial Model ###
+model_multilevel <- brm(
+  formula   = Sector_merge ~ net_loss_s  + closed + 
+    children_in_care_s   +
+    (1 | Local.authority),
+  data      = brmdata_multinom,
+  family    = categorical(),
+  prior     = priors,
+  cores     = 4,
+  iter      = 2000
+)
+
+
+
+brmdata_multinom <- mlm %>%
+  tidyr::drop_na(Sector_merge, net_loss_s, children_in_care_s,  Local.authority) %>%
+  dplyr::select(Sector_merge, net_loss_s, children_in_care_s,
+                Local.authority, closed, age_years) %>%
+  dplyr::mutate(
+    Sector_merge = factor(Sector_merge),
+    Local.authority = factor(Local.authority),
+    closed = factor(closed),
+    age_s = scale(age_years))
+
+brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
+levels(brmdata_multinom$Sector_merge) 
+
+
+### Fit the Hierarchical Multinomial Model ###
+model_multilevel_int <- brm(
+  formula   = Sector_merge ~ net_loss_s*age_s  + closed + 
+    children_in_care_s   +
+    (1 | Local.authority),
+  data      = brmdata_multinom,
+  family    = categorical(),
+  prior     = priors,
+  cores     = 4,
+  iter      = 2000
+)
+
+
+
+
+
+
+brmdata_multinom <- mlm %>%
+  tidyr::drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,  Local.authority) %>%
+  dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,
+                Local.authority, closed) %>%
+  dplyr::mutate(
+    Sector_merge = factor(Sector_merge),
+    Local.authority = factor(Local.authority),
+    closed = factor(closed))
 
 brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
 levels(brmdata_multinom$Sector_merge) 
 
 ### Fit the Hierarchical Multinomial Model ###
-model_multilevel <- brm(
-  formula = Sector_merge ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-    residential_expenditure_s + average_house_price_per_sq_m_s + median_wage_s +
-    Region.Country.name + (1 | Local.authority),
-  data = brmdata_multinom,
-  family = categorical(),
-  cores = 4,
-  iter = 2000
+model_multilevel_house <- brm(
+  formula   = Sector_merge ~ average_house_price_per_sq_m_s  + closed + 
+    children_in_care_s   +
+    (1 | Local.authority),
+  data      = brmdata_multinom,
+  family    = categorical(),
+  prior     = priors,
+  cores     = 4,
+  iter      = 2000
 )
+
+brmdata_multinom <- mlm %>%
+  tidyr::drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,  Local.authority) %>%
+  dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,
+                Local.authority, closed, age_years) %>%
+  dplyr::mutate(
+    Sector_merge = factor(Sector_merge),
+    Local.authority = factor(Local.authority),
+    closed = factor(closed),
+    age_s = scale(age_years))
+
+brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
+levels(brmdata_multinom$Sector_merge) 
+
+### Fit the Hierarchical Multinomial Model ###
+model_multilevel_house_int <- brm(
+  formula   = Sector_merge ~ average_house_price_per_sq_m_s*age_s  + closed + 
+    children_in_care_s   +
+    (1 | Local.authority),
+  data      = brmdata_multinom,
+  family    = categorical(),
+  prior     = priors,
+  cores     = 4,
+  iter      = 2000
+)
+
+get_prior(
+  Sector_merge ~ net_loss_s + Places_s+ age_s+closed+chain_size_0s_s + children_in_care_s +
+    residential_expenditure_s + average_house_price_per_sq_m_s + median_wage_s +rel_pov_per_s+
+    Region.Country.name + (1 | Local.authority),
+  family = categorical(),
+  data   = brmdata_multinom
+)
+
+
+
+pp_check(model_multilevel)
+
+pp_check(model_multilevel, type = "bars")           # bar plot comparison for categories
+pp_check(model_multilevel, type = "stat", stat = "mean")  # compare means
+pp_check(model_multilevel, type = "error_bars")     # interval checks
 
 summary(model_multilevel)
 
-
-### Function to Extract Multinomial Regression Table ###
-extract_regression_table <- function(model, reference_level) {
-  summary_model <- summary(model)
-  results_table <- data.frame(
-    Category = character(),
-    Predictor = character(),
-    Estimate = numeric(),
-    SE = numeric(),
-    CI_Lower = numeric(),
-    CI_Upper = numeric(),
-    P_value = numeric(),
-    stringsAsFactors = FALSE
-  )
-  
-  # Get outcome categories (excluding the specified reference)
-  categories <- levels(model$data$Sector_merge)
-  categories <- categories[categories != reference_level]
-  
-  for (cat in categories) {
-    cat_clean <- gsub(" ", "", cat)
-    fixed_effects <- summary_model$fixed[grep(paste0("^mu", cat_clean, "_"), rownames(summary_model$fixed)), ]
-    
-    for (i in 1:nrow(fixed_effects)) {
-      param_name <- rownames(fixed_effects)[i]
-      predictor <- gsub(paste0("^mu", cat_clean, "_"), "", param_name)
-      
-      results_table <- rbind(results_table, data.frame(
-        Category = cat,
-        Predictor = predictor,
-        Estimate = fixed_effects[i, "Estimate"],
-        SE = fixed_effects[i, "Est.Error"],
-        CI_Lower = fixed_effects[i, "l-95% CI"],
-        CI_Upper = fixed_effects[i, "u-95% CI"],
-        P_value = 2 * (1 - pnorm(abs(fixed_effects[i, "Estimate"] / fixed_effects[i, "Est.Error"]))),
-        stringsAsFactors = FALSE
-      ))
-    }
-  }
-  return(results_table)
-}
-
-# Adjust the reference level as needed (here we assume "Local Authority" is the reference)
-reg_table_multinom <- extract_regression_table(model_multilevel, "Local Authority")
-
-formatted_multinom <- reg_table_multinom %>%
-  mutate(
-    Significance = case_when(
-      P_value < 0.001 ~ "***",
-      P_value < 0.01  ~ "**",
-      P_value < 0.05  ~ "*",
-      P_value < 0.1   ~ ".",
-      TRUE ~ ""
-    ),
-    Estimate_formatted = sprintf("%.3f%s", Estimate, Significance),
-    CI_formatted = sprintf("[%.3f, %.3f]", CI_Lower, CI_Upper)
-  ) %>%
-  dplyr::select(Category, Predictor, Estimate_formatted, CI_formatted, P_value)
-
-### Prepare Data for the Numerical BRMS Models ###
-brmdata_overall <- mlm %>%
-  tidyr::drop_na(overall.average,number_of_inspections, age, net_loss_s, Places, children_in_care_s,
-                 residential_expenditure_s, average_house_price_per_sq_m_s, median_wage_s,
-                 Region.Country.name, Local.authority) %>%
-  dplyr::mutate(Region.Country.name = factor(Region.Country.name),
-                Local.authority = factor(Local.authority))
-
-brmdata_profit <- mlm %>%
-  tidyr::drop_na(profit_margin_average, age, net_loss_s, Places, children_in_care_s,
-                 residential_expenditure_s, average_house_price_per_sq_m_s, median_wage_s,
-                 Region.Country.name, Local.authority) %>%
-  dplyr::mutate(Region.Country.name = factor(Region.Country.name),
-                Local.authority = factor(Local.authority))
-
-
-
-### Fit Hierarchical Gaussian Models for the Numerical Outcomes ###
-
-# Model for overall.average
-model_overall <- brm(
-  formula = overall.average ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-    residential_expenditure_s + average_house_price_per_sq_m_s + median_wage_s +
-    Region.Country.name + (1 | Local.authority),
-  data = brmdata_overall,
-  family = gaussian(),
-  cores = 4,
-  iter = 2000
-)
-
-# Model for profit_margin_average
-model_profit <- brm(
-  formula = profit_margin_average ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-    residential_expenditure_s + average_house_price_per_sq_m_s + median_wage_s +
-    Region.Country.name + (1 | Local.authority),
-  data = brmdata_profit,
-  family = gaussian(),
-  cores = 4,
-  iter = 2000
-)
-
-### Function to Extract Fixed Effects from a Gaussian BRMS Model ###
-extract_brms_linear_table <- function(model) {
-  summ <- summary(model)$fixed
-  results <- data.frame(
-    term = rownames(summ),
-    Estimate = summ[,"Estimate"],
-    SE = summ[,"Est.Error"],
-    CI_Lower = summ[,"l-95% CI"],
-    CI_Upper = summ[,"u-95% CI"],
-    stringsAsFactors = FALSE
-  )
-  # Exclude the intercept
-  results <- results %>% filter(term != "Intercept")
-  results <- results %>% mutate(
-    P_value = 2 * (1 - pnorm(abs(Estimate / SE))),
-    Significance = case_when(
-      P_value < 0.001 ~ "***",
-      P_value < 0.01  ~ "**",
-      P_value < 0.05  ~ "*",
-      P_value < 0.1   ~ ".",
-      TRUE ~ ""
-    ),
-    Estimate_formatted = sprintf("%.3f%s", Estimate, Significance),
-    CI_formatted = sprintf("[%.3f, %.3f]", CI_Lower, CI_Upper)
-  )
-  results <- results %>% dplyr::select(term, Estimate_formatted, CI_formatted, P_value)
-  return(results)
-}
-
-overall_table <- extract_brms_linear_table(model_overall)
-profit_table  <- extract_brms_linear_table(model_profit)
-
-### Reshape Multinomial Table and Merge with Numerical Outcome Tables ###
-
-# Pivot the multinomial table so that each category becomes a column
-multinom_wide <- formatted_multinom %>%
-  pivot_wider(names_from = Category, values_from = c(Estimate_formatted, CI_formatted, P_value))
-
-# Rename Predictor to term to merge by predictor name
-multinom_wide <- multinom_wide %>% rename(term = Predictor)
-
 library(dplyr)
-library(stringr)
-library(gt)
+library(kableExtra)
+library(tidyr)
 
-# Merge overall and profit margin estimates by predictor ("term")
-final_table <- multinom_wide %>%
-  full_join(overall_table %>% 
-              rename(overall_average = Estimate_formatted,
-                     overall_average_CI = CI_formatted,
-                     overall_average_P_value = P_value),
-            by = "term") %>%
-  full_join(profit_table  %>% 
-              rename(profit_margin_average = Estimate_formatted,
-                     profit_margin_CI = CI_formatted,
-                     profit_margin_P_value = P_value),
-            by = "term") %>%
-  filter(!str_detect(term, "Region"),
-         term != "Intercept") %>%
-  select(term, 
-         `Estimate_formatted_Third sector`, `CI_formatted_Third sector`, 
-         `Estimate_formatted_Individual owned`, `CI_formatted_Individual owned`, 
-         `Estimate_formatted_Corporate owned`, `CI_formatted_Corporate owned`,
-         `Estimate_formatted_Investment owned`, `CI_formatted_Investment owned`, 
-         overall_average, overall_average_CI, 
-         profit_margin_average, profit_margin_CI)
-
-# Create a prettier version of the table with clear column names and cleaned predictors
-pretty_table <- final_table %>%
-  rename(
-    Predictor = term,
-    `Third Sector (Estimate)` = `Estimate_formatted_Third sector`,
-    `Third Sector (95% CI)` = `CI_formatted_Third sector`,
-    `Individual Owned (Estimate)` = `Estimate_formatted_Individual owned`,
-    `Individual Owned (95% CI)` = `CI_formatted_Individual owned`,
-    `Corporate Owned (Estimate)` = `Estimate_formatted_Corporate owned`,
-    `Corporate Owned (95% CI)` = `CI_formatted_Corporate owned`,
-    `Investment Owned (Estimate)` = `Estimate_formatted_Investment owned`,
-    `Investment Owned (95% CI)` = `CI_formatted_Investment owned`,
-    `Overall Rating (Estimate)` = overall_average,
-    `Overall Rating (95% CI)` = overall_average_CI,
-    `Profit Margin (Estimate)` = profit_margin_average,
-    `Profit Margin (95% CI)` = profit_margin_CI
-  ) %>%
-  mutate(
-    Predictor = case_when(
-      Predictor == "net_loss_s" ~ "Area Need (Net Loss)",
-      Predictor == "Places" ~ "Places",
-      Predictor == "age_years" ~ "Age (years)",
-      Predictor == "chain_size_0s" ~ "Chain size (n, 10s)",
-      Predictor == "closed1" ~ "De-registered home (closed or taken over, dummy)",
-      Predictor == "children_in_care_s" ~ "Children in Care",
-      Predictor == "residential_expenditure_s" ~ "Local Authority Expenditure (Residential care)",
-      Predictor == "average_house_price_per_sq_m_s" ~ "Median House Price (per sq m, excluding flats)",
-      Predictor == "median_wage_s" ~ "Median Wage (Hourly)",
-      Predictor == "number_of_inspections" ~ "Number of Previous Inspections",
-      TRUE ~ Predictor
+# Create extraction function if it doesn't already exist
+if (!exists("extract_regression_table")) {
+  extract_regression_table <- function(model, reference_level) {
+    summary_model <- summary(model)
+    results_table <- data.frame(
+      Category = character(),
+      Predictor = character(),
+      Estimate = numeric(),
+      SE = numeric(),
+      CI_Lower = numeric(),
+      CI_Upper = numeric(),
+      P_value = numeric(),
+      stringsAsFactors = FALSE
     )
+    
+    # Get outcome categories (excluding the specified reference)
+    categories <- levels(model$data$Sector_merge)
+    categories <- categories[categories != reference_level]
+    
+    for (cat in categories) {
+      cat_clean <- gsub(" ", "", cat)
+      fixed_effects <- summary_model$fixed[grep(paste0("^mu", cat_clean, "_"), rownames(summary_model$fixed)), ]
+      
+      for (i in 1:nrow(fixed_effects)) {
+        param_name <- rownames(fixed_effects)[i]
+        predictor <- gsub(paste0("^mu", cat_clean, "_"), "", param_name)
+        
+        results_table <- rbind(results_table, data.frame(
+          Category = cat,
+          Predictor = predictor,
+          Estimate = fixed_effects[i, "Estimate"],
+          SE = fixed_effects[i, "Est.Error"],
+          CI_Lower = fixed_effects[i, "l-95% CI"],
+          CI_Upper = fixed_effects[i, "u-95% CI"],
+          P_value = 2 * (1 - pnorm(abs(fixed_effects[i, "Estimate"] / fixed_effects[i, "Est.Error"]))),
+          stringsAsFactors = FALSE
+        ))
+      }
+    }
+    return(results_table)
+  }
+}
+
+# Extract regression tables for all four models if they don't exist
+if (!exists("reg_table_multinom_1") || !exists("reg_table_multinom_int") || 
+    !exists("reg_table_multinom_2") || !exists("reg_table_multinom_house_int")) {
+  
+  # Model 1: Base net loss model
+  reg_table_multinom_1 <- extract_regression_table(model_multilevel, "Local Authority")
+  
+  # Model 2: Net loss with age interaction
+  reg_table_multinom_int <- extract_regression_table(model_multilevel_int, "Local Authority")
+  
+  # Model 3: House price model
+  reg_table_multinom_2 <- extract_regression_table(model_multilevel_house, "Local Authority")
+  
+  # Model 4: House price with age interaction
+  reg_table_multinom_house_int <- extract_regression_table(model_multilevel_house_int, "Local Authority")
+  
+  # Format all tables
+  format_table <- function(table) {
+    table %>%
+      mutate(
+        Significance = case_when(
+          P_value < 0.001 ~ "***",
+          P_value < 0.01  ~ "**",
+          P_value < 0.05  ~ "*",
+          P_value < 0.1   ~ ".",
+          TRUE ~ ""
+        ),
+        Estimate_formatted = sprintf("%.3f%s", Estimate, Significance),
+        CI_formatted = sprintf("[%.3f, %.3f]", CI_Lower, CI_Upper)
+      ) %>%
+      dplyr::select(Category, Predictor, Estimate_formatted, CI_formatted, P_value)
+  }
+  
+  reg_table_multinom_1 <- format_table(reg_table_multinom_1)
+  reg_table_multinom_int <- format_table(reg_table_multinom_int)
+  reg_table_multinom_2 <- format_table(reg_table_multinom_2)
+  reg_table_multinom_house_int <- format_table(reg_table_multinom_house_int)
+}
+
+# First, let's combine the four regression tables
+# Create copies with model identifiers
+reg_table_1 <- reg_table_multinom_1 %>%
+  mutate(Model = "Model 1: Net Loss")
+
+reg_table_2 <- reg_table_multinom_int %>%
+  mutate(Model = "Model 2: Net Loss × Age")
+
+reg_table_3 <- reg_table_multinom_2 %>%
+  mutate(Model = "Model 3: House Price")
+
+reg_table_4 <- reg_table_multinom_house_int %>%
+  mutate(Model = "Model 4: House Price × Age")
+
+# Replace predictor names for clarity in all tables
+format_predictors <- function(table) {
+  table %>%
+    mutate(Predictor = case_when(
+      Predictor == "Intercept" ~ "Intercept",
+      Predictor == "net_loss_s" ~ "Net Loss (std)",
+      Predictor == "average_house_price_per_sq_m_s" ~ "House Price per sq.m (std)",
+      Predictor == "closed1" ~ "Closed (Yes)",
+      Predictor == "children_in_care_s" ~ "Children in Care (std)",
+      Predictor == "age_s" ~ "Age (std)",
+      Predictor == "net_loss_s:age_s" ~ "Net Loss × Age",
+      Predictor == "average_house_price_per_sq_m_s:age_s" ~ "House Price × Age",
+      TRUE ~ Predictor
+    ))
+}
+
+reg_table_1 <- format_predictors(reg_table_1)
+reg_table_2 <- format_predictors(reg_table_2)
+reg_table_3 <- format_predictors(reg_table_3)
+reg_table_4 <- format_predictors(reg_table_4)
+
+# Combine the tables
+combined_table <- bind_rows(reg_table_1, reg_table_2, reg_table_3, reg_table_4)
+
+# Create a wide-format table with models as columns
+wide_table <- combined_table %>%
+  select(Category, Predictor, Model, Estimate_formatted, CI_formatted) %>%
+  unite("Value", Estimate_formatted, CI_formatted, sep = " ") %>%
+  pivot_wider(
+    names_from = Model, 
+    values_from = Value,
+    values_fill = " "  # Use empty space for missing values
+  ) %>%
+  arrange(Category, match(Predictor, c(
+    "Intercept", 
+    "Net Loss (std)", 
+    "House Price per sq.m (std)", 
+    "Age (std)",
+    "Net Loss × Age", 
+    "House Price × Age",
+    "Closed (Yes)", 
+    "Children in Care (std)"
+  )))%>%
+  dplyr::filter(Predictor!="Intercept",
+                Predictor!="Closed (Yes)",
+                Predictor!="Children in Care (std)",
   )
 
-# Calculate sample sizes for each model
-n_multinom <- nrow(brmdata_multinom)
-n_overall  <- nrow(brmdata_overall)
-n_profit   <- nrow(brmdata_profit)
-
-# Add rows for fixed/random effects and sample sizes
-# Using NA for cells that are not applicable provides more consistent formatting.
-pretty_table <- pretty_table %>%
-  add_row(Predictor = "Regional Fixed Effects", 
-          `Third Sector (Estimate)` = "Included", 
-          `Third Sector (95% CI)` = NA,
-          `Individual Owned (Estimate)` = "Included",
-          `Individual Owned (95% CI)` = NA,
-          `Corporate Owned (Estimate)` = "Included",
-          `Corporate Owned (95% CI)` = NA,
-          `Investment Owned (Estimate)` = "Included",
-          `Investment Owned (95% CI)` = NA,
-          `Overall Rating (Estimate)` = "Included",
-          `Overall Rating (95% CI)` = NA,
-          `Profit Margin (Estimate)` = "Included",
-          `Profit Margin (95% CI)` = NA
-  ) %>%
-  add_row(Predictor = "Local Authority Random Effects", 
-          `Third Sector (Estimate)` = "Included", 
-          `Third Sector (95% CI)` = NA,
-          `Individual Owned (Estimate)` = "Included",
-          `Individual Owned (95% CI)` = NA,
-          `Corporate Owned (Estimate)` = "Included",
-          `Corporate Owned (95% CI)` = NA,
-          `Investment Owned (Estimate)` = "Included",
-          `Investment Owned (95% CI)` = NA,
-          `Overall Rating (Estimate)` = "Included",
-          `Overall Rating (95% CI)` = NA,
-          `Profit Margin (Estimate)` = "Included",
-          `Profit Margin (95% CI)` = NA
-  ) %>%
-  add_row(Predictor = "Observations (n)", 
-          `Third Sector (Estimate)` = as.character(n_multinom), 
-          `Third Sector (95% CI)` = NA,
-          `Individual Owned (Estimate)` = NA, 
-          `Individual Owned (95% CI)` = NA,
-          `Corporate Owned (Estimate)` = NA, 
-          `Corporate Owned (95% CI)` = NA,
-          `Investment Owned (Estimate)` = NA, 
-          `Investment Owned (95% CI)` = NA,
-          `Overall Rating (Estimate)` = as.character(n_overall), 
-          `Overall Rating (95% CI)` = NA,
-          `Profit Margin (Estimate)` = as.character(n_profit), 
-          `Profit Margin (95% CI)` = NA
+# Create flextable
+ft <- flextable(wide_table) %>%
+  set_header_labels(
+    Category = "Sector Type",
+    Predictor = "Predictor",
+    `Model 1: Net Loss` = "Model 1",
+    `Model 2: Net Loss × Age` = "Model 2",
+    `Model 3: House Price` = "Model 3",
+    `Model 4: House Price × Age` = "Model 4"
   )
 
-# Combine each estimate with its 95% CI into one column per model/metric
-pretty_table <- pretty_table %>%
-  mutate(
-    `Third Sector (Estimate) [95% CI]` = paste0(`Third Sector (Estimate)`, " ", `Third Sector (95% CI)`, ""),
-    `Individual Owned (Estimate) [95% CI]` = paste0(`Individual Owned (Estimate)`, " ", `Individual Owned (95% CI)`, ""),
-    `Corporate Owned (Estimate) [95% CI]` = paste0(`Corporate Owned (Estimate)`, " ", `Corporate Owned (95% CI)`, ""),
-    `Investment Owned (Estimate) [95% CI]` = paste0(`Investment Owned (Estimate)`, " ", `Investment Owned (95% CI)`, ""),
-    `Quality (Estimate) [95% CI]` = paste0(`Overall Rating (Estimate)`, " ", `Overall Rating (95% CI)`, ""),
-    `Profit Margin (Estimate) [95% CI]` = paste0(`Profit Margin (Estimate)`, " ", `Profit Margin (95% CI)`, "")
-  ) %>%
-  dplyr::select(Predictor,
-                `Third Sector (Estimate) [95% CI]`,
-                `Individual Owned (Estimate) [95% CI]`,
-                `Corporate Owned (Estimate) [95% CI]`,
-                `Investment Owned (Estimate) [95% CI]`,
-                `Quality (Estimate) [95% CI]`,
-                `Profit Margin (Estimate) [95% CI]`)
+# Add header rows for grouping
+ft <- add_header_row(
+  ft,
+  values = c("", "", "Base Models", "Interaction Models"),
+  colwidths = c(1, 1, 2, 2)
+)
 
-# Build the gt table
-regression_table <- pretty_table %>%
-  gt() %>%
-  tab_header(
-    title = "Hierarchical Regression Models Examining Predictors of Children Home Ownership and Performance"
-  ) %>%
-  tab_spanner(
-    label = c("Reference category for ownership type: Local Authority"),
-    columns = matches("Third Sector|Individual Owned|Corporate Owned|Investment Owned")
-  ) %>%
-  tab_spanner(
-    label = c("Ownership Type (Multinomial Model)"),
-    columns = matches("Third Sector|Individual Owned|Corporate Owned|Investment Owned")
-  ) %>%
-  tab_spanner(
-    label = "Performance Metrics",
-    columns = matches("Quality|Profit Margin")
-  ) %>%
-  cols_align(
-    align = "left",
-    columns = "Predictor"
-  ) %>%
-  cols_align(
-    align = "center",
-    columns = c("Third Sector (Estimate) [95% CI]",
-                "Individual Owned (Estimate) [95% CI]",
-                "Corporate Owned (Estimate) [95% CI]",
-                "Investment Owned (Estimate) [95% CI]",
-                "Quality (Estimate) [95% CI]",
-                "Profit Margin (Estimate) [95% CI]")
-  ) %>%
-  tab_options(
-    table.font.size = px(12),
-    heading.title.font.size = px(16),
-    heading.subtitle.font.size = px(14),
-    column_labels.font.weight = "bold",
-    row_group.font.weight = "bold",
-    source_notes.font.size = px(10),
-    footnotes.font.size = px(10),
-    table.width = pct(100)
-  )
+ft <- add_header_row(
+  ft,
+  values = c("", "", "Coefficient Estimates [95% CI]"),
+  colwidths = c(1, 1, 4)
+)
 
-# Save the table as HTML
-regression_table %>%
-  gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table3.html")
+# Style the table for Word
+ft <- ft %>%
+  theme_booktabs() %>%
+  align(j = 1:2, align = "left") %>%
+  align(j = 3:6, align = "center") %>%
+  fontsize(size = 9) %>%  # Smaller font for better fit in Word
+  width(j = 1, width = 1.5) %>%
+  width(j = 2, width = 1.75) %>%
+  width(j = 3:6, width = 1.6) %>%
+  bold(j = 1) %>%
+  italic(j = 2) %>%
+  border(i = 1, border.top = fp_border(color = "black", width = 1.5), part = "header") %>%
+  border(i = 3, border.bottom = fp_border(color = "black", width = 1.5), part = "header") %>%
+  border(border.bottom = fp_border(color = "black", width = 1), part = "body") %>%
+  bg(bg = "#f2f2f2", part = "header")
+
+# Group rows by sector type
+sector_types <- unique(wide_table$Category)
+for (sector in sector_types) {
+  indices <- which(wide_table$Category == sector)
+  if (length(indices) > 1) {
+    ft <- merge_at(ft, i = indices, j = 1)
+  }
+}
+
+# Set caption and footnote
+ft <- set_caption(ft, 
+                  caption = "Multinomial Logistic Regression Models Comparing Care Home Ownership Types (Reference: Local Authority)")
+
+ft <- add_footer_lines(ft, 
+                       values = "Note: Standardized continuous predictors. *p<0.05; **p<0.01; ***p<0.001.")
+
+# Save directly to Word
+save_as_docx(ft, path = "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table3_fin.docx")
+
+# Return the flextable object
+ft
+
+} else {
+  print("Required regression tables not found in the environment.")
+}
+# Save the table to an HTML file if needed
+# saveRDS(final_table, "multinomial_regression_table.rds")
+ save_kable(final_table,  "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table3_fin.html")
+
 
 
 
@@ -3015,6 +3147,23 @@ fig_publication <- (fig5 + plot2) / (fig6 + plot1) +
 ggsave(plot=fig_publication, filename="Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/figures/figure_3_attempt2.png", width=16.5, height=10, dpi=600)
 
 
+####number of homes####
+length(unique(df$URN))
+length(unique(mlm[mlm$Sector_merge=="Local Authority",]$URN))
+length(unique(mlm[mlm$Sector_merge=="Third sector",]$URN))
+length(unique(mlm[mlm$Sector_merge=="Investment owned",]$URN))
+length(unique(mlm[mlm$Sector_merge=="Individual owned",]$URN))
+length(unique(mlm[mlm$Sector_merge=="Corporate owned",]$URN))
+
+length(unique(df$URN))-(
+  length(unique(mlm[mlm$Sector_merge=="Local Authority",]$URN))+
+  length(unique(mlm[mlm$Sector_merge=="Third sector",]$URN))+
+  length(unique(mlm[mlm$Sector_merge=="Investment owned",]$URN))+
+  length(unique(mlm[mlm$Sector_merge=="Individual owned",]$URN))+
+  length(unique(mlm[mlm$Sector_merge=="Corporate owned",]$URN))
+  
+
+)
 
 
 ####APPENDIX####
@@ -3038,132 +3187,27 @@ mlm$sector_indiv <- ifelse(mlm$Sector_merge=="Local Authority", 0,
                            ))
 
 
-reg1 <- lmerTest::lmer(sector_third ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-                 residential_expenditure_s + median_house_price_detached_s + median_wage_s +
-                 Region.Country.name + (1 | Local.authority),data = mlm )
-reg2 <- lmerTest::lmer(sector_indiv ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
-                         Region.Country.name + (1 | Local.authority),data = mlm )
-reg3 <- lmerTest::lmer(sector_corp ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
-                         Region.Country.name + (1 | Local.authority),data = mlm )
-reg4 <- lmerTest::lmer(sector_invest ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
-                         Region.Country.name + (1 | Local.authority),data = mlm )
-reg5 <- lmerTest::lmer(overall.average ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
-                         Region.Country.name + (1 | Local.authority), data = mlm)
-reg6 <- lmerTest::lmer(profit_margin_average ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
-                         residential_expenditure_s + median_house_price_detached_s + median_wage_s +
-                         Region.Country.name + (1 | Local.authority), data = mlm)
+reg1 <- lmerTest::lmer(sector_third ~ net_loss_s +  children_in_care_s +  (1 | Local.authority),data = mlm )
+reg2 <- lmerTest::lmer(sector_indiv ~ net_loss_s +  children_in_care_s +  (1 | Local.authority),data = mlm)
+reg3 <- lmerTest::lmer(sector_corp ~ net_loss_s +  children_in_care_s +  (1 | Local.authority),data = mlm )
+reg4 <- lmerTest::lmer(sector_invest ~ net_loss_s +  children_in_care_s +  (1 | Local.authority),data = mlm)
+
+reg5 <- lmerTest::lmer(sector_third ~ average_house_price_per_sq_m_s +  children_in_care_s +  (1 | Local.authority),data = mlm )
+reg6 <- lmerTest::lmer(sector_indiv ~ average_house_price_per_sq_m_s +  children_in_care_s +  (1 | Local.authority),data = mlm)
+reg7 <- lmerTest::lmer(sector_corp ~ average_house_price_per_sq_m_s +  children_in_care_s +  (1 | Local.authority),data = mlm )
+reg8 <- lmerTest::lmer(sector_invest ~ average_house_price_per_sq_m_s +  children_in_care_s +  (1 | Local.authority),data = mlm)
 
 
-modelsummary(list(reg1, reg2, reg3, reg4, reg5, reg6))
 
-####specification curve####
 
-# Load necessary libraries
-library(lmerTest)
-library(dplyr)
-library(ggplot2)
-library(purrr)
-library(broom.mixed)  # For tidying mixed-effects models
 
-# Define the outcome variables
-outcomes <- c("sector_third", "sector_indiv", "sector_corp", 
-              "sector_invest", "overall.average", "profit_margin_average")
+modelsummary(list(reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8),
+             stars = TRUE,
+             coef_omit = "Intercept",
+             output = "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Appendix/simple_mlm.docx")
 
-# Define the potential control variables (to be varied)
-controls <- c("Places", "age_years", "closed", "chain_size_0s", 
-              "children_in_care_s", "residential_expenditure_s", 
-              "average_house_price_per_sq_m_s", "median_wage_s", 
-              "Region.Country.name")
-
-# A list to collect results from all specifications
-results <- list()
-
-# Loop over each outcome variable
-for (outcome in outcomes) {
-  
-  # For each possible number of controls (from 0 to all available)
-  for (k in 0:length(controls)) {
-    
-    # Get all combinations of controls of size k 
-    ctrl_combinations <- if(k == 0) list(character(0)) else combn(controls, k, simplify = FALSE)
-    
-    # Loop over each specific combination of controls
-    for (ctrl_set in ctrl_combinations) {
-      
-      # Always include 'net_loss_s' and add the current set of controls
-      fixed_effects <- if(length(ctrl_set) > 0) {
-        paste(c("net_loss_s", ctrl_set), collapse = " + ")
-      } else {
-        "net_loss_s"
-      }
-      
-      # Construct the model formula: outcome ~ net_loss_s + ... + (1|Local.authority)
-      formula_str <- paste(outcome, "~", fixed_effects, "+ (1 | Local.authority)")
-      formula_model <- as.formula(formula_str)
-      
-      # Fit the model using lmer (wrap in try() in case of convergence or data issues)
-      fit <- try(lmer(formula_model, data = mlm), silent = TRUE)
-      if (inherits(fit, "try-error")) next
-      
-      # Extract the net_loss_s coefficient details using broom.mixed::tidy with confidence intervals
-      tidy_fit <- broom.mixed::tidy(fit, effects = "fixed", conf.int = TRUE)
-      net_loss_coef <- tidy_fit %>% filter(term == "net_loss_s")
-      
-      # If confidence intervals are missing, compute them using a normal approximation
-      if(nrow(net_loss_coef) > 0) {
-        if (!("conf.low" %in% names(net_loss_coef)) ||
-            !("conf.high" %in% names(net_loss_coef))) {
-          net_loss_coef <- net_loss_coef %>%
-            mutate(conf.low = estimate - 1.96 * std.error,
-                   conf.high = estimate + 1.96 * std.error)
-        }
-        results[[length(results) + 1]] <- data.frame(
-          outcome      = outcome,
-          controls     = if(length(ctrl_set) == 0) "None" else paste(ctrl_set, collapse = ", "),
-          num_controls = length(ctrl_set),
-          estimate     = net_loss_coef$estimate,
-          std.error    = net_loss_coef$std.error,
-          conf.low     = net_loss_coef$conf.low,
-          conf.high    = net_loss_coef$conf.high
-        )
-      }
-    }
-  }
-}
-
-# Combine the list into one data frame if at least one model was successful
-if(length(results) > 0) {
-  results_df <- do.call(rbind, results)
-} else {
-  stop("No model specifications were successfully fit.")
-}
-
-results_df$outcome <- factor(ifelse(results_df$outcome=="sector_third", "Third sector",
-                                    ifelse(results_df$outcome=="sector_indiv", "Individual-owned",
-                                           ifelse(results_df$outcome=="sector_corp", "Corporate-owned",
-                                                  ifelse(results_df$outcome=="sector_invest", "Investment-owned",
-                                                         ifelse(results_df$outcome=="overall.average", "Quality score",
-                                                                ifelse(results_df$outcome=="profit_margin_average", "Profit Margin (%)", NA)))))))
-
-# Create a specification curve plot:
-y <- ggplot(results_df, aes(x = factor(num_controls), y = estimate)) +
-  geom_jitter(width = 0.2, alpha = 0.5, color = "steelblue") +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.1, alpha = 0.3) +
-  facet_wrap(~ outcome, scales = "free_y") +
-  geom_hline(yintercept = 0)+
-  labs(x = "Number of Controls Included",
-       y = "Coefficient Estimate for Area Need (net loss)",
-       title = "Specification Curve: Effect of Area Need, varying controls") +
-  theme_bw()
-ggsave(plot=y, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Appendix/specification_curve.jpeg", width=8, height=8, dpi=600)
 
 ####changing all results to net_loss in 2014####
-
-
 
 
 
@@ -3171,10 +3215,11 @@ ggsave(plot=y, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitH
 create_ownership_plot <- function(data, ownership_type, title_suffix) {
   # Parse dates and filter for the specified ownership type
   changeplot <- data %>%
+    dplyr::select(Registration.date, Sector_merge, Local.authority)%>%
     left_join(., data %>%
                 dplyr::select(Local.authority, net_loss_2014) %>%
                 dplyr::distinct(.keep_all = TRUE) %>%
-                dplyr::mutate(needQuint = ntile(net_loss_2014, 5)) %>%
+                dplyr::mutate(needQuint = factor(ntile(net_loss_2014, 5))) %>%
                 dplyr::select(-net_loss_2014)
     ) %>%
     mutate(location_start = dmy(Registration.date)) %>%
@@ -3284,313 +3329,136 @@ final_plot <- cowplot::plot_grid(
 final_plot
 
 # Save the plot if needed
-ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Figure3_option_1.png", final_plot, width = 15, height = 10, dpi = 600)
+ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Appendix/Figure3_2014_need.png", final_plot, width = 15, height = 10, dpi = 600)
 
 
 
 
-
-
-
-
-# Parse dates and filter for 2012 onwards
-changeplot <- mlm %>%
-  left_join(., mlm %>%
-              dplyr::select(Local.authority, net_loss) %>%
-              dplyr::distinct(.keep_all = T)%>%
-              dplyr::mutate(needQuint = ntile(net_loss, 5))%>%
-              dplyr::select(-net_loss)
-  )%>%
-  mutate(location_start = dmy(Registration.date)) %>%
-  filter(location_start >= as.Date("2014-03-01"),
-         binary_sector_private=="Investment owned"
-  ) %>%
-  mutate(month = floor_date(location_start, "month")) %>%
-  group_by(month, needQuint) %>%
-  summarise(new_care_homes = n(), .groups = "drop") %>%
-  complete(
-    month = seq(min(month), max(month), by = "month"),
-    needQuint = unique(needQuint),
-    fill = list(new_care_homes = 0)
-  )%>%
-  group_by(needQuint) %>%
-  arrange(month) %>%
-  mutate(cumulative_homes = cumsum(new_care_homes),
-         needQuint = ifelse(needQuint==5, "5 (High need)",
-                            ifelse(needQuint==4, "4",
-                                   ifelse(needQuint==3,"3",
-                                          ifelse(needQuint==2, "2",
-                                                 ifelse(needQuint==1, "1 (Low need)"))))))
-
-# Add a zero baseline for each quintile
-zero_rows <- changeplot %>%
-  group_by(needQuint) %>%
-  summarise(month = min(month) - months(1), cumulative_homes = 0, .groups = "drop") %>%
-  mutate(new_care_homes = 0)
-
-changeplot <- bind_rows(changeplot, zero_rows) %>%
-  arrange(needQuint, month)
-
-
-# Create the ggplot
-plot1 <- ggplot(changeplot, aes(x = month, y = cumulative_homes, color = factor(needQuint))) +
-  geom_line(size=1.5) +
-  labs(
-    title = "Cumulative number of new children homes\n(Investment-owned)",
-    x = "Year",
-    y = "Investment-owned children homes opened (n, cumulative)",
-    color = "Area Need\n(Net loss, Quintile)"
-  ) +
-  theme_bw()+
-  scale_color_viridis_d(option = "viridis") 
-
-
-x <- cowplot::get_legend(plot1)
-
-
-
-
-ggsave(plot=ugly_plot, filename="Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/figures/figure_3_binary.png", width=6, height=6, dpi=600)
-
-
-
-
-
-
-
-
-####Negative Binomial ####
-nbm <- as.data.frame(LA_panel_data) %>%
-  dplyr::mutate(needQuint = factor(ntile(net_loss, 5),
-                                   levels=c(5,4,3,2,1)),
-                needQuint = ifelse(needQuint==1, "1 (Low need)",
-                                   ifelse(needQuint==2, "2",
-                                          ifelse(needQuint==3,"3",
-                                                 ifelse(needQuint==4, "4",
-                                                        ifelse(needQuint==5, "5 (High need)", NA))))),
-                needQuint = factor(needQuint,
-                                   levels = c("5 (High need)", "4", "3", "2", "1 (Low need)")))
+# Function to create plot for each ownership type
+create_ownership_plot <- function(data, ownership_type, title_suffix) {
+  # Parse dates and filter for the specified ownership type
+  changeplot <- data %>%
+    left_join(., data %>%
+                dplyr::select(Local.authority, house_price_2014) %>%
+                dplyr::distinct(.keep_all = TRUE) %>%
+                dplyr::mutate(houseQuint = factor(ntile(house_price_2014, 5))) %>%
+                dplyr::select(-house_price_2014)
+    ) %>%
+    mutate(location_start = dmy(Registration.date)) %>%
+    filter(location_start >= as.Date("2014-03-01"),
+           Sector_merge == ownership_type,
+           !is.na(houseQuint)
+    ) %>%
+    mutate(month = floor_date(location_start, "month")) %>%
+    group_by(month, houseQuint) %>%
+    summarise(new_care_homes = n(), .groups = "drop") %>%
+    complete(
+      month = seq(min(month), max(month), by = "month"),
+      houseQuint = unique(houseQuint),
+      fill = list(new_care_homes = 0)
+    ) %>%
+    group_by(houseQuint) %>%
+    arrange(month) %>%
+    mutate(cumulative_homes = cumsum(new_care_homes),
+           houseQuint = case_when(
+             houseQuint == 5 ~ "5 (High price)",
+             houseQuint == 4 ~ "4",
+             houseQuint == 3 ~ "3",
+             houseQuint == 2 ~ "2",
+             houseQuint == 1 ~ "1 (Low price)"
+           ))
   
-
-
-nbm$net_loss <- as.numeric(nbm$net_loss_lagged)
-nbm$median_wage <- as.numeric(nbm$median_wage)
-nbm$median_house_price_detached <- as.numeric(nbm$median_house_price_detached)
-nbm$occupancy_rate_fte <- as.numeric(nbm$occupancy_rate_fte)
-nbm$Unemployment.rate...aged.16.64. <- as.numeric(nbm$Unemployment.rate...aged.16.64.)
-nbm$children_in_care <- as.numeric(as.numeric(nbm$out_of_area_per)*as.numeric(nbm$out_of_area))
-nbm$claimant_count_rate <- as.numeric(nbm$claimant_count_rate)
-nbm$white <- as.numeric(nbm$X..of.white...aged.16.)
-nbm$residential_expenditure <- as.numeric(nbm$residential_expenditure)
-
-
-# Create a scaled version in the data frame
-nbm$net_loss_s <- scale(nbm$net_loss)
-nbm$median_wage_s <- scale(nbm$median_wage)
-nbm$median_house_price_detached_s <- scale(nbm$median_house_price_detached)
-nbm$occupancy_rate_fte_s <- scale(nbm$occupancy_rate_fte)
-nbm$Unemployment.rate...aged.16.64._s <- scale(nbm$Unemployment.rate...aged.16.64.)
-nbm$claimant_count_rate_s <- scale(nbm$claimant_count_rate)
-nbm$children_in_care_s <- scale(nbm$children_in_care)
-nbm$white_s <- scale(nbm$white)
-nbm$residential_expenditure_s <- scale(nbm$residential_expenditure)
-
-
-nbm$non_invest = scale(as.numeric(nbm$All_homes-nbm$Homes_Investment_owned))
-nbm$non_corp = scale(as.numeric(nbm$All_homes-nbm$Homes_Corporate_owned))
-nbm$non_indiv = scale(as.numeric(nbm$All_homes-nbm$Homes_Individual_owned))
-nbm$non_la = scale(as.numeric(nbm$All_homes-nbm$Homes_Local_Authority))
-nbm$non_3rd = scale(as.numeric(nbm$All_homes-nbm$Homes_Third_sector))
-
-reg1 <- plm(residential_expenditure_s ~  net_loss_s  + median_house_price_detached_s +median_wage_s +Unemployment.rate...aged.16.64._s + white_s+ occupancy_rate_fte_s+claimant_count_rate_s + children_in_care_s  +  Region.Country.name, 
-            index = c("Local.authority", "year"), data = nbm%>%
-              dplyr::filter(Region.Country.name!="London"), model = "pooling")
-coef_test(reg1, vcov = "CR2", cluster = nbm%>%
-            dplyr::filter(Region.Country.name!="London")$Local.authority, test = "Satterthwaite")
-
-nbm_filtered <- nbm %>% dplyr::filter(Region.Country.name != "London")
-
-# Run the PLM model
-reg1 <- plm(residential_expenditure_s ~ net_loss_s + median_house_price_detached_s + 
-              median_wage_s + Unemployment.rate...aged.16.64._s + white_s + 
-              occupancy_rate_fte_s + claimant_count_rate_s + children_in_care_s + 
-              Region.Country.name, 
-            index = c("Local.authority", "year"), 
-            data = nbm_filtered, 
-            model = "pooling")
-
-# Run coefficient test with clustering
-coef_test(reg1, vcov = "CR2", cluster = nbm_filtered$Local.authority, test = "Satterthwaite")
-
-reg1 <- plm(as.numeric(unregulated) ~  net_loss_s+ as.numeric(Asylum_per)  + median_house_price_detached_s +median_wage_s +Unemployment.rate...aged.16.64._s + white_s+ occupancy_rate_fte_s+claimant_count_rate_s + children_in_care_s  +  Region.Country.name, 
-            index = c("Local.authority", "year"), data = nbm, model = "pooling")
-coef_test(reg1, vcov = "CR2", cluster = nbm$Local.authority, test = "Satterthwaite")
-
-
-
-
-
-
-# Check its length
-length(nbm$net_loss_s)  # Should match nrow(nbm)
-
-rownames(nbm) <- NULL
-
-
-library(dplyr)
-library(plm)
-library(sjPlot)
-library(clubSandwich)
-library(cowplot)
-
-# Prepare the panel data
-nbm <- nbm %>% distinct(.keep_all = TRUE)
-
-# Load required libraries if not already loaded
-# library(plm)
-# library(dplyr)
-# library(sjPlot)
-# library(lmtest)
-# library(sandwich)
-# library(clubSandwich)  # For coef_test function
-
-# Create a named vector for variable labels
-var_labels <- c(
-  "needQuint" = "Area need\n(net loss)",
-  "median_wage_s" = "Median Wage\n(£, hourly)",
-  "median_house_price_detached_s" = "Median House Price\n(Detached)",
-  "Unemployment.rate...aged.16.64._s" = "Unemployment Rate\n(16-64, %)",
-  "occupancy_rate_fte_s" = "Social Worker Occupancy Rate\n(FTE, %)",
-  "white_s" = "White Population\n(%)",
-  "claimant_count_rate_s" = "Claimant Count Rate\n(%)",
-  "children_in_care_s" = "Children in Residential Care"
-)
-
-# List of variables to include in models
-vars_to_include <- c("needQuint", "median_wage_s", "median_house_price_detached_s", 
-                     "Unemployment.rate...aged.16.64._s", "occupancy_rate_fte_s", 
-                     "white_s", "claimant_count_rate_s", "children_in_care_s")
-
-# Set up the panel data
-nbm <- pdata.frame(nbm %>% distinct(.keep_all = TRUE), 
-                   index = c("Local.authority", "year"))
-
-add_significance_stars <- function(p_value) {
-  if (is.na(p_value)) return("")
-  if (p_value < 0.001) return("***")
-  if (p_value < 0.01) return("**")
-  if (p_value < 0.05) return("*")
-  if (p_value < 0.1) return(".")
-  return("")
-}
-
-# Function to create model and plot with clustered standard errors
-create_model_plot <- function(dependent_var, title) {
-  # Run the model
-  model_formula <- as.formula(paste(
-    dependent_var, "~", 
-    paste(vars_to_include, collapse = " + "), 
-    "+ factor(Region.Country.name)"
-  ))
+  # Add a zero baseline for each quintile
+  zero_rows <- changeplot %>%
+    group_by(houseQuint) %>%
+    summarise(month = min(month) - months(1), cumulative_homes = 0, .groups = "drop") %>%
+    mutate(new_care_homes = 0)
   
-  model <- lm(model_formula, data = nbm)
+  changeplot <- bind_rows(changeplot, zero_rows) %>%
+    arrange(houseQuint, month)
   
-  # Compute clustered standard errors
-  clustered <- coef_test(model, vcov = "CR2", 
-                         cluster = nbm$Local.authority, 
-                         test = "Satterthwaite")
-  
-  # Extract coefficients and SEs from clustered results
-  # Convert the clustered results to a data frame
-  coefs_data <- data.frame(
-    term = clustered$Coef,
-    estimate = clustered$beta,
-    std.error = clustered$SE,
-    satt.freedom = clustered$df_Satt,
-    statistic = clustered$tstat,
-    p.value = clustered$p_Satt,
-    stringsAsFactors = FALSE
-  )
-  
-  
-  # Set significance level (for a 95% confidence interval)
-  alpha <- 0.05
-  
-  # Compute the lower and upper bounds of the confidence interval for each coefficient
-  coefs_data$conf.low <- coefs_data$estimate - qt(1 - alpha/2, df = coefs_data$satt.freedom) * coefs_data$std.error
-  coefs_data$conf.high <- coefs_data$estimate + qt(1 - alpha/2, df = coefs_data$satt.freedom) * coefs_data$std.error
-  
-  # Add significance stars
-  coefs_data$stars <- sapply(coefs_data$p.value, add_significance_stars)
-  
-  # Format estimates for display (2 decimal places)
-  coefs_data$est_label <- paste0(format(round(coefs_data$estimate, 2), nsmall = 2), coefs_data$stars)
-  
-  # Filter to only include the variables we want to plot
-  coefs_filtered <- coefs_data[coefs_data$term %in% vars_to_include, ]
-  
-  # Create factor with levels in desired order for plotting
-  coefs_filtered$term <- factor(coefs_filtered$term, levels = rev(vars_to_include))
-  
-  plot <- ggplot(coefs_filtered, aes(x = term, y = estimate, 
-                                     ymin = conf.low, ymax = conf.high)) +
-    geom_pointrange() +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
-    coord_flip() +
-    scale_x_discrete(labels = var_labels[as.character(coefs_filtered$term)]) +
-    # Add coefficient values with stars
-    geom_text(aes(label = est_label), vjust = -0.7, hjust = ifelse(coefs_filtered$estimate > 0, -0.1, 1.1), size = 3) +
+  # Create the ggplot
+  plot <- ggplot(changeplot, aes(x = month, y = cumulative_homes, color = factor(houseQuint))) +
+    geom_line(size = 1.5) +
     labs(
-      title = title,
-      x = "",
-      y = "Coefficient"
+      title = paste0("Cumulative number of new children homes\n(", title_suffix, ")"),
+      x = "Year",
+      y = paste0(title_suffix, " children homes opened (n, cumulative)"),
+      color = "House price\n(Quintile)"
     ) +
     theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      panel.grid.minor = element_blank()
-    )
+    scale_color_viridis_d(option = "viridis") +
+    theme(legend.position = "none")  # Remove individual legends
   
-  return(list(model = model, clustered = clustered, plot = plot))
+  return(plot)
 }
 
-
-# Create all models and plots
-models <- list(
-  all = create_model_plot("all_change", "All Homes"),
-  ind = create_model_plot("ind_change", "Individual Owned"),
-  corp = create_model_plot("corp_change", "Corporate Owned"),
-  invest = create_model_plot("invest_change", "Investment Owned"),
-  la = create_model_plot("la_change", "Local Authority"),
-  third = create_model_plot("third_change", "Third Sector")
+# Define ownership types and their display names
+ownership_types <- c(
+  "Individual owned", 
+  "Corporate owned", 
+  "Investment owned", 
+  "Local Authority", 
+  "Third sector"
 )
 
-# Extract just the plots for the grid
-plots <- list(
-  models$all$plot,
-  models$la$plot,
-  models$third$plot,
-  models$ind$plot,
-  models$corp$plot,
-  models$invest$plot
+display_names <- c(
+  "Individual-owned", 
+  "Corporate-owned", 
+  "Investment-owned", 
+  "Local Authority", 
+  "Third sector"
 )
 
-# Create the combined plot grid
-combined_plot <- cowplot::plot_grid(plotlist = plots, ncol = 3)
+# Create a list to store the plots
+plots_list <- list()
 
-# Display the combined plot
-combined_plot
+# Generate all plots
+for (i in 1:length(ownership_types)) {
+  plots_list[[i]] <- create_ownership_plot(
+    data = mlm, 
+    ownership_type = ownership_types[i], 
+    title_suffix = display_names[i]
+  )
+}
 
-# To access the clustered standard errors results for any model:
-# models$all$clustered
-# models$ind$clustered
-# etc.
+# Extract legend from the first plot (with legend included)
+legend_plot <- ggplot(plots_list[[1]]$data, aes(x = month, y = cumulative_homes, color = factor(houseQuint))) +
+  geom_line(size = 1.5) +
+  labs(color = "House price\n(Quintile)") +
+  theme_bw() +
+  scale_color_viridis_d(option = "viridis")
+
+legend <- cowplot::get_legend(legend_plot)
+
+# Combine all plots in a grid with the legend
+combined_plot <- cowplot::plot_grid(
+  plotlist = plots_list,
+  ncol = 3,
+  nrow = 2,
+  labels = "AUTO"
+)
+
+# Create the final plot with the legend
+final_plot <- cowplot::plot_grid(
+  combined_plot,
+  legend,
+  ncol = 2,
+  rel_widths = c(0.9, 0.1)
+)
+
+# Display the final plot
+final_plot
+
+# Save the plot if needed
+ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Appendix/Figure3_2014_house.png", final_plot, width = 15, height = 10, dpi = 600)
 
 
-ggsave(plot=combined_plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2.jpeg", width=14, height=7, dpi=600)
 
 
-####Map of area need####
+
+
+####Map of area need and house price####
 
 
 
@@ -3662,6 +3530,84 @@ a <- map %>%  dplyr::mutate(unreg_quantiles =cut(net_loss_s,
 
 
 ggsave(plot=a, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new//Care-Markets/figures/Appendix/map_need.jpeg", width=8, height=6, dpi=600)
+
+
+
+
+
+
+map <- st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2022_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")%>%
+  dplyr::rename(Local.authority = CTYUA22NM)%>%
+  dplyr::filter(Local.authority!="Wales",
+                Local.authority!="Scotland",
+                grepl('^E', CTYUA22CD))%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())%>%
+  dplyr::full_join(., mlm %>%
+                     dplyr::select(Local.authority, average_house_price_per_sq_m_s),
+                   by="Local.authority")%>%
+  st_as_sf(.)
+
+
+
+
+no_classes <- 6
+
+
+quantiles <- quantile(as.double(map$average_house_price_per_sq_m_s), 
+                      probs = seq(0, 1, length.out = no_classes + 1), na.rm=T)
+
+# here I define custom labels (the default ones would be ugly)
+labels <- c()
+for(idx in 1:length(quantiles)){
+  labels <- c(labels, paste0(round(quantiles[idx], 2), 
+                             " - ", 
+                             round(quantiles[idx + 1], 2)))
+}
+# I need to remove the last label 
+# because that would be something like "66.62 - NA"
+labels <- labels[1:length(labels)-1]
+
+
+
+
+a <- map %>%  dplyr::mutate(unreg_quantiles =cut(average_house_price_per_sq_m_s, 
+                                                 breaks = quantiles, 
+                                                 labels = labels, 
+                                                 include.lowest = T) )%>%
+  ggplot(.) +
+  geom_sf(aes(fill = unreg_quantiles), color = "black") +
+  theme_map()+
+  labs(x = NULL, 
+       y = NULL)+
+  scale_fill_brewer(
+    palette = "OrRd",
+    name = "House price\n(per sq m, average, 2014-23)", na.value="grey")+
+  theme(text=element_text(size=10), legend.key.size = unit(0.65, "cm"), legend.title = element_text(size=9))
+
+
+ggsave(plot=a, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new//Care-Markets/figures/Appendix/map_house.jpeg", width=8, height=6, dpi=600)
+
+
+
+
+
+
 
 ####care home falsification####
 
@@ -3927,97 +3873,6 @@ regression_table %>%
 
 
 
-####correlation plot####
-
-
-corr <- LA_panel_data %>% dplyr::select(Homes_Individual_owned, Homes_Corporate_owned, Homes_Investment_owned, Homes_Third_sector, Homes_Local_Authority,
-                                          median_wage, out_of_area_per,  net_loss, vacancy_rate_fte, average_house_price_per_sq_m, children_in_care, residential_expenditure, 
-                                          Asylum_per, unregulated, claimant_count_rate, Unemployment.rate...aged.16.64.)%>%
-  dplyr::distinct(.keep_all = T)%>%
-  mutate(across(everything(), as.numeric))%>%
-  dplyr::mutate(unregulated_per = unregulated/children_in_care)%>%
-  dplyr::select(-unregulated)
-
-
-
-# Calculate the correlation matrix
-cor_matrix <- cor(corr, use = "complete.obs")
-
-# Create a more attractive visualization using corrplot
-par(mar = c(1, 1, 2, 1))  # Adjust margins
-
-
-# Set up a high-resolution image file
-png("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/correlation_matrix_full.png", width = 5000, height = 5000, res = 500)
-
-# Set the plotting parameters for a full-size plot
-par(mar = c(2, 2, 2, 2), # Minimal margins
-    oma = c(0, 0, 0, 0), # No outer margins
-    mfrow = c(1, 1))     # Single plot
-
-# Generate the correlation plot with enhanced visual features
-corrplot(cor_matrix,
-         method = "color",      # Color-coded squares
-         type = "upper",        # Upper triangular matrix
-         order = "hclust",      # Hierarchical clustering to group similar variables
-         tl.col = "black",      # Text label color
-         tl.srt = 45,           # Text label rotation
-         addCoef.col = "black", # Add correlation coefficients to the plot
-         number.cex = 0.7,      # Size of correlation coefficients
-         col = colorRampPalette(c("#6D9EC1", "white", "#E46726"))(200), # Custom color palette
-         diag = FALSE,          # Hide the diagonal
-         mar = c(0, 0, 1, 0),   # Minimal margins
-         tl.cex = 1.2)          # Text label size increased
-
-# Close the device to save the image
-dev.off()
-
-
-
-
-
-####correlation plot home level####
-
-
-corr <- mlm %>% dplyr::select(age_years, Places, left, profit_margin_average, ebitda_margin_average, salaries_turnover_average, overall.average, ever_inadequate, ever_outstanding, chain_size_0s)%>%
-  dplyr::distinct(.keep_all = T)%>%
-  mutate(across(everything(), as.numeric))
-
-
-
-# Calculate the correlation matrix
-cor_matrix <- cor(corr, use = "complete.obs")
-
-# Create a more attractive visualization using corrplot
-par(mar = c(1, 1, 2, 1))  # Adjust margins
-
-
-# Set up a high-resolution image file
-png("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/correlation_matrix_full_home_level.png", width = 5000, height = 5000, res = 500)
-
-# Set the plotting parameters for a full-size plot
-par(mar = c(2, 2, 2, 2), # Minimal margins
-    oma = c(0, 0, 0, 0), # No outer margins
-    mfrow = c(1, 1))     # Single plot
-
-# Generate the correlation plot with enhanced visual features
-corrplot(cor_matrix,
-         method = "color",      # Color-coded squares
-         type = "upper",        # Upper triangular matrix
-         order = "hclust",      # Hierarchical clustering to group similar variables
-         tl.col = "black",      # Text label color
-         tl.srt = 45,           # Text label rotation
-         addCoef.col = "black", # Add correlation coefficients to the plot
-         number.cex = 0.7,      # Size of correlation coefficients
-         col = colorRampPalette(c("#6D9EC1", "white", "#E46726"))(200), # Custom color palette
-         diag = FALSE,          # Hide the diagonal
-         mar = c(0, 0, 1, 0),   # Minimal margins
-         tl.cex = 1.2)          # Text label size increased
-
-# Close the device to save the image
-dev.off()
-
-
 ####other quality reg table ####
 
 
@@ -4180,6 +4035,420 @@ as.data.frame(LA_panel_data)%>%
   ) %>%
   dplyr::filter(ratio>1)
 
+####Outcomes of profit and quality ####
+
+#### Table 3####
+
+
+### Prepare Data for Multinomial BRMS Model ###
+
+brmdata_multinom <- mlm %>%
+  tidyr::drop_na(Sector_merge, net_loss_s,age, Places, children_in_care_s,rel_pov_per_s,
+                 residential_expenditure_s, average_house_price_per_sq_m_s, median_wage_s,
+                 Region.Country.name, Local.authority) %>%
+  dplyr::select(Sector_merge,age_years, net_loss_s,closed, chain_size_0s, rel_pov_per_s, Places, children_in_care_s,
+                residential_expenditure_s, average_house_price_per_sq_m_s, median_wage_s,
+                Region.Country.name, Local.authority) %>%
+  dplyr::mutate(Region.Country.name = factor(Region.Country.name),
+                Sector_merge = factor(Sector_merge),
+                Local.authority = factor(Local.authority),
+                closed = factor(closed),
+                chain_size_0s_s = scale(chain_size_0s),
+                Places_s = scale(Places),
+                age_s = scale(age_years))
+
+brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
+levels(brmdata_multinom$Sector_merge) 
+
+
+
+
+priors <- c(
+  # Slopes for each category
+  prior(normal(0, 1), class = "b", dpar = "muCorporateowned"),
+  prior(normal(0, 1), class = "b", dpar = "muIndividualowned"),
+  prior(normal(0, 1), class = "b", dpar = "muInvestmentowned"),
+  prior(normal(0, 1), class = "b", dpar = "muThirdsector"),
+  
+  # Intercepts
+  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muCorporateowned"),
+  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muIndividualowned"),
+  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muInvestmentowned"),
+  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muThirdsector"),
+  
+  # Random effect SDs
+  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muCorporateowned"),
+  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muIndividualowned"),
+  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muInvestmentowned"),
+  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muThirdsector")
+)
+
+
+### Fit the Hierarchical Multinomial Model ###
+model_multilevel <- brm(
+  formula   = Sector_merge ~ net_loss_s + Places_s + age_s + closed + chain_size_0s_s +
+    children_in_care_s + residential_expenditure_s + average_house_price_per_sq_m_s +
+    median_wage_s + rel_pov_per_s + Region.Country.name +
+    (1 | Local.authority),
+  data      = brmdata_multinom,
+  family    = categorical(),
+  prior     = priors,
+  cores     = 4,
+  iter      = 2000
+)
+
+
+
+
+
+get_prior(
+  Sector_merge ~ net_loss_s + Places_s+ age_s+closed+chain_size_0s_s + children_in_care_s +
+    residential_expenditure_s + average_house_price_per_sq_m_s + median_wage_s +rel_pov_per_s+
+    Region.Country.name + (1 | Local.authority),
+  family = categorical(),
+  data   = brmdata_multinom
+)
+
+
+test <- brm(
+  formula = Sector_merge ~ net_loss_s + Places_s+ age_s+closed+chain_size_0s_s + children_in_care_s +
+    residential_expenditure_s + average_house_price_per_sq_m_s + median_wage_s +rel_pov_per_s + 
+    (1 | Local.authority),
+  data = brmdata_multinom,
+  family = categorical(),
+  cores = 4,
+  iter = 2000,
+  sample_prior = "only"
+  
+)
+
+pp_check(model_multilevel)
+
+pp_check(model_multilevel, type = "bars")           # bar plot comparison for categories
+pp_check(model_multilevel, type = "stat", stat = "mean")  # compare means
+pp_check(model_multilevel, type = "error_bars")     # interval checks
+
+summary(model_multilevel)
+
+
+### Function to Extract Multinomial Regression Table ###
+extract_regression_table <- function(model, reference_level) {
+  summary_model <- summary(model)
+  results_table <- data.frame(
+    Category = character(),
+    Predictor = character(),
+    Estimate = numeric(),
+    SE = numeric(),
+    CI_Lower = numeric(),
+    CI_Upper = numeric(),
+    P_value = numeric(),
+    stringsAsFactors = FALSE
+  )
+  
+  # Get outcome categories (excluding the specified reference)
+  categories <- levels(model$data$Sector_merge)
+  categories <- categories[categories != reference_level]
+  
+  for (cat in categories) {
+    cat_clean <- gsub(" ", "", cat)
+    fixed_effects <- summary_model$fixed[grep(paste0("^mu", cat_clean, "_"), rownames(summary_model$fixed)), ]
+    
+    for (i in 1:nrow(fixed_effects)) {
+      param_name <- rownames(fixed_effects)[i]
+      predictor <- gsub(paste0("^mu", cat_clean, "_"), "", param_name)
+      
+      results_table <- rbind(results_table, data.frame(
+        Category = cat,
+        Predictor = predictor,
+        Estimate = fixed_effects[i, "Estimate"],
+        SE = fixed_effects[i, "Est.Error"],
+        CI_Lower = fixed_effects[i, "l-95% CI"],
+        CI_Upper = fixed_effects[i, "u-95% CI"],
+        P_value = 2 * (1 - pnorm(abs(fixed_effects[i, "Estimate"] / fixed_effects[i, "Est.Error"]))),
+        stringsAsFactors = FALSE
+      ))
+    }
+  }
+  return(results_table)
+}
+
+# Adjust the reference level as needed (here we assume "Local Authority" is the reference)
+reg_table_multinom <- extract_regression_table(model_multilevel, "Local Authority")
+
+formatted_multinom <- reg_table_multinom %>%
+  mutate(
+    Significance = case_when(
+      P_value < 0.001 ~ "***",
+      P_value < 0.01  ~ "**",
+      P_value < 0.05  ~ "*",
+      P_value < 0.1   ~ ".",
+      TRUE ~ ""
+    ),
+    Estimate_formatted = sprintf("%.3f%s", Estimate, Significance),
+    CI_formatted = sprintf("[%.3f, %.3f]", CI_Lower, CI_Upper)
+  ) %>%
+  dplyr::select(Category, Predictor, Estimate_formatted, CI_formatted, P_value)
+
+### Prepare Data for the Numerical BRMS Models ###
+brmdata_overall <- mlm %>%
+  tidyr::drop_na(overall.average,number_of_inspections, age_s, net_loss_s, Places_s,rel_pov_per_s, children_in_care_s,
+                 residential_expenditure_s, average_house_price_per_sq_m_s, median_wage_s,
+                 Region.Country.name, Local.authority) %>%
+  dplyr::mutate(Region.Country.name = factor(Region.Country.name),
+                Local.authority = factor(Local.authority))
+
+brmdata_profit <- mlm %>%
+  tidyr::drop_na(profit_margin_average, age, net_loss_s, Places, children_in_care_s,rel_pov_per_s,
+                 residential_expenditure_s, average_house_price_per_sq_m_s, median_wage_s,
+                 Region.Country.name, Local.authority) %>%
+  dplyr::mutate(Region.Country.name = factor(Region.Country.name),
+                Local.authority = factor(Local.authority))
+
+
+
+### Fit Hierarchical Gaussian Models for the Numerical Outcomes ###
+
+# Model for overall.average
+model_overall <- brm(
+  formula = overall.average ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
+    residential_expenditure_s + average_house_price_per_sq_m_s + median_wage_s +rel_pov_per_s+
+    Region.Country.name + (1 | Local.authority),
+  data = brmdata_overall,
+  family = gaussian(),
+  cores = 4,
+  iter = 2000
+)
+
+# Model for profit_margin_average
+model_profit <- brm(
+  formula = profit_margin_average ~ net_loss_s + Places+ age_years+closed+chain_size_0s + children_in_care_s +
+    residential_expenditure_s + average_house_price_per_sq_m_s + median_wage_s +rel_pov_per_s+
+    Region.Country.name + (1 | Local.authority),
+  data = brmdata_profit,
+  family = gaussian(),
+  cores = 4,
+  iter = 2000
+)
+
+### Function to Extract Fixed Effects from a Gaussian BRMS Model ###
+extract_brms_linear_table <- function(model) {
+  summ <- summary(model)$fixed
+  results <- data.frame(
+    term = rownames(summ),
+    Estimate = summ[,"Estimate"],
+    SE = summ[,"Est.Error"],
+    CI_Lower = summ[,"l-95% CI"],
+    CI_Upper = summ[,"u-95% CI"],
+    stringsAsFactors = FALSE
+  )
+  # Exclude the intercept
+  results <- results %>% filter(term != "Intercept")
+  results <- results %>% mutate(
+    P_value = 2 * (1 - pnorm(abs(Estimate / SE))),
+    Significance = case_when(
+      P_value < 0.001 ~ "***",
+      P_value < 0.01  ~ "**",
+      P_value < 0.05  ~ "*",
+      P_value < 0.1   ~ ".",
+      TRUE ~ ""
+    ),
+    Estimate_formatted = sprintf("%.3f%s", Estimate, Significance),
+    CI_formatted = sprintf("[%.3f, %.3f]", CI_Lower, CI_Upper)
+  )
+  results <- results %>% dplyr::select(term, Estimate_formatted, CI_formatted, P_value)
+  return(results)
+}
+
+overall_table <- extract_brms_linear_table(model_overall)
+profit_table  <- extract_brms_linear_table(model_profit)
+
+### Reshape Multinomial Table and Merge with Numerical Outcome Tables ###
+
+# Pivot the multinomial table so that each category becomes a column
+multinom_wide <- formatted_multinom %>%
+  pivot_wider(names_from = Category, values_from = c(Estimate_formatted, CI_formatted, P_value))
+
+# Rename Predictor to term to merge by predictor name
+multinom_wide <- multinom_wide %>% rename(term = Predictor)
+
+library(dplyr)
+library(stringr)
+library(gt)
+
+# Merge overall and profit margin estimates by predictor ("term")
+final_table <- multinom_wide %>%
+  full_join(overall_table %>% 
+              rename(overall_average = Estimate_formatted,
+                     overall_average_CI = CI_formatted,
+                     overall_average_P_value = P_value),
+            by = "term") %>%
+  full_join(profit_table  %>% 
+              rename(profit_margin_average = Estimate_formatted,
+                     profit_margin_CI = CI_formatted,
+                     profit_margin_P_value = P_value),
+            by = "term") %>%
+  filter(!str_detect(term, "Region"),
+         term != "Intercept") %>%
+  select(term, 
+         `Estimate_formatted_Third sector`, `CI_formatted_Third sector`, 
+         `Estimate_formatted_Individual owned`, `CI_formatted_Individual owned`, 
+         `Estimate_formatted_Corporate owned`, `CI_formatted_Corporate owned`,
+         `Estimate_formatted_Investment owned`, `CI_formatted_Investment owned`, 
+         overall_average, overall_average_CI, 
+         profit_margin_average, profit_margin_CI)
+
+# Create a prettier version of the table with clear column names and cleaned predictors
+pretty_table <- final_table %>%
+  rename(
+    Predictor = term,
+    `Third Sector (Estimate)` = `Estimate_formatted_Third sector`,
+    `Third Sector (95% CI)` = `CI_formatted_Third sector`,
+    `Individual Owned (Estimate)` = `Estimate_formatted_Individual owned`,
+    `Individual Owned (95% CI)` = `CI_formatted_Individual owned`,
+    `Corporate Owned (Estimate)` = `Estimate_formatted_Corporate owned`,
+    `Corporate Owned (95% CI)` = `CI_formatted_Corporate owned`,
+    `Investment Owned (Estimate)` = `Estimate_formatted_Investment owned`,
+    `Investment Owned (95% CI)` = `CI_formatted_Investment owned`,
+    `Overall Rating (Estimate)` = overall_average,
+    `Overall Rating (95% CI)` = overall_average_CI,
+    `Profit Margin (Estimate)` = profit_margin_average,
+    `Profit Margin (95% CI)` = profit_margin_CI
+  ) %>%
+  mutate(
+    Predictor = case_when(
+      Predictor == "net_loss_s" ~ "Area Need (Net Loss)",
+      Predictor == "Places" ~ "Places",
+      Predictor == "age_years" ~ "Age (years)",
+      Predictor == "chain_size_0s" ~ "Chain size (n, 10s)",
+      Predictor == "closed1" ~ "De-registered home (closed or taken over, dummy)",
+      Predictor == "children_in_care_s" ~ "Children in Care",
+      Predictor == "residential_expenditure_s" ~ "Local Authority Expenditure (Residential care)",
+      Predictor == "average_house_price_per_sq_m_s" ~ "Median House Price (per sq m, excluding flats)",
+      Predictor == "median_wage_s" ~ "Median Wage (Hourly)",
+      Predictor == "rel_pov_per_s" ~ "Children in low income households (%)",
+      Predictor == "number_of_inspections" ~ "Number of Previous Inspections",
+      TRUE ~ Predictor
+    )
+  )
+
+# Calculate sample sizes for each model
+n_multinom <- nrow(brmdata_multinom)
+n_overall  <- nrow(brmdata_overall)
+n_profit   <- nrow(brmdata_profit)
+
+# Add rows for fixed/random effects and sample sizes
+# Using NA for cells that are not applicable provides more consistent formatting.
+pretty_table <- pretty_table %>%
+  add_row(Predictor = "Regional Fixed Effects", 
+          `Third Sector (Estimate)` = "Included", 
+          `Third Sector (95% CI)` = NA,
+          `Individual Owned (Estimate)` = "Included",
+          `Individual Owned (95% CI)` = NA,
+          `Corporate Owned (Estimate)` = "Included",
+          `Corporate Owned (95% CI)` = NA,
+          `Investment Owned (Estimate)` = "Included",
+          `Investment Owned (95% CI)` = NA,
+          `Overall Rating (Estimate)` = "Included",
+          `Overall Rating (95% CI)` = NA,
+          `Profit Margin (Estimate)` = "Included",
+          `Profit Margin (95% CI)` = NA
+  ) %>%
+  add_row(Predictor = "Local Authority Random Effects", 
+          `Third Sector (Estimate)` = "Included", 
+          `Third Sector (95% CI)` = NA,
+          `Individual Owned (Estimate)` = "Included",
+          `Individual Owned (95% CI)` = NA,
+          `Corporate Owned (Estimate)` = "Included",
+          `Corporate Owned (95% CI)` = NA,
+          `Investment Owned (Estimate)` = "Included",
+          `Investment Owned (95% CI)` = NA,
+          `Overall Rating (Estimate)` = "Included",
+          `Overall Rating (95% CI)` = NA,
+          `Profit Margin (Estimate)` = "Included",
+          `Profit Margin (95% CI)` = NA
+  ) %>%
+  add_row(Predictor = "Observations (n)", 
+          `Third Sector (Estimate)` = as.character(n_multinom), 
+          `Third Sector (95% CI)` = NA,
+          `Individual Owned (Estimate)` = NA, 
+          `Individual Owned (95% CI)` = NA,
+          `Corporate Owned (Estimate)` = NA, 
+          `Corporate Owned (95% CI)` = NA,
+          `Investment Owned (Estimate)` = NA, 
+          `Investment Owned (95% CI)` = NA,
+          `Overall Rating (Estimate)` = as.character(n_overall), 
+          `Overall Rating (95% CI)` = NA,
+          `Profit Margin (Estimate)` = as.character(n_profit), 
+          `Profit Margin (95% CI)` = NA
+  )
+
+# Combine each estimate with its 95% CI into one column per model/metric
+pretty_table <- pretty_table %>%
+  mutate(
+    `Third Sector (Estimate) [95% CI]` = paste0(`Third Sector (Estimate)`, " ", `Third Sector (95% CI)`, ""),
+    `Individual Owned (Estimate) [95% CI]` = paste0(`Individual Owned (Estimate)`, " ", `Individual Owned (95% CI)`, ""),
+    `Corporate Owned (Estimate) [95% CI]` = paste0(`Corporate Owned (Estimate)`, " ", `Corporate Owned (95% CI)`, ""),
+    `Investment Owned (Estimate) [95% CI]` = paste0(`Investment Owned (Estimate)`, " ", `Investment Owned (95% CI)`, ""),
+    `Quality (Estimate) [95% CI]` = paste0(`Overall Rating (Estimate)`, " ", `Overall Rating (95% CI)`, ""),
+    `Profit Margin (Estimate) [95% CI]` = paste0(`Profit Margin (Estimate)`, " ", `Profit Margin (95% CI)`, "")
+  ) %>%
+  dplyr::select(Predictor,
+                `Third Sector (Estimate) [95% CI]`,
+                `Individual Owned (Estimate) [95% CI]`,
+                `Corporate Owned (Estimate) [95% CI]`,
+                `Investment Owned (Estimate) [95% CI]`,
+                `Quality (Estimate) [95% CI]`,
+                `Profit Margin (Estimate) [95% CI]`)
+
+# Build the gt table
+regression_table <- pretty_table %>%
+  gt() %>%
+  tab_header(
+    title = "Hierarchical Regression Models Examining Predictors of Children Home Ownership and Performance"
+  ) %>%
+  tab_spanner(
+    label = c("Reference category for ownership type: Local Authority"),
+    columns = matches("Third Sector|Individual Owned|Corporate Owned|Investment Owned")
+  ) %>%
+  tab_spanner(
+    label = c("Ownership Type (Multinomial Model)"),
+    columns = matches("Third Sector|Individual Owned|Corporate Owned|Investment Owned")
+  ) %>%
+  tab_spanner(
+    label = "Performance Metrics",
+    columns = matches("Quality|Profit Margin")
+  ) %>%
+  cols_align(
+    align = "left",
+    columns = "Predictor"
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = c("Third Sector (Estimate) [95% CI]",
+                "Individual Owned (Estimate) [95% CI]",
+                "Corporate Owned (Estimate) [95% CI]",
+                "Investment Owned (Estimate) [95% CI]",
+                "Quality (Estimate) [95% CI]",
+                "Profit Margin (Estimate) [95% CI]")
+  ) %>%
+  tab_options(
+    table.font.size = px(12),
+    heading.title.font.size = px(16),
+    heading.subtitle.font.size = px(14),
+    column_labels.font.weight = "bold",
+    row_group.font.weight = "bold",
+    source_notes.font.size = px(10),
+    footnotes.font.size = px(10),
+    table.width = pct(100)
+  )
+
+# Save the table as HTML
+regression_table %>%
+  gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table3.html")
+
+
+
+
 
 ####changing the comparison to invest firm####
 
@@ -4327,3 +4596,437 @@ y <- ggplot(results_df, aes(x = factor(num_controls), y = estimate)) +
   theme_bw()
 ggsave(plot=y, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Appendix/specification_curve.jpeg", width=8, height=8, dpi=600)
 
+
+
+
+
+
+
+
+# Load necessary libraries
+library(lmerTest)
+library(dplyr)
+library(ggplot2)
+library(purrr)
+library(broom.mixed)  # For tidying mixed-effects models
+
+# Define the outcome variables
+outcomes <- c("sector_third", "sector_indiv", "sector_corp", 
+              "sector_invest", "overall.average", "profit_margin_average")
+
+# Define the potential control variables (to be varied)
+controls <- c("Places", "age_years", "closed", "chain_size_0s", 
+              "children_in_care_s", "residential_expenditure_s", 
+              "average_house_price_per_sq_m_s", "median_wage_s", 
+              "Region.Country.name")
+
+# A list to collect results from all specifications
+results <- list()
+
+# Loop over each outcome variable
+for (outcome in outcomes) {
+  
+  # For each possible number of controls (from 0 to all available)
+  for (k in 0:length(controls)) {
+    
+    # Get all combinations of controls of size k 
+    ctrl_combinations <- if(k == 0) list(character(0)) else combn(controls, k, simplify = FALSE)
+    
+    # Loop over each specific combination of controls
+    for (ctrl_set in ctrl_combinations) {
+      
+      # Always include 'net_loss_s' and add the current set of controls
+      fixed_effects <- if(length(ctrl_set) > 0) {
+        paste(c("net_loss_s", ctrl_set), collapse = " + ")
+      } else {
+        "net_loss_s"
+      }
+      
+      # Construct the model formula: outcome ~ net_loss_s + ... + (1|Local.authority)
+      formula_str <- paste(outcome, "~", fixed_effects, "+ (1 | Local.authority)")
+      formula_model <- as.formula(formula_str)
+      
+      # Fit the model using lmer (wrap in try() in case of convergence or data issues)
+      fit <- try(lmer(formula_model, data = mlm), silent = TRUE)
+      if (inherits(fit, "try-error")) next
+      
+      # Extract the net_loss_s coefficient details using broom.mixed::tidy with confidence intervals
+      tidy_fit <- broom.mixed::tidy(fit, effects = "fixed", conf.int = TRUE)
+      net_loss_coef <- tidy_fit %>% filter(term == "net_loss_s")
+      
+      # If confidence intervals are missing, compute them using a normal approximation
+      if(nrow(net_loss_coef) > 0) {
+        if (!("conf.low" %in% names(net_loss_coef)) ||
+            !("conf.high" %in% names(net_loss_coef))) {
+          net_loss_coef <- net_loss_coef %>%
+            mutate(conf.low = estimate - 1.96 * std.error,
+                   conf.high = estimate + 1.96 * std.error)
+        }
+        results[[length(results) + 1]] <- data.frame(
+          outcome      = outcome,
+          controls     = if(length(ctrl_set) == 0) "None" else paste(ctrl_set, collapse = ", "),
+          num_controls = length(ctrl_set),
+          estimate     = net_loss_coef$estimate,
+          std.error    = net_loss_coef$std.error,
+          conf.low     = net_loss_coef$conf.low,
+          conf.high    = net_loss_coef$conf.high
+        )
+      }
+    }
+  }
+}
+
+# Combine the list into one data frame if at least one model was successful
+if(length(results) > 0) {
+  results_df <- do.call(rbind, results)
+} else {
+  stop("No model specifications were successfully fit.")
+}
+
+results_df$outcome <- factor(ifelse(results_df$outcome=="sector_third", "Third sector",
+                                    ifelse(results_df$outcome=="sector_indiv", "Individual-owned",
+                                           ifelse(results_df$outcome=="sector_corp", "Corporate-owned",
+                                                  ifelse(results_df$outcome=="sector_invest", "Investment-owned",
+                                                         ifelse(results_df$outcome=="overall.average", "Quality score",
+                                                                ifelse(results_df$outcome=="profit_margin_average", "Profit Margin (%)", NA)))))))
+
+# Create a specification curve plot:
+y <- ggplot(results_df, aes(x = factor(num_controls), y = estimate)) +
+  geom_jitter(width = 0.2, alpha = 0.5, color = "steelblue") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.1, alpha = 0.3) +
+  facet_wrap(~ outcome, scales = "free_y") +
+  geom_hline(yintercept = 0)+
+  labs(x = "Number of Controls Included",
+       y = "Coefficient Estimate for Area Need (net loss)",
+       title = "Specification Curve: Effect of Area Need, varying controls") +
+  theme_bw()
+ggsave(plot=y, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Appendix/specification_curve.jpeg", width=8, height=8, dpi=600)
+
+
+
+
+
+
+
+nbm <- as.data.frame(LA_panel_data) %>%
+  dplyr::mutate(needQuint = factor(ntile(net_loss, 5),
+                                   levels=c(5,4,3,2,1)),
+                needQuint = ifelse(needQuint==1, "1 (Low need)",
+                                   ifelse(needQuint==2, "2",
+                                          ifelse(needQuint==3,"3",
+                                                 ifelse(needQuint==4, "4",
+                                                        ifelse(needQuint==5, "5 (High need)", NA))))),
+                needQuint = factor(needQuint,
+                                   levels = c("5 (High need)", "4", "3", "2", "1 (Low need)")))
+
+
+
+nbm$net_loss <- as.numeric(nbm$net_loss_lagged)
+nbm$median_wage <- as.numeric(nbm$median_wage)
+nbm$median_house_price_detached <- as.numeric(nbm$median_house_price_detached)
+nbm$occupancy_rate_fte <- as.numeric(nbm$occupancy_rate_fte)
+nbm$Unemployment.rate...aged.16.64. <- as.numeric(nbm$Unemployment.rate...aged.16.64.)
+nbm$children_in_care <- as.numeric(as.numeric(nbm$out_of_area_per)*as.numeric(nbm$out_of_area))
+nbm$claimant_count_rate <- as.numeric(nbm$claimant_count_rate)
+nbm$white <- as.numeric(nbm$X..of.white...aged.16.)
+nbm$residential_expenditure <- as.numeric(nbm$residential_expenditure)
+
+
+# Create a scaled version in the data frame
+nbm$net_loss_s <- scale(nbm$net_loss)
+nbm$median_wage_s <- scale(nbm$median_wage)
+nbm$median_house_price_detached_s <- scale(nbm$median_house_price_detached)
+nbm$occupancy_rate_fte_s <- scale(nbm$occupancy_rate_fte)
+nbm$Unemployment.rate...aged.16.64._s <- scale(nbm$Unemployment.rate...aged.16.64.)
+nbm$claimant_count_rate_s <- scale(nbm$claimant_count_rate)
+nbm$children_in_care_s <- scale(nbm$children_in_care)
+nbm$white_s <- scale(nbm$white)
+nbm$residential_expenditure_s <- scale(nbm$residential_expenditure)
+
+
+nbm$non_invest = scale(as.numeric(nbm$All_homes-nbm$Homes_Investment_owned))
+nbm$non_corp = scale(as.numeric(nbm$All_homes-nbm$Homes_Corporate_owned))
+nbm$non_indiv = scale(as.numeric(nbm$All_homes-nbm$Homes_Individual_owned))
+nbm$non_la = scale(as.numeric(nbm$All_homes-nbm$Homes_Local_Authority))
+nbm$non_3rd = scale(as.numeric(nbm$All_homes-nbm$Homes_Third_sector))
+
+reg1 <- plm(residential_expenditure_s ~  net_loss_s  + median_house_price_detached_s +median_wage_s +Unemployment.rate...aged.16.64._s + white_s+ occupancy_rate_fte_s+claimant_count_rate_s + children_in_care_s  +  Region.Country.name, 
+            index = c("Local.authority", "year"), data = nbm%>%
+              dplyr::filter(Region.Country.name!="London"), model = "pooling")
+coef_test(reg1, vcov = "CR2", cluster = nbm%>%
+            dplyr::filter(Region.Country.name!="London")$Local.authority, test = "Satterthwaite")
+
+nbm_filtered <- nbm %>% dplyr::filter(Region.Country.name != "London")
+
+# Run the PLM model
+reg1 <- plm(residential_expenditure_s ~ net_loss_s + median_house_price_detached_s + 
+              median_wage_s + Unemployment.rate...aged.16.64._s + white_s + 
+              occupancy_rate_fte_s + claimant_count_rate_s + children_in_care_s + 
+              Region.Country.name, 
+            index = c("Local.authority", "year"), 
+            data = nbm_filtered, 
+            model = "pooling")
+
+# Run coefficient test with clustering
+coef_test(reg1, vcov = "CR2", cluster = nbm_filtered$Local.authority, test = "Satterthwaite")
+
+reg1 <- plm(as.numeric(unregulated) ~  net_loss_s+ as.numeric(Asylum_per)  + median_house_price_detached_s +median_wage_s +Unemployment.rate...aged.16.64._s + white_s+ occupancy_rate_fte_s+claimant_count_rate_s + children_in_care_s  +  Region.Country.name, 
+            index = c("Local.authority", "year"), data = nbm, model = "pooling")
+coef_test(reg1, vcov = "CR2", cluster = nbm$Local.authority, test = "Satterthwaite")
+
+
+
+
+
+
+# Check its length
+length(nbm$net_loss_s)  # Should match nrow(nbm)
+
+rownames(nbm) <- NULL
+
+
+library(dplyr)
+library(plm)
+library(sjPlot)
+library(clubSandwich)
+library(cowplot)
+
+# Prepare the panel data
+nbm <- nbm %>% distinct(.keep_all = TRUE)
+
+# Load required libraries if not already loaded
+# library(plm)
+# library(dplyr)
+# library(sjPlot)
+# library(lmtest)
+# library(sandwich)
+# library(clubSandwich)  # For coef_test function
+
+# Create a named vector for variable labels
+var_labels <- c(
+  "needQuint" = "Area need\n(net loss)",
+  "median_wage_s" = "Median Wage\n(£, hourly)",
+  "median_house_price_detached_s" = "Median House Price\n(Detached)",
+  "Unemployment.rate...aged.16.64._s" = "Unemployment Rate\n(16-64, %)",
+  "occupancy_rate_fte_s" = "Social Worker Occupancy Rate\n(FTE, %)",
+  "white_s" = "White Population\n(%)",
+  "claimant_count_rate_s" = "Claimant Count Rate\n(%)",
+  "children_in_care_s" = "Children in Residential Care"
+)
+
+# List of variables to include in models
+vars_to_include <- c("needQuint", "median_wage_s", "median_house_price_detached_s", 
+                     "Unemployment.rate...aged.16.64._s", "occupancy_rate_fte_s", 
+                     "white_s", "claimant_count_rate_s", "children_in_care_s")
+
+# Set up the panel data
+nbm <- pdata.frame(nbm %>% distinct(.keep_all = TRUE), 
+                   index = c("Local.authority", "year"))
+
+add_significance_stars <- function(p_value) {
+  if (is.na(p_value)) return("")
+  if (p_value < 0.001) return("***")
+  if (p_value < 0.01) return("**")
+  if (p_value < 0.05) return("*")
+  if (p_value < 0.1) return(".")
+  return("")
+}
+
+# Function to create model and plot with clustered standard errors
+create_model_plot <- function(dependent_var, title) {
+  # Run the model
+  model_formula <- as.formula(paste(
+    dependent_var, "~", 
+    paste(vars_to_include, collapse = " + "), 
+    "+ factor(Region.Country.name)"
+  ))
+  
+  model <- lm(model_formula, data = nbm)
+  
+  # Compute clustered standard errors
+  clustered <- coef_test(model, vcov = "CR2", 
+                         cluster = nbm$Local.authority, 
+                         test = "Satterthwaite")
+  
+  # Extract coefficients and SEs from clustered results
+  # Convert the clustered results to a data frame
+  coefs_data <- data.frame(
+    term = clustered$Coef,
+    estimate = clustered$beta,
+    std.error = clustered$SE,
+    satt.freedom = clustered$df_Satt,
+    statistic = clustered$tstat,
+    p.value = clustered$p_Satt,
+    stringsAsFactors = FALSE
+  )
+  
+  
+  # Set significance level (for a 95% confidence interval)
+  alpha <- 0.05
+  
+  # Compute the lower and upper bounds of the confidence interval for each coefficient
+  coefs_data$conf.low <- coefs_data$estimate - qt(1 - alpha/2, df = coefs_data$satt.freedom) * coefs_data$std.error
+  coefs_data$conf.high <- coefs_data$estimate + qt(1 - alpha/2, df = coefs_data$satt.freedom) * coefs_data$std.error
+  
+  # Add significance stars
+  coefs_data$stars <- sapply(coefs_data$p.value, add_significance_stars)
+  
+  # Format estimates for display (2 decimal places)
+  coefs_data$est_label <- paste0(format(round(coefs_data$estimate, 2), nsmall = 2), coefs_data$stars)
+  
+  # Filter to only include the variables we want to plot
+  coefs_filtered <- coefs_data[coefs_data$term %in% vars_to_include, ]
+  
+  # Create factor with levels in desired order for plotting
+  coefs_filtered$term <- factor(coefs_filtered$term, levels = rev(vars_to_include))
+  
+  plot <- ggplot(coefs_filtered, aes(x = term, y = estimate, 
+                                     ymin = conf.low, ymax = conf.high)) +
+    geom_pointrange() +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+    coord_flip() +
+    scale_x_discrete(labels = var_labels[as.character(coefs_filtered$term)]) +
+    # Add coefficient values with stars
+    geom_text(aes(label = est_label), vjust = -0.7, hjust = ifelse(coefs_filtered$estimate > 0, -0.1, 1.1), size = 3) +
+    labs(
+      title = title,
+      x = "",
+      y = "Coefficient"
+    ) +
+    theme_bw() +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      panel.grid.minor = element_blank()
+    )
+  
+  return(list(model = model, clustered = clustered, plot = plot))
+}
+
+
+# Create all models and plots
+models <- list(
+  all = create_model_plot("all_change", "All Homes"),
+  ind = create_model_plot("ind_change", "Individual Owned"),
+  corp = create_model_plot("corp_change", "Corporate Owned"),
+  invest = create_model_plot("invest_change", "Investment Owned"),
+  la = create_model_plot("la_change", "Local Authority"),
+  third = create_model_plot("third_change", "Third Sector")
+)
+
+# Extract just the plots for the grid
+plots <- list(
+  models$all$plot,
+  models$la$plot,
+  models$third$plot,
+  models$ind$plot,
+  models$corp$plot,
+  models$invest$plot
+)
+
+# Create the combined plot grid
+combined_plot <- cowplot::plot_grid(plotlist = plots, ncol = 3)
+
+# Display the combined plot
+combined_plot
+
+# To access the clustered standard errors results for any model:
+# models$all$clustered
+# models$ind$clustered
+# etc.
+
+
+ggsave(plot=combined_plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2.jpeg", width=14, height=7, dpi=600)
+
+
+
+
+
+
+
+
+
+corr <- LA_panel_data %>% dplyr::select(Homes_Individual_owned, Homes_Corporate_owned, Homes_Investment_owned, Homes_Third_sector, Homes_Local_Authority,
+                                        median_wage, out_of_area_per,  net_loss, vacancy_rate_fte, average_house_price_per_sq_m, children_in_care, residential_expenditure, 
+                                        Asylum_per, unregulated, claimant_count_rate, Unemployment.rate...aged.16.64.)%>%
+  dplyr::distinct(.keep_all = T)%>%
+  mutate(across(everything(), as.numeric))%>%
+  dplyr::mutate(unregulated_per = unregulated/children_in_care)%>%
+  dplyr::select(-unregulated)
+
+
+
+# Calculate the correlation matrix
+cor_matrix <- cor(corr, use = "complete.obs")
+
+# Create a more attractive visualization using corrplot
+par(mar = c(1, 1, 2, 1))  # Adjust margins
+
+
+# Set up a high-resolution image file
+png("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/correlation_matrix_full.png", width = 5000, height = 5000, res = 500)
+
+# Set the plotting parameters for a full-size plot
+par(mar = c(2, 2, 2, 2), # Minimal margins
+    oma = c(0, 0, 0, 0), # No outer margins
+    mfrow = c(1, 1))     # Single plot
+
+# Generate the correlation plot with enhanced visual features
+corrplot(cor_matrix,
+         method = "color",      # Color-coded squares
+         type = "upper",        # Upper triangular matrix
+         order = "hclust",      # Hierarchical clustering to group similar variables
+         tl.col = "black",      # Text label color
+         tl.srt = 45,           # Text label rotation
+         addCoef.col = "black", # Add correlation coefficients to the plot
+         number.cex = 0.7,      # Size of correlation coefficients
+         col = colorRampPalette(c("#6D9EC1", "white", "#E46726"))(200), # Custom color palette
+         diag = FALSE,          # Hide the diagonal
+         mar = c(0, 0, 1, 0),   # Minimal margins
+         tl.cex = 1.2)          # Text label size increased
+
+# Close the device to save the image
+dev.off()
+
+
+
+
+
+
+
+corr <- mlm %>% dplyr::select(age_years, Places, left, profit_margin_average, ebitda_margin_average, salaries_turnover_average, overall.average, ever_inadequate, ever_outstanding, chain_size_0s)%>%
+  dplyr::distinct(.keep_all = T)%>%
+  mutate(across(everything(), as.numeric))
+
+
+
+# Calculate the correlation matrix
+cor_matrix <- cor(corr, use = "complete.obs")
+
+# Create a more attractive visualization using corrplot
+par(mar = c(1, 1, 2, 1))  # Adjust margins
+
+
+# Set up a high-resolution image file
+png("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/correlation_matrix_full_home_level.png", width = 5000, height = 5000, res = 500)
+
+# Set the plotting parameters for a full-size plot
+par(mar = c(2, 2, 2, 2), # Minimal margins
+    oma = c(0, 0, 0, 0), # No outer margins
+    mfrow = c(1, 1))     # Single plot
+
+# Generate the correlation plot with enhanced visual features
+corrplot(cor_matrix,
+         method = "color",      # Color-coded squares
+         type = "upper",        # Upper triangular matrix
+         order = "hclust",      # Hierarchical clustering to group similar variables
+         tl.col = "black",      # Text label color
+         tl.srt = 45,           # Text label rotation
+         addCoef.col = "black", # Add correlation coefficients to the plot
+         number.cex = 0.7,      # Size of correlation coefficients
+         col = colorRampPalette(c("#6D9EC1", "white", "#E46726"))(200), # Custom color palette
+         diag = FALSE,          # Hide the diagonal
+         mar = c(0, 0, 1, 0),   # Minimal margins
+         tl.cex = 1.2)          # Text label size increased
+
+# Close the device to save the image
+dev.off()
