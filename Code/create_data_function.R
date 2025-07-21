@@ -459,5 +459,8 @@ df <- df %>%
                                       ifelse(Sector.x=="Voluntary", "Third sector", Sector.y)),
                 Sector_merge = ifelse(is.na(Sector_merge), "Unidentified for-profit", Sector_merge))
 
+df$Sector_merge <- factor(df$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unidentified for-profit"))
+
+
 
 }
