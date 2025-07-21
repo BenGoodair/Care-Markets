@@ -1238,38 +1238,7 @@ mlm$age_years <- mlm$age/12
 
 
 mlm <- mlm %>%
-  left_join(rbind(read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's care homes project/Data/Francois_1_basic_companies.csv")%>%
-                    dplyr::select(Company.name, GUO...Name)%>%
-                    dplyr::distinct(.keep_all = T)%>%
-                    dplyr::filter(Company.name!=""),
-                  read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's care homes project/kids_correction.csv")%>%
-                    dplyr::select(Company.name, GUO...Name)%>%
-                    dplyr::distinct(.keep_all = T)%>%
-                    dplyr::filter(Company.name!="")
-  ))
-
-
-
-mlm <- mlm %>% dplyr::mutate(GUO...Name = ifelse(GUO...Name=="", Organisation, GUO...Name))
-
-
-mlm <- mlm %>%
-  mutate(Organisation = ifelse(Sector_merge=="Local Authority", Local.authority, Organisation))
-
-
-mlm <- mlm %>%
-  dplyr::group_by(GUO...Name) %>%
-  dplyr::mutate(GUO_chain_size = dplyr::n())%>%
-  dplyr::ungroup()%>%
-  dplyr::mutate(company_filled = ifelse(is.na(Company.name), Organisation, Company.name))%>%
-  dplyr::group_by(company_filled)%>%
-  dplyr::mutate(comp_chain_size = dplyr::n())%>%
-  dplyr::ungroup()%>%
-  dplyr::mutate(chain_size = ifelse(is.na(GUO...Name)| GUO...Name=="",comp_chain_size, GUO_chain_size ))%>%
-  dplyr::mutate(chain_size = ifelse(is.na(company_filled), NA, chain_size ))
-
-ello <- mlm %>%
-  dplyr::select(chain_size, URN)
+  left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/chain_size.csv")), by= "URN")
 
 
 
