@@ -1107,35 +1107,6 @@ LA_panel_data <- LA_panel_data %>%
 
 
 
-LA_panel_data <- LA_panel_data %>%
-  dplyr::left_join(.,
-                   read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/FOI_2024-0014264_part_1.csv", skip=15) %>%
-                     dplyr::rename(Local.authority = la_name,
-                                   unregulated = number,
-                                   year= time_period)%>%
-                     dplyr::filter(new_la_code!="E10000009")%>%
-                     dplyr::select(Local.authority,unregulated, year )%>%
-                     dplyr::mutate(Local.authority = Local.authority %>%
-                                     gsub('&', 'and', .) %>%
-                                     gsub('[[:punct:] ]+', ' ', .) %>%
-                                     gsub('[0-9]', '', .)%>%
-                                     toupper() %>%
-                                     gsub("CITY OF", "",.)%>%
-                                     gsub("UA", "",.)%>%
-                                     gsub("COUNTY OF", "",.)%>%
-                                     gsub("ROYAL BOROUGH OF", "",.)%>%
-                                     gsub("LEICESTER CITY", "LEICESTER",.)%>%
-                                     gsub("UA", "",.)%>%
-                                     gsub("DARWIN", "DARWEN", .)%>%
-                                     gsub("COUNTY DURHAM", "DURHAM", .)%>%
-                                     gsub("AND DARWEN", "WITH DARWEN", .)%>%
-                                     gsub("NE SOM", "NORTH EAST SOM", .)%>%
-                                     gsub("N E SOM", "NORTH EAST SOM", .)%>%
-                                     str_trim()),
-                   by=c("Local.authority", "year"))
-
-
-
 LA_panel_data <- pdata.frame(LA_panel_data%>%
                                distinct(.keep_all = T), index = c("Local.authority", "year"))
 
@@ -1319,49 +1290,10 @@ mlm$chain_size_0s <- mlm$chain_size/10
 
 
 ####reqs and recs####
-####update provider data for 2024 and use that for inspections####
-####work out reqs and recs per inspection during the period we have data, fold it into mlm####
-CHrequirements <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/Requirements_ch_ifa.csv")%>%
-  dplyr::mutate(Inspection.date = as.Date(Inspection.date, format="%d/%m/%Y"))%>%
-  dplyr::mutate(number_of_requirements = 1)%>%
-  dplyr::select(URN, number_of_requirements)%>%
-  dplyr::group_by(URN)%>%
-  dplyr::summarise(number_of_requirements = sum(number_of_requirements, na.rm=T))%>%
-  dplyr::ungroup()
-
-CHrecs <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/Recommendations_ch_ifa.csv")%>%
-  dplyr::mutate(Inspection.date = as.Date(Inspection.date, format="%d/%m/%Y"))%>%
-  dplyr::mutate(number_of_recomendations = 1)%>%
-  dplyr::select(URN, number_of_recomendations)%>%
-  dplyr::group_by(URN)%>%
-  dplyr::summarise(number_of_recomendations = sum(number_of_recomendations, na.rm=T))%>%
-  dplyr::ungroup()
-
-
-source("https://raw.githubusercontent.com/BenGoodair/childrens_social_care_data/main/Code/provider_cleaning_function.R")
-ProviderData <- create_provider_data() %>%
-  dplyr::filter(Event.type=="Full inspection")%>%
-  dplyr::select(URN, Inspection.date) %>%
-  dplyr::mutate(Inspection.date = as.Date(Inspection.date, format="%d/%m/%Y"))%>%
-  dplyr::filter(Inspection.date>"2014-08-01",
-                Inspection.date<"2021-05-05")%>%
-  dplyr::mutate(number_of_requirement_inspections = 1)%>%
-  dplyr::select(URN, number_of_requirement_inspections)%>%
-  dplyr::group_by(URN)%>%
-  dplyr::summarise(number_of_requirement_inspections = sum(number_of_requirement_inspections, na.rm=T))%>%
-  dplyr::ungroup()%>%
-  dplyr::full_join(., CHrecs, by="URN")%>%
-  dplyr::full_join(., CHrequirements, by="URN")%>%
-  dplyr::mutate(number_of_recomendations = ifelse(is.na(number_of_recomendations), 0, number_of_recomendations),
-                number_of_requirements= ifelse(is.na(number_of_requirements), 0, number_of_requirements),
-                recs_per = number_of_recomendations/ number_of_requirement_inspections,
-                reqs_per = number_of_requirements/ number_of_requirement_inspections)%>%
-  dplyr::select(URN, reqs_per, recs_per)
-
 
 
 mlm <- mlm %>%
-  dplyr::left_join(., ProviderData, by="URN")%>%
+  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/reqs_per.csv")), by="URN")%>%
   dplyr::distinct(URN,.keep_all = T)
 
 
