@@ -528,41 +528,13 @@ data <- data %>%
 
 
 data <- data %>%
-  full_join(
-    rbind(read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/profits_over_time.csv") %>%
-            mutate(across(starts_with("Profit.margin"), as.numeric),
-                   across(starts_with("Salaries..Turnover"), as.numeric),
-                   across(starts_with("EBITDA.margin."), as.numeric)) %>%
-            mutate(
-              profit_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Profit.margin")))) >= 3,
-                                             rowMeans(dplyr::select(., starts_with("Profit.margin")), na.rm = TRUE), NA),
-              ebitda_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("EBITDA.margin.")))) >= 3,
-                                             rowMeans(dplyr::select(., starts_with("EBITDA.margin.")), na.rm = TRUE), NA),
-              salaries_turnover_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Salaries..Turnover")))) >= 3,
-                                                 rowMeans(dplyr::select(., starts_with("Salaries..Turnover")), na.rm = TRUE), NA)
-            ) %>%
-            dplyr::select(Company.name, profit_margin_average, ebitda_margin_average, salaries_turnover_average),
-          read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/kids_correction.csv")%>%
-            dplyr::select(-GUO...Name)%>%
-            mutate(across(starts_with("Profit.margin"), as.numeric),
-                   across(starts_with("Salaries..Turnover"), as.numeric),
-                   across(starts_with("EBITDA.margin."), as.numeric)) %>%
-            mutate(
-              profit_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Profit.margin")))) >= 3,
-                                             rowMeans(dplyr::select(., starts_with("Profit.margin")), na.rm = TRUE), NA),
-              ebitda_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("EBITDA.margin.")))) >= 3,
-                                             rowMeans(dplyr::select(., starts_with("EBITDA.margin.")), na.rm = TRUE), NA),
-              salaries_turnover_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Salaries..Turnover")))) >= 3,
-                                                 rowMeans(dplyr::select(., starts_with("Salaries..Turnover")), na.rm = TRUE), NA)
-            ) %>%
-            dplyr::select(Company.name, profit_margin_average, ebitda_margin_average, salaries_turnover_average)
+  full_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/processed_profs.csv"))
           
-          
-    ),
+    ,
     by = "Company.name"
   )
 
-houseprice <- bind_rows(read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/detached_house_prices.csv", skip=2)%>%
+houseprice <- bind_rows(read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/detached_house_prices.csv"), skip=2)%>%
                           dplyr::select(Local.authority.name, contains("mar"), Region.Country.name)%>%
                           tidyr::pivot_longer(cols =contains("mar"), names_to = "year", values_to = "median_house_price_detached" )%>%
                           dplyr::mutate(year = as.numeric(gsub("[^0-9]", "", year)),
@@ -586,7 +558,7 @@ houseprice <- bind_rows(read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Docum
                                           gsub("N E SOM", "NORTH EAST SOM", .)%>%
                                           str_trim())%>%
                           dplyr::filter(Local.authority!=""),
-                        read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/detached_house_prices_county.csv", skip=2)%>%
+                        read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/detached_house_prices_county.csv"), skip=2)%>%
                           dplyr::select(County.name, contains("mar"), Region.Country.name)%>%
                           dplyr::rename(Local.authority = County.name)%>%
                           tidyr::pivot_longer(cols =contains("mar"), names_to = "year", values_to = "median_house_price_detached" )%>%
@@ -611,7 +583,7 @@ houseprice <- bind_rows(read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Docum
                                           str_trim())%>%
                           dplyr::filter(Local.authority!=""))
 
-house_price_two <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/priceperareadata.csv", skip=2)%>%
+house_price_two <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/priceperareadata.csv"), skip=2)%>%
   dplyr::mutate(Location =  LA.name %>%
                   gsub('&', 'and', .) %>%
                   gsub('[[:punct:] ]+', ' ', .) %>%
@@ -630,7 +602,7 @@ house_price_two <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/
                   gsub("N E SOM", "NORTH EAST SOM", .)%>%
                   str_trim())%>%
   
-  dplyr::left_join(., read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/Lower_Tier_Local_Authority_to_Upper_Tier_Local_Authority_(December_2016)_Lookup_in_EW.csv")%>%
+  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/Lower_Tier_Local_Authority_to_Upper_Tier_Local_Authority_(December_2016)_Lookup_in_EW.csv"))%>%
                      dplyr::mutate(Location = LTLA16NM %>%
                                      gsub('&', 'and', .) %>%
                                      gsub('[[:punct:] ]+', ' ', .) %>%
@@ -670,7 +642,7 @@ house_price_two <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/
   dplyr::summarise(X2014 = mean(X2014, na.rm=T),
                    X2015 = mean(X2015, na.rm=T),
                    X2016 = mean(X2016, na.rm=T))%>%
-  dplyr::bind_rows(.,  read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/priceperareadata.csv", skip=2)%>%
+  dplyr::bind_rows(.,  read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/priceperareadata.csv"), skip=2)%>%
                      dplyr::mutate(Local.authority =  LA.name %>%
                                      gsub('&', 'and', .) %>%
                                      gsub('[[:punct:] ]+', ' ', .) %>%
@@ -694,20 +666,20 @@ house_price_two <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/
   dplyr::mutate(average_house_price_per_sq_m = (X2014+X2015+X2016)/3)%>%
   dplyr::select(Local.authority, average_house_price_per_sq_m)
 
-workforce <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/csww_indicators_2017_to_2024.csv")%>%
+workforce <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/csww_indicators_2017_to_2024.csv"))%>%
   dplyr::filter(geographic_level=="Local authority")%>%
   dplyr::select(time_period, la_name, vacancy_rate_fte)%>%
   dplyr::rename(year=time_period,
                 Local.authority = la_name)%>%
   dplyr::mutate(vacancy_rate_fte = as.numeric(vacancy_rate_fte))%>%
-  dplyr::bind_rows(., read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/SFR07_2016_UD.csv")%>%
+  dplyr::bind_rows(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/SFR07_2016_UD.csv"))%>%
                      dplyr::select(LA_name, A3_FTE_VacancyRate_2015)%>%
                      dplyr::mutate(year=2015)%>%
                      dplyr::rename(Local.authority= LA_name,
                                    vacancy_rate_fte = A3_FTE_VacancyRate_2015)%>%
                      dplyr::filter(Local.authority!="")%>%
                      dplyr::mutate(vacancy_rate_fte = as.numeric(vacancy_rate_fte)))%>%
-  dplyr::bind_rows(., read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/SFR07_2016_UD.csv")%>%
+  dplyr::bind_rows(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/SFR07_2016_UD.csv"))%>%
                      dplyr::select(LA_name, A3_FTE_VacancyRate_2015)%>%
                      dplyr::mutate(year=2016)%>%
                      dplyr::rename(Local.authority= LA_name,
@@ -1177,37 +1149,7 @@ mlm <- df %>%
   dplyr::mutate(joined = ifelse(is.na(Join) | Join <= "2016-01-01", 0, 1),
                 left = ifelse(!is.na(Leave), 1, 0),
                 age = as.integer(time_length(difftime( as.Date(Registration.date,  format =  "%d/%m/%Y"), as.Date("2024-01-01")), "months"))*-1)%>%
-  full_join(
-    rbind(read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/profits_over_time.csv") %>%
-            mutate(across(starts_with("Profit.margin"), as.numeric),
-                   across(starts_with("Salaries..Turnover"), as.numeric),
-                   across(starts_with("EBITDA.margin."), as.numeric)) %>%
-            mutate(
-              profit_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Profit.margin")))) >= 3,
-                                             rowMeans(dplyr::select(., starts_with("Profit.margin")), na.rm = TRUE), NA),
-              ebitda_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("EBITDA.margin.")))) >= 3,
-                                             rowMeans(dplyr::select(., starts_with("EBITDA.margin.")), na.rm = TRUE), NA),
-              salaries_turnover_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Salaries..Turnover")))) >= 3,
-                                                 rowMeans(dplyr::select(., starts_with("Salaries..Turnover")), na.rm = TRUE), NA)
-            ) %>%
-            dplyr::select(Company.name, profit_margin_average, ebitda_margin_average, salaries_turnover_average),
-          read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/kids_correction.csv")%>%
-            dplyr::select(-GUO...Name)%>%
-            mutate(across(starts_with("Profit.margin"), as.numeric),
-                   across(starts_with("Salaries..Turnover"), as.numeric),
-                   across(starts_with("EBITDA.margin."), as.numeric)) %>%
-            mutate(
-              profit_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Profit.margin")))) >= 3,
-                                             rowMeans(dplyr::select(., starts_with("Profit.margin")), na.rm = TRUE), NA),
-              ebitda_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("EBITDA.margin.")))) >= 3,
-                                             rowMeans(dplyr::select(., starts_with("EBITDA.margin.")), na.rm = TRUE), NA),
-              salaries_turnover_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Salaries..Turnover")))) >= 3,
-                                                 rowMeans(dplyr::select(., starts_with("Salaries..Turnover")), na.rm = TRUE), NA)
-            ) %>%
-            dplyr::select(Company.name, profit_margin_average, ebitda_margin_average, salaries_turnover_average)
-          
-          
-    ),
+  full_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/processed_profs.csv")),
     by = "Company.name"
   )%>%
   dplyr::left_join(., LA_panel_data %>%
@@ -1296,15 +1238,16 @@ mlm$age_years <- mlm$age/12
 
 
 mlm <- mlm %>%
-  left_join(., rbind(read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's care homes project/Data/Francois_1_basic_companies.csv")%>%
-                       dplyr::select(Company.name, GUO...Name)%>%
-                       dplyr::distinct(.keep_all = T)%>%
-                       dplyr::filter(Company.name!=""),
-                     read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's care homes project/kids_correction.csv")%>%
-                       dplyr::select(Company.name, GUO...Name)%>%
-                       dplyr::distinct(.keep_all = T)%>%
-                       dplyr::filter(Company.name!="")
+  left_join(rbind(read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's care homes project/Data/Francois_1_basic_companies.csv")%>%
+                    dplyr::select(Company.name, GUO...Name)%>%
+                    dplyr::distinct(.keep_all = T)%>%
+                    dplyr::filter(Company.name!=""),
+                  read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's care homes project/kids_correction.csv")%>%
+                    dplyr::select(Company.name, GUO...Name)%>%
+                    dplyr::distinct(.keep_all = T)%>%
+                    dplyr::filter(Company.name!="")
   ))
+
 
 
 mlm <- mlm %>% dplyr::mutate(GUO...Name = ifelse(GUO...Name=="", Organisation, GUO...Name))
@@ -1324,6 +1267,11 @@ mlm <- mlm %>%
   dplyr::ungroup()%>%
   dplyr::mutate(chain_size = ifelse(is.na(GUO...Name)| GUO...Name=="",comp_chain_size, GUO_chain_size ))%>%
   dplyr::mutate(chain_size = ifelse(is.na(company_filled), NA, chain_size ))
+
+ello <- mlm %>%
+  dplyr::select(chain_size, URN)
+
+
 
 mlm <- mlm %>%
   dplyr::mutate(binary_sector_private = ifelse(Sector_merge=="Local Authority", 0,
@@ -1449,7 +1397,7 @@ mlm <- mlm %>%
 
 
 mlm <- mlm %>%
-  dplyr::left_join(.,  read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/priceperareadata.csv", skip=2)%>%
+  dplyr::left_join(.,  read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/priceperareadata.csv"), skip=2)%>%
                      dplyr::mutate(Local.authority =  LA.name %>%
                                      gsub('&', 'and', .) %>%
                                      gsub('[[:punct:] ]+', ' ', .) %>%
