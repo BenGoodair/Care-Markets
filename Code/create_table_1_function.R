@@ -1,5 +1,10 @@
 create_table_1 <- function(){
   
+  source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_data_function.R")
+  
+  df <- create_home_data()
+  
+  
   ####table 1####
   
   library(dplyr)
@@ -7,27 +12,26 @@ create_table_1 <- function(){
   library(gt)
   
   # Create the summary table with renamed variables
-  summary_table <- mlm %>%
+  summary_table <- df %>%
     dplyr::distinct(URN, .keep_all = T)%>%
-    dplyr::mutate(residential_expenditure = residential_expenditure/1000000)%>%
     mutate(Sector_merge = droplevels(Sector_merge)) %>%
-    select(Sector_merge,
+    dplyr::select(Sector_merge,
            overall.average, ever_outstanding, reqs_per, age, Places, left, profit_margin_average,
            chain_size) %>%
     tbl_summary(
       by = Sector_merge,              # split table by ownership type
       missing = "no",
       type = all_continuous() ~ "continuous2",
-      statistic = all_continuous() ~ c("{mean} ({median})",
-                                       "{N_nonmiss}"#,
-                                       #"{min}, {max} ({sd})"
+      statistic = all_continuous() ~ c("({median} {IQR})",
+                                       "{N_nonmiss}",
+                                       "{min}, {max} ({sd})"
       ),
       label = list(
         overall.average ~ "Quality (average inspection score)",
         ever_outstanding ~ "Quality (ever rated Outstanding)",
         reqs_per ~ "Number of Requirements (per inspection)",
-        age ~ "Age of Home (months)",
-        Places ~ "Places (n)",
+        age ~ "Age of Home (months since registration)",
+        Places ~ "Children home size (Places, n)",
         left ~ "Closed",
         profit_margin_average ~ "Profit margin (%)",
         chain_size ~ "Chain size (n)"
