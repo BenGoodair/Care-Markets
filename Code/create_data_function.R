@@ -1,5 +1,6 @@
 
-
+create_characteristics_data <- function(){
+  
 
 
 if (!require("pacman")) install.packages("pacman")
@@ -76,36 +77,37 @@ Leavers <- rbind( #joiners17 %>% dplyr::filter(Leaver.status=="Leaver") %>% dply
 
 exits <- rbind(joiners, Leavers)
 
-pre <- rbind(
-  read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 3, skip=3) %>%
-    dplyr::mutate(leave_join = "Join")%>%
-    dplyr::rename(Date = `Registration date`),
-  read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 4, skip=3) %>%
-    dplyr::mutate(leave_join = "Leave")%>%
-    dplyr::rename(Date = `Date closed`),
-  read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 5, skip=3) %>%
-    dplyr::mutate(leave_join = "Join")%>%
-    dplyr::rename(Date = `Registration date`),
-  read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 6, skip=3) %>%
-    dplyr::mutate(leave_join = "Leave")%>%
-    dplyr::rename(Date = `Date closed`),
-  read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 7, skip=3) %>%
-    dplyr::mutate(leave_join = "Join")%>%
-    dplyr::rename(Date = `Registration date`),
-  read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 8, skip=3) %>%
-    dplyr::mutate(leave_join = "Leave")%>%
-    dplyr::rename(Date = `Date closed`),
-  read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 9, skip=3) %>%
-    dplyr::mutate(leave_join = "Join")%>%
-    dplyr::rename(Date = `Registration date`),
-  read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 10, skip=3) %>%
-    dplyr::mutate(leave_join = "Leave")%>%
-    dplyr::rename(Date = `Date closed`)
-)
+# pre <- rbind(
+#   read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 3, skip=3) %>%
+#     dplyr::mutate(leave_join = "Join")%>%
+#     dplyr::rename(Date = `Registration date`),
+#   read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 4, skip=3) %>%
+#     dplyr::mutate(leave_join = "Leave")%>%
+#     dplyr::rename(Date = `Date closed`),
+#   read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 5, skip=3) %>%
+#     dplyr::mutate(leave_join = "Join")%>%
+#     dplyr::rename(Date = `Registration date`),
+#   read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 6, skip=3) %>%
+#     dplyr::mutate(leave_join = "Leave")%>%
+#     dplyr::rename(Date = `Date closed`),
+#   read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 7, skip=3) %>%
+#     dplyr::mutate(leave_join = "Join")%>%
+#     dplyr::rename(Date = `Registration date`),
+#   read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 8, skip=3) %>%
+#     dplyr::mutate(leave_join = "Leave")%>%
+#     dplyr::rename(Date = `Date closed`),
+#   read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 9, skip=3) %>%
+#     dplyr::mutate(leave_join = "Join")%>%
+#     dplyr::rename(Date = `Registration date`),
+#   read_excel("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care Markets/Data/Raw/Children_s_homes_registrations_transparency_dataset (1).xls", sheet = 10, skip=3) %>%
+#     dplyr::mutate(leave_join = "Leave")%>%
+#     dplyr::rename(Date = `Date closed`)
+# )
+
+pre <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/pre2019_joiners_leavers.csv"))  
 
 all <- rbind(pre%>%
-               dplyr::rename(Provision.type = `Provider type`,
-                             Local.authority=`Local authority`)%>%
+               dplyr::rename(Provision.type = Provider.type)%>%
                dplyr::mutate(Local.authority = Local.authority %>%
                                gsub('&', 'and', .) %>%
                                gsub('[[:punct:] ]+', ' ', .) %>%
@@ -331,10 +333,10 @@ checkforremove <- df %>%
 
 df_nola <- checkforremove %>% dplyr::filter(is.na(Local.authority)) 
 
-checkforremove <- df %>%
-  dplyr::distinct(URN, .keep_all = T) %>%
-  dplyr::mutate(reason_drop = ifelse(is.na(Local.authority), "no LA",
-  ))
+# checkforremove <- df %>%
+#   dplyr::distinct(URN, .keep_all = T) %>%
+#   dplyr::mutate(reason_drop = ifelse(is.na(Local.authority), "no LA",
+#   ))
 
 df <- df%>% dplyr::filter(!is.na(Local.authority))%>%
   bind_rows(., yes%>%
@@ -433,7 +435,7 @@ df <- df %>%
 #### lookup####
 
 
-lookup <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Data/lookup_fame_search_clean_manual.csv")%>%
+lookup <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/lookup_fame_search_clean_manual.csv"))%>%
   dplyr::mutate(Organisation_fame_search = Organisation_fame_search %>%
                   gsub("Selected", "", .),
                 Company.name = Company.name %>%
@@ -446,7 +448,7 @@ lookup <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Gi
 
 
 
-francois_clean <- read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's care homes project/Data/francois_clean.csv")
+francois_clean <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/c_home_cats.csv"))
 
 
 
@@ -456,3 +458,6 @@ df <- df %>%
   dplyr::mutate(Sector_merge = ifelse(Sector.x=="Local Authority", "Local Authority",
                                       ifelse(Sector.x=="Voluntary", "Third sector", Sector.y)),
                 Sector_merge = ifelse(is.na(Sector_merge), "Unidentified for-profit", Sector_merge))
+
+
+}
