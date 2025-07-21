@@ -326,6 +326,16 @@ yes <- df %>% dplyr::filter(is.na(Local.authority))%>%
   dplyr::filter(keep==1)
 
 
+checkforremove <- df %>%
+  dplyr::distinct(URN, .keep_all = T) 
+
+df_nola <- checkforremove %>% dplyr::filter(is.na(Local.authority)) 
+
+checkforremove <- df %>%
+  dplyr::distinct(URN, .keep_all = T) %>%
+  dplyr::mutate(reason_drop = ifelse(is.na(Local.authority), "no LA",
+                                     ))
+
 df <- df%>% dplyr::filter(!is.na(Local.authority))%>%
   bind_rows(., yes%>%
               dplyr::mutate(Places = as.numeric(Places)))%>%
@@ -1458,6 +1468,8 @@ mlm <- mlm %>%
                      dplyr::rename(house_price_2014 = X2014)
   )
 
+
+
 ####ANALYSIS####
 
 
@@ -2285,6 +2297,7 @@ table_html %>%
 #### Table 3 new ####
 
 
+head(df)
 
 
 priors <- c(
@@ -3219,6 +3232,488 @@ length(unique(df$URN))-(
 
 
 ####APPENDIX####
+
+#### ICC table ####
+mlm
+#–– Packages
+if (!require(lme4))     install.packages("lme4");     library(lme4)
+if (!require(broom.mixed)) install.packages("broom.mixed"); library(broom.mixed)
+if (!require(dplyr))    install.packages("dplyr");    library(dplyr)
+if (!require(knitr))    install.packages("knitr");    library(knitr)
+
+#–– Outcomes and model formulas
+outcomes <- list(
+  overall_avg    = "overall.average",
+  ever_outstanding = "ever_outstanding",
+  reqs_per       = "reqs_per",
+  recs_per       = "recs_per",
+  profit_margin_average = "profit_margin_average",
+  left = "left",
+  age_years = "age_years"
+)
+
+#–– Function to fit null model and compute ICC
+compute_icc <- function(varname) {
+  is_binary <- varname == "ever_outstanding"
+  formula_text <- if (is_binary) {
+    paste0(varname, " ~ 1 + (1 | Organisation)")
+  } else {
+    paste0(varname, " ~ 1 + (1 | Organisation)")
+  }
+  # fit
+  if (is_binary) {
+    m0 <- glmer(
+      as.formula(formula_text),
+      data = mlm,
+      family = binomial(link = "logit"),
+      control = glmerControl(optimizer = "bobyqa")
+    )
+    # variance on latent scale for logistic: π^2/3
+    var_resid <- (pi^2) / 3
+  } else {
+    m0 <- lmer(
+      as.formula(formula_text),
+      data = mlm,
+      REML = TRUE
+    )
+    var_resid <- sigma(m0)^2
+  }
+  vc <- as.data.frame(VarCorr(m0))  
+  var_org <- vc %>% filter(grp == "Organisation") %>% pull(vcov)
+  icc <- var_org / (var_org + var_resid)
+  data.frame(
+    Outcome = varname,
+    Var_Organisation = var_org,
+    Var_Residual     = var_resid,
+    ICC              = icc
+  )
+}
+
+#–– Compute ICCs for all outcomes
+icc_table <- bind_rows(lapply(outcomes, compute_icc)) %>%
+  mutate(
+    ICC = round(ICC, 3)
+  )
+
+#–– Print as a nice table for your supplement
+knitr::kable(
+  icc_table,
+  col.names = c("Outcome", "σ²<sub>Organisation</sub>", "σ²<sub>Residual</sub>", "ICC"),
+  caption = "Intraclass correlation coefficients (ICC) for each outcome, Organisation‐level clustering"
+)
+
+####spatial analysis ####
+
+install_if_missing <- function(pkgs) {
+  to_install <- pkgs[!pkgs %in% installed.packages()[,"Package"]]
+  if(length(to_install)) install.packages(to_install)
+}
+install_if_missing(c("sf","lwgeom","spdep","brms","dplyr","tidyr","INLA","ggplot2","scales"))
+# INLA has its own repo:
+if (!requireNamespace("INLA", quietly=TRUE)) {
+  install.packages("INLA", repos=c(INLA="https://inla.r-inla-download.org/R/stable"))
+}
+
+library(sf)
+library(lwgeom)
+library(spdep)
+library(brms)
+library(dplyr)
+library(tidyr)
+library(INLA)
+library(ggplot2)
+library(scales)
+
+
+la_shp   <-  st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2022_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")%>%
+  dplyr::rename(Local.authority = CTYUA22NM)%>%
+  dplyr::filter(Local.authority!="Wales",
+                Local.authority!="Scotland",
+                grepl('^E', CTYUA22CD))%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())
+
+
+#–– 2. Clean invalid geometries and build adjacency for INLA
+la_shp_valid <- la_shp %>%
+  st_make_valid() %>%    # fix geometry errors
+  st_buffer(0)           # remove tiny gaps/overlaps
+
+# build neighbours list and INLA graph
+nb <- poly2nb(la_shp_valid, row.names = la_shp_valid$Local.authority, queen = TRUE)
+nb2INLA("la_adj.graph", nb)
+la_graph <- inla.read.graph("la_adj.graph")
+
+#–– 3. Aggregate to LA × Year with covariates
+la_year_data <-LA_panel_data %>%
+  dplyr::mutate(O = Places_Individual_owned+Places_Local_Authority+ 
+                  Places_Unidentified_for_profit+Places_Third_sector+
+                  Places_Investment_owned+Places_Corporate_owned+
+                  Places_LA_owned_company)%>%
+  dplyr::select(Local.authority, year, O, net_loss, children_in_care, average_house_price_per_sq_m )# ensure zeros
+
+# join region‑level covariates (time‑invariant)
+region_cov <- mlm %>%
+  group_by(Local.authority) %>%
+  summarise(
+    net_loss_s                    = mean(net_loss_s,                    na.rm=TRUE),
+    children_in_care_s            = mean(children_in_care_s,            na.rm=TRUE),
+    average_house_price_per_sq_m_s= mean(average_house_price_per_sq_m_s,na.rm=TRUE)  )
+
+la_data <- la_year_data %>%
+  left_join(region_cov, by = "Local.authority")
+
+#–– 4. Fit Bayesian multilevel neg‑binomial model to estimate E
+#    (one row per LA‑Year, random intercept on LA)
+count_priors <- c(
+  prior(normal(0, 1), class = "b"),
+  prior(student_t(3, 0, 2.5), class = "Intercept"),
+  prior(student_t(3, 0, 2.5), class = "sd")
+)
+
+model_nb <- brm(
+  bf(O ~ net_loss_s 
+     + children_in_care_s 
+     + average_house_price_per_sq_m_s 
+     + (1 | Local.authority)
+  ),
+  data    = la_data,
+  family  = negbinomial(),
+  prior   = count_priors,
+  cores   = 4,
+  iter    = 2000,
+  control = list(adapt_delta = 0.95)
+)
+
+# extract expected counts E (marginalizing LA random effect)
+fitted_E <- fitted(
+  model_nb,
+  newdata    = la_data,
+  re_formula = NA,
+  scale      = "response"
+)
+la_data <- la_data %>%
+  mutate(
+    E   = fitted_E[ , "Estimate"],
+    OE  = O / E
+  )
+
+
+
+#–– 5b. Remove any rows where E is NA (so INLA won’t choke on the offset)
+la_data <- la_data %>% 
+  tidyr::drop_na(E)
+
+#–– 6. (re)compute the indexing for INLA on the cleaned data
+la_data <- la_data %>%
+  arrange(Local.authority, year) %>%
+  dplyr::mutate(year = as.numeric(as.character(year)))%>%
+  mutate(
+    spatial  = as.integer(factor(Local.authority)),
+    temporal = year - min(year) + 1,
+    st_idx   = (spatial - 1) * max(temporal) + temporal
+  )
+
+#–– Before fitting, ensure no missing index values
+#    (you should have already done drop_na(E) and then recomputed temporal)
+la_data <- la_data %>%
+  filter(!is.na(spatial) & !is.na(temporal) & !is.na(st_idx))
+
+# get the set of unique time‐levels
+time_vals <- sort(unique(la_data$temporal))
+
+# define a clean formula object
+formula_inla <- formula(
+  O ~ net_loss_s
+  + children_in_care_s
+  + average_house_price_per_sq_m_s
+  + f(spatial,  model = "bym2", graph = la_graph)
+  + f(temporal, model = "rw1", values = time_vals, scale.model = TRUE)
+  + f(st_idx,   model = "iid")
+)
+
+# now call inla() by naming the formula argument
+res_inla <- inla(
+  formula       = formula_inla,
+  family        = "poisson",
+  data          = la_data,
+  E             = la_data$E,
+  control.predictor = list(compute = TRUE),
+  control.compute   = list(dic = TRUE, waic = TRUE)
+)
+
+
+
+
+#–– 7. Summaries
+# fixed effects
+print(res_inla$summary.fixed, digits = 3)
+# spatial hyperpars
+print(res_inla$summary.hyperpar, digits = 3)
+
+library(dplyr)
+library(ggplot2)
+
+#–– 1. Extract just the total BYM2 effect for each spatial ID
+n_la <- length(unique(la_data$spatial))           # number of LAs in your INLA data
+spat_summary <- res_inla$summary.random$spatial   # this has 2*n_la rows for BYM2
+
+# the first n_la rows are the *total* effect
+total_spat <- spat_summary[1:n_la, c("ID", "mean")]
+colnames(total_spat) <- c("spatial", "spat_mean")
+
+#–– 2. Ensure your shapefile has the same 'spatial' codes
+la_shp_plot <- la_shp_valid %>%
+  mutate(
+    spatial = as.integer(factor(Local.authority)) 
+    # this must match how you constructed la_data$spatial
+  )
+
+#–– 3. Left‐join the effect values
+la_shp_plot <- la_shp_plot %>%
+  left_join(total_spat, by = "spatial")
+
+#–– 4. Plot (NAs will simply be blank)
+ggplot(la_shp_plot) +
+  geom_sf(aes(fill = spat_mean.y), colour = "grey80") +
+  scale_fill_viridis_c(
+    na.value = "white", 
+    option   = "viridis",
+    name     = "Spatial effect"
+  ) +
+  labs(
+    title = "Posterior mean total spatial effect (BYM2)"
+  ) +
+  theme_minimal()
+
+
+#–– 9. (Optional) plot temporal effect
+temp <- res_inla$summary.random$temporal
+ggplot(temp, aes(x = ID, y = mean)) +
+  geom_line() +
+  labs(x="Year index", y="Posterior mean", title="Temporal RW1 effect")
+
+#–– 10. Save E and OE for reporting
+write.csv(
+  la_data %>% select(Local.authority, year, O, E, OE),
+  "LA_yearly_OE.csv",
+  row.names = FALSE
+)
+
+
+
+####O:E ration####
+
+
+#–– 0. Packages  
+library(dplyr)        # data wrangling  
+library(tidyr)        # data wrangling  
+library(brms)         # Bayesian multilevel modeling  
+library(sf)           # spatial data  
+library(ggplot2)      # plotting  
+library(scales)       # axis formatting  
+
+
+ la_shp   <-  st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2022_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")%>%
+   dplyr::rename(Local.authority = CTYUA22NM)%>%
+   dplyr::filter(Local.authority!="Wales",
+                 Local.authority!="Scotland",
+                 grepl('^E', CTYUA22CD))%>%
+   dplyr::mutate(Local.authority = Local.authority %>%
+                   gsub('&', 'and', .) %>%
+                   gsub('[[:punct:] ]+', ' ', .) %>%
+                   gsub('[0-9]', '', .)%>%
+                   toupper() %>%
+                   gsub("CITY OF", "",.)%>%
+                   gsub("UA", "",.)%>%
+                   gsub("COUNTY OF", "",.)%>%
+                   gsub("ROYAL BOROUGH OF", "",.)%>%
+                   gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                   gsub("UA", "",.)%>%
+                   gsub("DARWIN", "DARWEN", .)%>%
+                   gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                   gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                   gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                   gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                   str_trim())
+
+#–– 2. Aggregate to Region‑Level & Build covariates  
+obs_la <- mlm %>% 
+  dplyr::group_by(Local.authority)%>%
+  dplyr::summarise(O = sum(Places, na.rm=T))%>%
+  dplyr::ungroup()
+
+
+region_data <- obs_la %>%
+  left_join(
+    mlm %>%
+      group_by(Local.authority) %>%
+      summarise(
+        children_in_care_s            = mean(children_in_care_s,            na.rm=TRUE)      ),
+    by = "Local.authority"
+  )
+
+#–– 3. Specify Weakly Informative Priors  
+count_priors <- c(
+  prior(normal(0, 1), class = "b"),            # slopes
+  prior(student_t(3, 0, 2.5), class = "Intercept"),  # intercept
+  prior(student_t(3, 0, 2.5), class = "sd")         # random‐effect SD
+)
+
+#–– 4. Fit Multilevel Count Models  
+# 4a. Poisson  
+model_poisson <- brm(
+  bf(O ~ children_in_care_s 
+     + (1 | Local.authority)
+  ),
+  data    = region_data,
+  family  = poisson(),
+  prior   = count_priors,
+  cores   = 4,
+  iter    = 2000,
+  control = list(adapt_delta = 0.95)
+)
+
+
+
+# Choose best (e.g. model_negbin) for E
+
+#–– 6. Extract Expected Counts (E) & Compute O:E  
+fitted_E <- fitted(
+  model_poisson,        # or model_poisson
+  newdata    = region_data,
+  re_formula = NA,     # marginalise over LA random effects
+  scale      = "response"
+)
+
+region_data <- region_data %>%
+  mutate(
+    E   = fitted_E[, "Estimate"],
+    O_E = O / E
+  )
+
+#–– 7. Summary Statistics of O:E  
+summary_stats <- region_data %>%
+  summarise(
+    median_OE = median(O_E, na.rm=T),
+    IQR_OE    = IQR(O_E, na.rm=T),
+    min_OE    = min(O_E, na.rm=T),
+    max_OE    = max(O_E, na.rm=T)
+  )
+print(summary_stats)
+
+#–– 8. Choropleth Map of O:E  
+map_df <- la_shp %>%
+  left_join(region_data, by = "Local.authority")
+
+p_map <- ggplot(map_df) +
+  geom_sf(aes(fill = O_E), colour = "grey30", size = 0.1) +
+  scale_fill_viridis_c(
+    name   = "O / E ratio",
+    option = "magma",
+    limits = c(0, 3),
+    oob    = scales::squish
+  ) +
+  labs(
+    title   = "Observed to Expected Ratio of Children’s Home Places by LA",
+    caption = "Expected from Bayesian Poisson model"
+  ) +
+  theme_minimal()
+
+# print or save
+print(p_map)
+# ggsave("Figure2_choropleth_OE.png", p_map, width=8, height=6)
+
+#–– 9. Funnel Plot of O:E  
+region_data <- region_data %>%
+  mutate(
+    z95     = qnorm(0.975),
+    z998    = qnorm(0.999),
+    lower95  = 1 - z95  / sqrt(E),
+    upper95  = 1 + z95  / sqrt(E),
+    lower998 = 1 - z998 / sqrt(E),
+    upper998 = 1 + z998 / sqrt(E),
+    outlier  = case_when(
+      O_E > upper998 ~ "High",
+      O_E < lower998 ~ "Low",
+      TRUE           ~ "Normal"
+    )
+  )
+
+# install.packages("ggrepel")  # if not already installed
+library(ggrepel)
+
+p_funnel_labeled <- ggplot(region_data, aes(x = E, y = O_E)) +
+  # funnel limits
+  geom_line(aes(y = upper95),  linetype = "dashed") +
+  geom_line(aes(y = lower95),  linetype = "dashed") +
+  geom_line(aes(y = upper998), linetype = "solid") +
+  geom_line(aes(y = lower998), linetype = "solid") +
+  # points colored by outlier status
+  geom_point(aes(col = outlier), size = 2) +
+  # labels only for true outliers
+  geom_text_repel(
+    data = subset(region_data, O_E > 3 | O_E < 0.3),
+    aes(label = Local.authority),
+    size         = 3,
+    max.overlaps = Inf,
+    box.padding  = 0.3,
+    point.padding= 0.2
+  ) +
+  # manual colours
+  scale_colour_manual(
+    values = c("High"   = "red",
+               "Low"    = "blue",
+               "Normal" = "black"),
+    guide  = guide_legend(title = NULL)
+  ) +
+  scale_x_continuous("Expected count of homes (E)", labels = comma) +
+  scale_y_continuous("Observed / Expected (O / E)", limits = c(0, NA)) +
+  labs(
+    title    = "Funnel Plot of LA‑level O:E Ratios",
+    subtitle = "dashed = 95 % limits; solid = 99.8 % limits"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+print(p_funnel_labeled)
+
+
+# print or save
+print(p_funnel)
+# ggsave("SupplFig_A8_funnel_OE.png", p_funnel, width=6, height=4)
+
+#–– 10. Export Results  
+# write.csv(
+#   region_data %>% select(Local.authority, O, E, O_E, outlier),
+#   "LA_OE_ratios.csv",
+#   row.names = FALSE
+# )
+
+
+
+
+
+
+
+
+
+
 
 ####prior diagnostics####
 
