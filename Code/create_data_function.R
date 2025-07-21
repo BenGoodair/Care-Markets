@@ -450,6 +450,7 @@ lookup <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Marke
 
 francois_clean <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/c_home_cats.csv"))
 
+df$Sector_merge <- factor(df$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unidentified for-profit"))
 
 
 df <- df %>%
@@ -459,7 +460,6 @@ df <- df %>%
                                       ifelse(Sector.x=="Voluntary", "Third sector", Sector.y)),
                 Sector_merge = ifelse(is.na(Sector_merge), "Unidentified for-profit", Sector_merge))
 
-df$Sector_merge <- factor(df$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unidentified for-profit"))
 
 
 

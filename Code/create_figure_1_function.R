@@ -1,3 +1,7 @@
+create_figure_1 <- function(){
+  
+  
+
 source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_data_function.R")
 
 df <- create_home_data()
@@ -66,28 +70,33 @@ nobser <- full_join(nobsBySector, nobsEndBySector, by = c("Sector_merge", "time"
     runningsum = cumulative - cumulative_end
   )
 
+
+nobser$Sector_merge <- factor(nobser$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unidentified for-profit"))
+
 # Create the time-series plot
 d <- ggplot(nobser %>% filter(time > -155,
                               Sector_merge != "LA owned company",
                               Sector_merge != "Unidentified for-profit"),
             aes(x = time, y = runningsum, group = Sector_merge,
                 fill = Sector_merge, colour = Sector_merge, alpha = Sector_merge)) +
-  geom_point() +
-  theme_minimal() +
-  scale_color_manual(values = c("#008F5D", "#F0AB00", "#E4007C", "#FF5E5E", "#5B0000", "#1F77B4", "#9467BD")) +
-  scale_alpha_manual(values = c(0.2, 0.2, 1, 1, 1, 0.2, 0.2)) +
+  geom_point(size = 2.5) +  # brighter dots (larger size)
+  theme_bw() +
+  scale_alpha_manual(values = c(0.4, 0.4, 1, 1, 1, 0.2, 0.2)) +
+  scale_color_manual(values = c("#008F5D", "#F0AB00", "#E4007C", "#FF5E5E", "#5B0000")) +
   labs(x = "Year", y = "Number of children homes", 
-       title = "Number of children's homes owned for-profit",
+       title = "Number of children's homes owned by ownership",
        fill = "Ownership", color = "Ownership", alpha = "Ownership") +
   scale_x_continuous(breaks = c(-12, -24, -36, -48, -60, -72, -84, -96, -108, -120, -132, -144, -156),
                      labels = c("2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011")) +
-  theme_minimal() +
-  theme(
-    legend.position = "none",
-    plot.title = element_text(size = 11, face = "bold")  ) +
   coord_cartesian(xlim = c(-110, -22)) +
-  theme(legend.position = "bottom")
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    legend.position = "bottom",
+    legend.text = element_text(size = 11),
+    legend.title = element_text(size = 12, face = "bold")
+  )
 
 
+#ggsave(plot=d, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_1_revised.jpeg", width=9.5, height=7, dpi=600)
 
-
+}
