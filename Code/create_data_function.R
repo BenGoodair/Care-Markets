@@ -106,35 +106,46 @@ exits <- rbind(joiners, Leavers)
 
 pre <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/main/Data/pre2019_joiners_leavers.csv"))  
 
-all <- rbind(pre%>%
-               dplyr::rename(Provision.type = Provider.type)%>%
+all <- rbind(pre %>%
+               dplyr::rename(Provision.type = Provider.type) %>%
                dplyr::mutate(Local.authority = Local.authority %>%
                                gsub('&', 'and', .) %>%
                                gsub('[[:punct:] ]+', ' ', .) %>%
-                               gsub('[0-9]', '', .)%>%
+                               gsub('[0-9]', '', .) %>%
                                toupper() %>%
-                               gsub("CITY OF", "",.)%>%
-                               gsub("UA", "",.)%>%
-                               gsub("COUNTY OF", "",.)%>%
-                               gsub("ROYAL BOROUGH OF", "",.)%>%
-                               gsub("LEICESTER CITY", "LEICESTER",.)%>%
-                               gsub("UA", "",.)%>%
-                               gsub("DARWIN", "DARWEN", .)%>%
-                               gsub("COUNTY DURHAM", "DURHAM", .)%>%
-                               gsub("AND DARWEN", "WITH DARWEN", .)%>%
-                               gsub("NE SOM", "NORTH EAST SOM", .)%>%
-                               gsub("N E SOM", "NORTH EAST SOM", .)%>%
-                               str_trim())%>% dplyr::select(URN,Local.authority,Sector,Places,Date,leave_join), 
-             exits%>% dplyr::select(URN,Local.authority,Sector,Places,Date, leave_join)%>%
-               dplyr::mutate(Date = as.Date(Date, format = "%d/%m/%Y")) %>%  # Convert Date to Date format
-               dplyr::filter(Date >= as.Date("2018-04-01"))  # Filter for dates after 1st April 2018
-)%>%  
-  dplyr::distinct(URN,leave_join, .keep_all = T)%>%
-  tidyr::pivot_wider(id_cols = c("Local.authority", "Sector", "URN", "Places"), names_from = "leave_join", values_from = as.character("Date"))%>%
+                               gsub("CITY OF", "", .) %>%
+                               gsub("UA", "", .) %>%
+                               gsub("COUNTY OF", "", .) %>%
+                               gsub("ROYAL BOROUGH OF", "", .) %>%
+                               gsub("LEICESTER CITY", "LEICESTER", .) %>%
+                               gsub("UA", "", .) %>%
+                               gsub("DARWIN", "DARWEN", .) %>%
+                               gsub("COUNTY DURHAM", "DURHAM", .) %>%
+                               gsub("AND DARWEN", "WITH DARWEN", .) %>%
+                               gsub("NE SOM", "NORTH EAST SOM", .) %>%
+                               gsub("N E SOM", "NORTH EAST SOM", .) %>%
+                               str_trim()) %>% 
+               # Fix Excel serial numbers in pre dataset
+               dplyr::mutate(
+                 Date = ifelse(
+                   grepl("^[0-9]+$", as.character(Date)) & as.numeric(as.character(Date)) > 10000,
+                   as.character(as.Date(as.numeric(as.character(Date)), origin = "1899-12-30")),
+                   as.character(Date)
+                 )
+               ) %>%
+               dplyr::select(URN, Local.authority, Sector, Places, Date, leave_join), 
+             exits %>% 
+               dplyr::select(URN, Local.authority, Sector, Places, Date, leave_join) %>%
+               dplyr::mutate(Date = as.character(as.Date(Date, format = "%d/%m/%Y"))) %>%
+               dplyr::filter(as.Date(Date) >= as.Date("2018-04-01"))  # Filter for dates after 1st April 2018
+) %>%  
+  dplyr::distinct(URN, leave_join, .keep_all = T) %>%
+  tidyr::pivot_wider(id_cols = c("Local.authority", "Sector", "URN", "Places"), 
+                     names_from = "leave_join", 
+                     values_from = "Date") %>%
   dplyr::mutate(Join = substr(Join, 1, 10),
                 Leave = substr(Leave, 1, 10),
-                Sector= ifelse(Sector=="Health Authority", "Local Authority", Sector))
-
+                Sector = ifelse(Sector == "Health Authority", "Local Authority", Sector))
 
 leaves <- all %>%
   dplyr::select(URN,Leave)

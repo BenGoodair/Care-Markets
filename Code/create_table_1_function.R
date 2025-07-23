@@ -17,14 +17,15 @@ create_table_1 <- function(){
     mutate(Sector_merge = droplevels(Sector_merge)) %>%
     dplyr::select(Sector_merge,
            overall.average, ever_outstanding, reqs_per, age, Places, left, profit_margin_average,
-           chain_size) %>%
+           chain_size, Region.Country.name) %>%
     tbl_summary(
       by = Sector_merge,              # split table by ownership type
       missing = "no",
       type = all_continuous() ~ "continuous2",
-      statistic = all_continuous() ~ c("({median} {IQR})",
-                                       "{N_nonmiss}",
-                                       "{min}, {max} ({sd})"
+      statistic = all_continuous() ~ c("{median}, {IQR}",
+                                       "{min}, {max}",
+                                       "{N_nonmiss}"
+                                       
       ),
       label = list(
         overall.average ~ "Quality (average inspection score)",
@@ -34,7 +35,8 @@ create_table_1 <- function(){
         Places ~ "Children home size (Places, n)",
         left ~ "Closed",
         profit_margin_average ~ "Profit margin (%)",
-        chain_size ~ "Chain size (n)"
+        chain_size ~ "Chain size (n)",
+        Region.Country.name = "Region"
       )
     ) %>%
     add_n() %>%
@@ -59,19 +61,10 @@ create_table_1 <- function(){
       table.border.top.color = "gray"
     )
   
-  # Print the final pretty table
-  gt_table%>%
-    gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table1_chomes.html")
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  # # Print the final pretty table
+  # gt_table%>%
+  #   gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table_1_revised.html")
+  # 
+  # 
   
 }

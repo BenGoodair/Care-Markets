@@ -331,10 +331,10 @@ checkforremove <- df %>%
 
 df_nola <- checkforremove %>% dplyr::filter(is.na(Local.authority)) 
 
-checkforremove <- df %>%
-  dplyr::distinct(URN, .keep_all = T) %>%
-  dplyr::mutate(reason_drop = ifelse(is.na(Local.authority), "no LA",
-                                     ))
+# checkforremove <- df %>%
+#   dplyr::distinct(URN, .keep_all = T) %>%
+#   dplyr::mutate(reason_drop = ifelse(is.na(Local.authority), "no LA",
+#                                      ))
 
 df <- df%>% dplyr::filter(!is.na(Local.authority))%>%
   bind_rows(., yes%>%
