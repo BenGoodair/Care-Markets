@@ -1222,11 +1222,6 @@ mlm$age_years <- mlm$age/12
 mlm <- mlm %>%
   left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/chain_size.csv")), by= "URN")
 
-er <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/chain_size.csv"))%>%
-  dplyr::filter(!is.na(chain_size))
-
-
-
 
 
 mlm <- mlm %>%
