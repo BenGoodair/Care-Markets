@@ -1339,8 +1339,7 @@ mlm <- mlm %>%
 
 
 mlm <- mlm%>%
-  dplyr::left_join(.,
-                 chom_out_of_area <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/FOI%202024-0040813%20part%202.csv"), skip=13)%>%
+  dplyr::left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/FOI%202024-0040813%20part%202.csv"), skip=13)%>%
                    dplyr::filter(geographic_level=="Local authority",
                                  time_period=="2023")%>%
                    dplyr::rename(Local.authority=la_name,
@@ -1365,7 +1364,7 @@ mlm <- mlm%>%
                                    gsub("N E SOM", "NORTH EAST SOM", .)%>%
                                    str_trim())%>%
                    dplyr::select(Local.authority,year, out_of_area, out_of_area_per)%>%
-                   dplyr::mutate(children_in_care_23 = out_of_area*(out_of_area_per/100))%>%
+                   dplyr::mutate(children_in_care_23 = as.numeric(out_of_area)*(as.numeric(out_of_area_per)/100))%>%
                    dplyr::select(Local.authority, children_in_care_23)
 )
 
