@@ -1,14 +1,14 @@
 create_table_2 <- function(){
   
   if (!require("pacman")) install.packages("pacman")
-   pacman::p_load(brms, dplyr, tidyr, broom.mixed, kableExtra, officer, flextable)
+  pacman::p_load(brms, dplyr, tidyr, broom.mixed, kableExtra, officer, flextable)
   
   source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_data_function.R")
   
   mlm  <- create_home_data()
   
   
-
+  
   priors <- c(
     # Slopes for each category
     prior(normal(0, 1), class = "b", dpar = "muCorporateowned"),
@@ -30,6 +30,7 @@ create_table_2 <- function(){
   )
   
   
+  # Model 1: Net Loss
   brmdata_multinom <- mlm %>%
     tidyr::drop_na(Sector_merge, net_loss_s, children_in_care_s,  Local.authority) %>%
     dplyr::select(Sector_merge, net_loss_s, children_in_care_s,
@@ -41,11 +42,6 @@ create_table_2 <- function(){
   
   brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
   levels(brmdata_multinom$Sector_merge) 
-  
-  
-  
-  
-  
   
   ### Fit the Hierarchical Multinomial Model ###
   model_multilevel <- brm(
@@ -60,38 +56,7 @@ create_table_2 <- function(){
   )
   
   
-  
-  brmdata_multinom <- mlm %>%
-    tidyr::drop_na(Sector_merge, net_loss_s, children_in_care_s,  Local.authority) %>%
-    dplyr::select(Sector_merge, net_loss_s, children_in_care_s,
-                  Local.authority, closed, age_years) %>%
-    dplyr::mutate(
-      Sector_merge = factor(Sector_merge),
-      Local.authority = factor(Local.authority),
-      closed = factor(closed),
-      age_s = scale(age_years))
-  
-  brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
-  levels(brmdata_multinom$Sector_merge) 
-  
-  
-  ### Fit the Hierarchical Multinomial Model ###
-  model_multilevel_int <- brm(
-    formula   = Sector_merge ~ net_loss_s*age_s  + closed + 
-      children_in_care_s   +
-      (1 | Local.authority),
-    data      = brmdata_multinom,
-    family    = categorical(),
-    prior     = priors,
-    cores     = 4,
-    iter      = 2000
-  )
-  
-  
-  
-  
-  
-  
+  # Model 3: House Price
   brmdata_multinom <- mlm %>%
     tidyr::drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,  Local.authority) %>%
     dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,
@@ -116,35 +81,8 @@ create_table_2 <- function(){
     iter      = 2000
   )
   
-  brmdata_multinom <- mlm %>%
-    tidyr::drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,  Local.authority) %>%
-    dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,
-                  Local.authority, closed, age_years) %>%
-    dplyr::mutate(
-      Sector_merge = factor(Sector_merge),
-      Local.authority = factor(Local.authority),
-      closed = factor(closed),
-      age_s = scale(age_years))
   
-  brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
-  levels(brmdata_multinom$Sector_merge) 
-  
-  ### Fit the Hierarchical Multinomial Model ###
-  model_multilevel_house_int <- brm(
-    formula   = Sector_merge ~ average_house_price_per_sq_m_s*age_s  + closed + 
-      children_in_care_s   +
-      (1 | Local.authority),
-    data      = brmdata_multinom,
-    family    = categorical(),
-    prior     = priors,
-    cores     = 4,
-    iter      = 2000
-  )  
-  
-  
-  
-  
-  # 0) Define extract_bayes_table to compute ORs
+  # Define extract_bayes_table to compute ORs
   extract_bayes_table <- function(model) {
     # 1) get posterior draws and exponentiate
     draws <- as_draws_df(model) %>%
@@ -190,15 +128,13 @@ Pr>1=%.2f",
       select(Category, Predictor, Value)
   }
   
-  # 1) Re-define bayes_models list
+  # Define bayes_models list with only models 1 and 3
   bayes_models <- list(
-    `Model 1: Net Loss`           = model_multilevel,
-    `Model 2: Net Loss × Age`     = model_multilevel_int,
-    `Model 3: House Price`        = model_multilevel_house,
-    `Model 4: House Price × Age`  = model_multilevel_house_int
+    `Model 1: Net Loss`    = model_multilevel,
+    `Model 3: House Price` = model_multilevel_house
   )
   
-  # 2) Re-extract all tables using the updated function
+  # Extract all tables using the updated function
   combined_bayes <- do.call(
     rbind,
     lapply(names(bayes_models), function(mn) {
@@ -208,56 +144,40 @@ Pr>1=%.2f",
     })
   )
   
-  # 3) Tidy predictor names
+  # Filter to only include Net Loss and House Price predictors
   combined_bayes <- combined_bayes %>%
+    filter(Predictor %in% c("net_loss_s", "average_house_price_per_sq_m_s")) %>%
     mutate(
       Predictor = recode(Predictor,
-                         Intercept = "Intercept",
-                         net_loss_s = "Net Loss (std)",
+                         net_loss_s = "Net Loss (std)",
                          average_house_price_per_sq_m_s = "House Price (std)",
-                         closed1 = "Closed (Yes)",
-                         children_in_care_s = "Children in Care (std)",
-                         age_s = "Age (std)",
-                         `net_loss_s:age_s` = "Net Loss × Age",
-                         `average_house_price_per_sq_m_s:age_s` = "House Price × Age",
                          .default = Predictor
-      )
-    )
+      ),
+      # Order categories by ownership group
+      Category = factor(Category, levels = c("Corporateowned", "Individualowned", "Investmentowned", "Thirdsector"))
+    ) %>%
+    arrange(Category, Predictor)
   
-  # 4) Pivot to wide format
+  # Pivot to wide format
   wide_bayes <- combined_bayes %>%
     pivot_wider(names_from = Model, values_from = Value)
   
-  # 5) Build and inspect the flextable
+  # Build and inspect the flextable
   ft_bayes <- flextable(wide_bayes) %>%
     set_header_labels(
-      Category                = "Sector Type",
+      Category                = "Ownership Type",
       Predictor               = "Predictor",
-      `Model 1: Net Loss`         = "Model 1",
-      `Model 2: Net Loss × Age`   = "Model 2",
-      `Model 3: House Price`      = "Model 3",
-      `Model 4: House Price × Age`= "Model 4"
+      `Model 1: Net Loss`     = "Model 1: Net Loss",
+      `Model 3: House Price`  = "Model 3: House Price"
     ) %>%
     add_header_row(
       values    = c("", "", "Posterior Summary"),
-      colwidths = c(1, 1, 4)
+      colwidths = c(1, 1, 2)
     ) %>%
     theme_booktabs() %>%
     align(j = 1:2, align = "left") %>%
-    align(j = 3:6, align = "center")
+    align(j = 3:4, align = "center")
   
-  # 6) Render or save
-  ft_bayes
-  
-  
-  # finally save:
-  #save_as_docx(ft_bayes, path = "Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Tables/Table_Bayesian_Regressions_revision.docx")  
-  
-  
-  
-  
-  
-  
-
-  
+  # Return the flextable
+  return(ft_bayes)
 }
