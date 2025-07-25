@@ -42,6 +42,7 @@ create_figure_3 <- function(){
   )
   
   
+  # Model 1: Net Loss
   brmdata_multinom <- mlm %>%
     tidyr::drop_na(Sector_merge, net_loss_s, children_in_care_s,  Local.authority) %>%
     dplyr::select(Sector_merge, net_loss_s, children_in_care_s,
@@ -53,11 +54,6 @@ create_figure_3 <- function(){
   
   brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
   levels(brmdata_multinom$Sector_merge) 
-  
-  
-  
-  
-  
   
   ### Fit the Hierarchical Multinomial Model ###
   model_multilevel <- brm(
@@ -72,38 +68,7 @@ create_figure_3 <- function(){
   )
   
   
-  
-  brmdata_multinom <- mlm %>%
-    tidyr::drop_na(Sector_merge, net_loss_s, children_in_care_s,  Local.authority) %>%
-    dplyr::select(Sector_merge, net_loss_s, children_in_care_s,
-                  Local.authority, closed, age_years) %>%
-    dplyr::mutate(
-      Sector_merge = factor(Sector_merge),
-      Local.authority = factor(Local.authority),
-      closed = factor(closed),
-      age_s = scale(age_years))
-  
-  brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
-  levels(brmdata_multinom$Sector_merge) 
-  
-  
-  ### Fit the Hierarchical Multinomial Model ###
-  model_multilevel_int <- brm(
-    formula   = Sector_merge ~ net_loss_s*age_s  + closed + 
-      children_in_care_s   +
-      (1 | Local.authority),
-    data      = brmdata_multinom,
-    family    = categorical(),
-    prior     = priors,
-    cores     = 4,
-    iter      = 2000
-  )
-  
-  
-  
-  
-  
-  
+  # Model 3: House Price
   brmdata_multinom <- mlm %>%
     tidyr::drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,  Local.authority) %>%
     dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,
@@ -127,31 +92,6 @@ create_figure_3 <- function(){
     cores     = 4,
     iter      = 2000
   )
-  
-  brmdata_multinom <- mlm %>%
-    tidyr::drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,  Local.authority) %>%
-    dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,
-                  Local.authority, closed, age_years) %>%
-    dplyr::mutate(
-      Sector_merge = factor(Sector_merge),
-      Local.authority = factor(Local.authority),
-      closed = factor(closed),
-      age_s = scale(age_years))
-  
-  brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
-  levels(brmdata_multinom$Sector_merge) 
-  
-  ### Fit the Hierarchical Multinomial Model ###
-  model_multilevel_house_int <- brm(
-    formula   = Sector_merge ~ average_house_price_per_sq_m_s*age_s  + closed + 
-      children_in_care_s   +
-      (1 | Local.authority),
-    data      = brmdata_multinom,
-    family    = categorical(),
-    prior     = priors,
-    cores     = 4,
-    iter      = 2000
-  )  
   
   
   # Helper: extract posterior OR draws for an effect
@@ -179,7 +119,7 @@ create_figure_3 <- function(){
   or_need  <- extract_posterior_OR(model_multilevel,        "net_loss_s")
   or_price <- extract_posterior_OR(model_multilevel_house,  "average_house_price_per_sq_m_s")
   
-  # Panel 1: Half‑eye plots of OR distributions (unchanged)
+  # Panel 1: Half‑eye plots of OR distributions (unchanged)
   p1_need <- ggplot(or_need,  aes(x = OR, y = label, fill = label)) +
     stat_halfeye(.width = c(0.5,0.95), slab_alpha = 0.8, slab_size = 1) +
     geom_vline(xintercept = 1, linetype = "dashed") +
@@ -219,7 +159,7 @@ create_figure_3 <- function(){
     "Third sector"     = "#F0AB00"
   )
   
-  # PANEL 2: Predicted probabilities by Area Need
+  # PANEL 2: Predicted probabilities by Area Need
   grid_need <- expand_grid(
     net_loss_s                   = c(-1.5, 1.5),
     average_house_price_per_sq_m_s = 0,
@@ -272,7 +212,7 @@ create_figure_3 <- function(){
     theme_minimal(base_size = 12) +
     theme(legend.position = "none")
   
-  # PANEL 3: Predicted probabilities by House Price
+  # PANEL 3: Predicted probabilities by House Price
   grid_price <- expand_grid(
     net_loss_s                   = 0,
     average_house_price_per_sq_m_s = c(-1.5, 1.5),
@@ -280,7 +220,7 @@ create_figure_3 <- function(){
     closed                       = 0
   )
   preds_price <- posterior_epred(
-    model_multilevel,
+    model_multilevel_house,
     newdata         = grid_price,
     re_formula      = NA,
     allow_new_levels = TRUE
