@@ -33,4 +33,4 @@ For non-coders or R users, a final version of the data used for all tables and f
  - Table 2 and figure 3 involve heavy models, and take over 30 minutes to run on my little laptop! be warned!
 
 
-Please reach out to b.goodair@lse.ac.uk for questions - I always want to improve my work (and don't have enough friends to test the code on their machines). :)
+Please reach out to b.goodair@lse.ac.uk for questions - I always want to improve my work (and fix my broken code!). :)
