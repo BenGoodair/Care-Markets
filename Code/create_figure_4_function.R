@@ -163,11 +163,8 @@ create_figure_4 <- function() {
   
   # Display the final plot
   return(final_plot)
-}
 
-# Usage:
-final_plot <- create_figure_4_area_need()
-final_plot
+
 
 # Save the plot
 # ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Figure_4_revisions.png", 
