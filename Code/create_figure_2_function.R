@@ -170,15 +170,15 @@ p_funnel_clean <- ggplot(region_data, aes(x = E, y = O_E)) +
   geom_line(aes(y = upper998), linetype = "solid") +
   geom_line(aes(y = lower998), linetype = "solid") +
   # points colored by outlier status
-  geom_point(aes(col = outlier), size = 2) +
+  geom_point(aes(col = outlier), size = 1.4) +
   # labels only for true outliers
   geom_text_repel(
     data = subset(region_data, O_E > 3 | O_E < 0.3),
     aes(label = Local.authority),
-    size         = 2.4,
-    max.overlaps = Inf,
+    size         = 1.5,
+    max.overlaps = 15,
     box.padding  = 0.3,
-    point.padding= 0.2
+    point.padding= 0.4
   ) +
   # annotate the top/bottom limits at left margin
   annotate(
@@ -188,7 +188,7 @@ p_funnel_clean <- ggplot(region_data, aes(x = E, y = O_E)) +
     label  = "More than expected\nchildren's home places",
     colour = "red",
     hjust  = 0,           # flush‐left
-    size   = 3
+    size   = 2
   ) +
   annotate(
     "text",
@@ -197,7 +197,7 @@ p_funnel_clean <- ggplot(region_data, aes(x = E, y = O_E)) +
     label  = "Fewer than expected\nchildren's home places",
     colour = "blue",
     hjust  = 0,
-    size   = 3
+    size   = 2
   ) +
   # extend x‑axis so labels fit
   expand_limits(x = max(region_data$E) * 1.15) +
@@ -226,8 +226,8 @@ p_funnel_clean <- ggplot(region_data, aes(x = E, y = O_E)) +
 
 
 
-plot<- cowplot::plot_grid(p_funnel_clean,p_map )
+plot<- cowplot::plot_grid(p_funnel_clean,p_map, rel_widths = c(0.42,0.58))
 
 
-#ggsave(plot=plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2_revised.jpeg", width=13.5, height=7, dpi=600)
+ggsave(plot=plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2_revised.jpeg", width=11, height=6, dpi=600)
 }

@@ -1,7 +1,7 @@
 create_table_2 <- function(){
   
   if (!require("pacman")) install.packages("pacman")
-   pacman::p_load(brms, dplyr, tidyr, broom.mixed, kableExtra, officer)
+   pacman::p_load(brms, dplyr, tidyr, broom.mixed, kableExtra, officer, flextable)
   
   source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_data_function.R")
   
