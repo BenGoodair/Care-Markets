@@ -57,7 +57,7 @@ region_data <- obs_la %>%
     mlm %>%
       group_by(Local.authority) %>%
       summarise(
-        children_in_care_s            = mean(children_in_care_s,            na.rm=TRUE)      ),
+        children_in_care_23            = mean(children_in_care_23,            na.rm=TRUE)      ),
     by = "Local.authority"
   )
 
@@ -69,7 +69,7 @@ count_priors <- c(
 
 # 4a. Poisson  
 model_poisson <- brm(
-  bf(O ~ children_in_care_s 
+  bf(O ~ children_in_care_23 
      + (1 | Local.authority)
   ),
   data    = region_data,
