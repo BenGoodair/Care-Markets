@@ -3,13 +3,7 @@ create_figure_3 <- function(){
   if (!require("pacman")) install.packages("pacman")
   
   pacman::p_load(tidyverse, brms, patchwork, ggdist, scales)
-  
-  # Load required libraries
-  library(tidyverse)
-  library(brms)
-  library(patchwork)
-  library(ggdist)
-  library(scales)
+
   
   
   if (!require("pacman")) install.packages("pacman")

@@ -180,4 +180,6 @@ Pr>1=%.2f",
   
   # Return the flextable
   return(ft_bayes)
+  
+  #save_as_docx(table_2, path = "Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Tables/Table_Bayesian_Regressions_revision.docx")
 }
