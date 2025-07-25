@@ -1338,7 +1338,35 @@ mlm <- mlm %>%
 
 
 
-
+mlm <- left_join(.,
+                 chom_out_of_area <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/FOI%202024-0040813%20part%202.csv"), skip=13)%>%
+                   dplyr::filter(geographic_level=="Local authority",
+                                 time_period=="2023")%>%
+                   dplyr::rename(Local.authority=la_name,
+                                 year=time_period,
+                                 out_of_area=number,
+                                 out_of_area_per = percentage)%>%
+                   dplyr::mutate(Local.authority = Local.authority %>%
+                                   gsub('&', 'and', .) %>%
+                                   gsub('[[:punct:] ]+', ' ', .) %>%
+                                   gsub('[0-9]', '', .)%>%
+                                   toupper() %>%
+                                   gsub("CITY OF", "",.)%>%
+                                   gsub("UA", "",.)%>%
+                                   gsub("COUNTY OF", "",.)%>%
+                                   gsub("ROYAL BOROUGH OF", "",.)%>%
+                                   gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                                   gsub("UA", "",.)%>%
+                                   gsub("DARWIN", "DARWEN", .)%>%
+                                   gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                                   gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                                   gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                                   gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                                   str_trim())%>%
+                   dplyr::select(Local.authority,year, out_of_area, out_of_area_per)%>%
+                   dplyr::mutate(children_in_care_23 = out_of_area*(out_of_area_per/100))%>%
+                   dplyr::select(Local.authority, children_in_care_23)
+)
 
 
 
