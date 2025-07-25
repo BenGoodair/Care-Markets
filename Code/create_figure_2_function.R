@@ -57,7 +57,7 @@ region_data <- obs_la %>%
     mlm %>%
       group_by(Local.authority) %>%
       summarise(
-        children_in_care_23            = mean(children_in_care_23,            na.rm=TRUE)      ),
+        children_in_care_s            = mean(children_in_care_s,            na.rm=TRUE)      ),
     by = "Local.authority"
   )
 
@@ -69,7 +69,7 @@ count_priors <- c(
 
 # 4a. Poisson  
 model_poisson <- brm(
-  bf(O ~ children_in_care_23 
+  bf(O ~ children_in_care_s 
      + (1 | Local.authority)
   ),
   data    = region_data,
@@ -130,7 +130,6 @@ p_map <- ggplot(map_df) +
 )
 
 # print or save
-print(p_map)
 # ggsave("Figure2_choropleth_OE.png", p_map, width=8, height=6)
 
 region_data <- region_data %>%
@@ -223,7 +222,6 @@ p_funnel_clean <- ggplot(region_data, aes(x = E, y = O_E)) +
     plot.subtitle   = element_text(size = 9)  # more space on right
   )
 
-print(p_funnel_clean)
 
 
 
