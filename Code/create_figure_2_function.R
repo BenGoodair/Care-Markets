@@ -2,6 +2,14 @@
 
 create_figure_2 <- function(){
   
+  if (!require("pacman")) install.packages("pacman")
+  
+  
+  pacman::p_load(dplyr, tidyr, brms, sf, ggplot2, scales)
+  
+  
+  source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_data_function.R")
+  
   mlm  <- create_home_data()
 
 
@@ -223,5 +231,5 @@ print(p_funnel_clean)
 plot<- cowplot::plot_grid(p_funnel_clean,p_map )
 
 
-ggsave(plot=plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2_revised.jpeg", width=13.5, height=7, dpi=600)
+#ggsave(plot=plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2_revised.jpeg", width=13.5, height=7, dpi=600)
 }

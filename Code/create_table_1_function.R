@@ -1,5 +1,8 @@
 create_table_1 <- function(){
   
+  if (!require("pacman")) install.packages("pacman")
+  pacman::p_load(dplyr, gtsummary, gt)
+  
   source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_data_function.R")
   
   df <- create_home_data()
@@ -7,9 +10,7 @@ create_table_1 <- function(){
   
   ####table 1####
   
-  library(dplyr)
-  library(gtsummary)
-  library(gt)
+
   
   # Create the summary table with renamed variables
   summary_table <- df %>%
@@ -22,8 +23,8 @@ create_table_1 <- function(){
       by = Sector_merge,              # split table by ownership type
       missing = "no",
       type = all_continuous() ~ "continuous2",
-      statistic = all_continuous() ~ c("{median}, {IQR}",
-                                       "{min}, {max}",
+      statistic = all_continuous() ~ c("{median}, {mean}",
+                                       "({min} : {max}), {IQR}",
                                        "{N_nonmiss}"
                                        
       ),
