@@ -125,6 +125,7 @@ create_figure_3 <- function(){
       "Third sector"     = "#757575"
     ), guide = "none") +
     labs(title = "Odds Ratios: Area Need",
+         subtitle = "Reference: Local Authority",
          x = "Odds Ratio", y = "Sector") +
     theme_minimal(base_size = 12) +
     coord_cartesian(xlim = c(0.1, 3))
@@ -140,6 +141,7 @@ create_figure_3 <- function(){
       "Third sector"     = "#757575"
     ), guide = "none") +
     labs(title = "Odds Ratios: House Price",
+         subtitle = "Reference: Local Authority",
          x = "Odds Ratio", y = "") +
     theme_minimal(base_size = 12) +
     coord_cartesian(xlim = c(0.1, 3))
@@ -199,9 +201,10 @@ create_figure_3 <- function(){
                   width = 0.4, size = 1.2) +
     geom_point(position = position_dodge(width = 0.5), size = 3) +
     labs(title    = "Predicted Probability by Area Need",
-         subtitle = "(holding house price and number of children at average)",
+         subtitle = "(holding number of children at average and closure status as open)",
          x        = "Area Need",
-         y        = "Probability") +
+         y        = "Probability",
+         color = "Ownership") +
     scale_color_manual(values = sector_colors) +
     theme_minimal(base_size = 12) +
     theme(legend.position = "none")
@@ -250,9 +253,10 @@ create_figure_3 <- function(){
                   width = 0.4, size = 1.2) +
     geom_point(position = position_dodge(width = 0.5), size = 3) +
     labs(title    = "Predicted Probability by House Price",
-         subtitle = "(holding area need and number of children at average)",
+         subtitle = "(holding number of children at average and closure status as open)",
          x        = "House price",
-         y        = "Probability") +
+         y        = "Probability",
+         color = "Ownership") +
     scale_color_manual(values = sector_colors) +
     theme_minimal(base_size = 12) +
     theme(legend.position = "bottom")
