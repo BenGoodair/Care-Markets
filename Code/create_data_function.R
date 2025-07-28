@@ -240,7 +240,7 @@ df <-rbind( read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Mar
               dplyr::rename(Organisation = Organisation.which.owns.the.provider,
                             Latest.full.inspection.date = Inspection.date)%>%
               dplyr::filter(str_detect(Provision.type, "(?i)home"),
-                            !str_detect(Provision.type, "(?i)school"))%>%
+                          !str_detect(Provision.type, "(?i)school"))%>%
               dplyr::select(Sector, URN, Places, Local.authority, Organisation, Registration.date, Overall.experiences.and.progress.of.children.and.young.people, Latest.full.inspection.date),
             
             
@@ -313,10 +313,11 @@ df <-rbind( read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Mar
                   str_trim())%>%
   dplyr::full_join(., all%>%
                      dplyr::select(-Places, -Local.authority, -Sector,)%>%
-                     dplyr::filter(as.Date(Leave)>="2015-04-01"|
+                     dplyr::filter(as.Date(Leave)>="2014-04-01"|
                                      is.na(Leave))%>%
                      dplyr::filter(as.Date(Join)<"2023-04-01"|
-                                     is.na(Join)), by=c("URN"))%>%
+                                     is.na(Join)),
+  by=c("URN"))%>%
   group_by(URN) %>%
   mutate(
     Registration.date = if_else(
@@ -339,15 +340,8 @@ yes <- df %>% dplyr::filter(is.na(Local.authority))%>%
   dplyr::filter(keep==1)
 
 
-checkforremove <- df %>%
-  dplyr::distinct(URN, .keep_all = T) 
 
-df_nola <- checkforremove %>% dplyr::filter(is.na(Local.authority)) 
 
-# checkforremove <- df %>%
-#   dplyr::distinct(URN, .keep_all = T) %>%
-#   dplyr::mutate(reason_drop = ifelse(is.na(Local.authority), "no LA",
-#   ))
 
 df <- df%>% dplyr::filter(!is.na(Local.authority))%>%
   bind_rows(., yes%>%
@@ -468,11 +462,11 @@ df <- df %>%
   dplyr::left_join(., francois_clean, by="Company.name") %>%
   dplyr::mutate(Sector_merge = ifelse(Sector.x=="Local Authority", "Local Authority",
                                       ifelse(Sector.x=="Voluntary", "Third sector", Sector.y)),
-                Sector_merge = ifelse(is.na(Sector_merge), "Unidentified for-profit", Sector_merge))
+                Sector_merge = ifelse(is.na(Sector_merge), "Unidentified for-profit", Sector_merge))%>%
+  dplyr::filter(!is.na(URN))
 
 df$Sector_merge <- factor(df$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unidentified for-profit"))
 
-df <- df
 
 
 
@@ -1131,7 +1125,7 @@ mlm <- df %>%
   dplyr::mutate(joined = ifelse(is.na(Join) | Join <= "2016-01-01", 0, 1),
                 left = ifelse(!is.na(Leave), 1, 0),
                 age = as.integer(time_length(difftime( as.Date(Registration.date,  format =  "%d/%m/%Y"), as.Date("2024-01-01")), "months"))*-1)%>%
-  full_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/processed_profs.csv")),
+  left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/processed_profs.csv")),
     by = "Company.name"
   )%>%
   dplyr::left_join(., LA_panel_data %>%
