@@ -268,7 +268,7 @@ create_figure_3 <- function(){
     plot_layout(heights = c(2, 1.2, 1)) &
     theme(plot.title = element_text(face = "bold"))
   
-  ggsave(plot=figure_3, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_3_revised.jpeg", width=12, height=11, dpi=600)
+ # ggsave(plot=figure_3, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_3_revised.jpeg", width=12, height=11, dpi=600)
   
   return(final)
 }
