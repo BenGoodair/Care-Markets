@@ -18,7 +18,9 @@ For example... to create the data simply run in R...
 
 ```
 
-The file in the folder Manuscript code - is a simple way to replicate all the results with 10 lines of code, running all the pre-prepared functions.
+Each function should work independently of eachother - so you don't need to produce the data first.
+
+The file in the folder Manuscript code is a simple way to replicate all the results with 10 lines of code, running all the pre-prepared functions.
 
 ## Non-coders
 
@@ -30,7 +32,7 @@ For non-coders or R users, a final version of the data used for all tables and f
 
  - The code uses Pacman to make it as reproducible as possible - but therefore if you run the code, expect many R packages to be downloaded onto your machines.
 
- - Table 2 and figure 3 involve heavy models, and take over 30 minutes to run on my little laptop! be warned!
+ - Table 2 and figure 3 involve some computation, and take over 10 minutes to run on my little laptop! 
 
 
 Please reach out to b.goodair@lse.ac.uk for questions - I always want to improve my work (and fix my broken code!) :)
