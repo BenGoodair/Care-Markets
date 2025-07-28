@@ -1360,7 +1360,8 @@ mlm <-  dplyr::left_join(mlm, read.csv(curl("https://raw.githubusercontent.com/B
                    dplyr::mutate(children_in_care_23 = as.numeric(out_of_area)*(as.numeric(out_of_area_per)/100))%>%
                    dplyr::select(Local.authority, children_in_care_23),
                    by="Local.authority"
-)
+)%>%
+  dplyr::distinct(URN, .keepall=T)
 
 
 
