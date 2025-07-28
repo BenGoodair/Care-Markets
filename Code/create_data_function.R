@@ -1361,7 +1361,7 @@ mlm <-  dplyr::left_join(mlm, read.csv(curl("https://raw.githubusercontent.com/B
                    dplyr::select(Local.authority, children_in_care_23),
                    by="Local.authority"
 )%>%
-  dplyr::distinct(URN, .keepall=T)
+  dplyr::distinct(URN, .keep_all = T) 
 
 
 
