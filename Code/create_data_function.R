@@ -475,6 +475,7 @@ chome_netgain <- read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Car
   dplyr::rename(Local.authority=la_name,
                 year=time_period,
                 net_gain = number)%>%
+  dplyr::filter(!(Local.authority == "Dorset" & net_gain == "z"))%>%
   dplyr::filter(geographic_level=="Local authority")%>%
   dplyr::mutate(Local.authority = Local.authority %>%
                   gsub('&', 'and', .) %>%
@@ -983,8 +984,7 @@ LA_panel_data <- LA_panel_data %>%
                      dplyr::select(Local.authority,year, out_of_area_per, out_of_area, net_gain)%>%
                      dplyr::distinct(.keep_all = T),
                    by=c("Local.authority", "year"))%>%
-  dplyr::filter(Local.authority!="DORSET",
-                Local.authority!="LONDON",
+  dplyr::filter(Local.authority!="LONDON",
                 !is.na(year))
 
 LA_panel_data <- LA_panel_data %>%
@@ -1010,8 +1010,7 @@ LA_panel_data <- LA_panel_data %>%
 LA_panel_data <- LA_panel_data %>%
   dplyr::left_join(., controls,
                    by=c("Local.authority", "year"))%>%
-  dplyr::filter(Local.authority!="LONDON",
-                Local.authority!="DORSET")
+  dplyr::filter(Local.authority!="LONDON")
 
 
 
