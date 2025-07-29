@@ -87,14 +87,7 @@ create_figure_4 <- function() {
   legend_index <- which(sapply(g$grobs, function(x) x$name) == "guide-box")
   legend <- g$grobs[[legend_index]]
   
-  # now 'legend' is a single grob you can stick under your plot_grid
-  
-  final_plot <- cowplot::plot_grid(
-    stacked_plots,
-    legend,
-    ncol = 1,
-    rel_heights = c(1, 0.08)
-  )
+
   
   # And then you just return or print final_plot as before.
   
