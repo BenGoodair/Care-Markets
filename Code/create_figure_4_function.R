@@ -9,7 +9,7 @@ create_figure_4 <- function() {
   
   create_ownership_plot <- function(data, ownership_type, title_suffix) {
     changeplot <- data %>%
-      dplyr::select(Registration.date, Sector_merge, Local.authority) %>%
+      dplyr::select(Registration.date, Sector_merge, Local.authority, Join) %>%
       left_join(., data %>%
                   dplyr::select(Local.authority, net_loss_s) %>%
                   dplyr::distinct(.keep_all = TRUE) %>%
