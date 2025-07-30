@@ -16,7 +16,9 @@ create_figure_4 <- function() {
                   dplyr::mutate(needQuint = factor(ntile(net_loss_s, 5))) %>%
                   dplyr::select(-net_loss_s)
       ) %>%
-      mutate(location_start = dmy(Registration.date)) %>%
+      mutate(location_start = dmy(Registration.date),
+             location_start = ifelse(is.na(location_start), Join, as.character(location_start)),
+             location_start = as.Date(location_start))%>%
       filter(location_start >= as.Date("2014-03-01"),
              Sector_merge == ownership_type,
              !is.na(needQuint)) %>%
