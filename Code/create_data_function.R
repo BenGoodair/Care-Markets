@@ -5,13 +5,16 @@ create_home_data <- function(){
 
 if (!require("pacman")) install.packages("pacman")
 
-pacman::p_load(MCMCglmm,ordinal,devtools,MASS,  sandwich,  lmtest,  clubSandwich,  
-               modelsummary, cowplot,ggmap,googleway,hrbrthemes,viridis,jsonlite,survival, 
-               httr, purrr, dplyr,gt, gtsummary, tidyverse,rattle,ggeffects, glmnet,caret, 
-               rpart.plot,rpart, tidyr, mice, stringr,randomForest,  curl, plm, readxl, zoo, 
-               stringr, patchwork,knitr,  sf, clubSandwich, modelsummary, sjPlot,
-               lmerTest, lme4, brms, glmmTMB, ggeffects, MCMCglmm, tidybayes, bayesplot,
-               gridExtra, nnet, clubSandwich, fixest, patchwork, gtExtras, estimatr)
+  pacman::p_load(
+    curl,       # for curl() in read.csv(curl(…))
+    dplyr,      # all of your select(), filter(), mutate(), group_by(), joins, etc.
+    tidyr,      # pivot_wider(), unnest()
+    stringr,    # str_trim(), plus you use stringr::str_replace_all() in a couple of spots
+    lubridate ,plm,
+    zoo,
+    stringr# lubridate::year()
+  )
+  
 
 
 ####proper dataset####
