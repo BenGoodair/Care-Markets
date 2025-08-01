@@ -1112,7 +1112,13 @@ LA_panel_data <- LA_panel_data %>%
 
 
 LA_panel_data <- LA_panel_data%>%
-                               dplyr::distinct(.keep_all = T)
+  dplyr::distinct(.keep_all = T)%>%
+  dplyr::rename(Unemployment.rate...aged.16.64. = `Unemployment rate - aged 16-64 `,
+                X..of.white...aged.16. = `% of white - aged 16+`)
+
+
+
+
 
 
 
