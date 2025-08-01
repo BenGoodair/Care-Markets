@@ -1,5 +1,6 @@
 create_table_2 <- function(){
   
+
   if (!require("pacman")) install.packages("pacman")
   pacman::p_load(brms, dplyr, tidyr, broom.mixed, kableExtra, officer, flextable, brms)
   
