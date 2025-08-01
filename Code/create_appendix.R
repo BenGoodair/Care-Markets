@@ -1192,6 +1192,111 @@ save_as_docx(ft_bayes, path = "~/Library/CloudStorage/OneDrive-Nexus365/Document
 # ggsave(plot=d, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new//Care-Markets/figures/Appendix/all_cats.png", width=8, height=6, dpi=600)
 # 
 
+####comparing unidentified fp with others####
+
+library(dplyr)
+library(ggplot2)
+
+# Compute the average Places by Sector_merge
+
+df <- df %>%
+  dplyr::filter(!is.na(URN))
+
+df_avg <- df %>%
+  dplyr::mutate(closed = ifelse(is.na(Leave), 0,1),
+                Overall.experiences.and.progress.of.children.and.young.people = ifelse(
+    Overall.experiences.and.progress.of.children.and.young.people=="Outstanding", 4,
+    ifelse( Overall.experiences.and.progress.of.children.and.young.people=="Good", 3,
+            ifelse( Overall.experiences.and.progress.of.children.and.young.people=="Requires improvement", 2,
+                    ifelse( Overall.experiences.and.progress.of.children.and.young.people=="Inadequate", 1,
+                            NA)) )    )  )%>%
+  group_by(Sector_merge) %>%
+  summarise(avg_places = mean(Places, na.rm = TRUE),
+            avg_inspection = mean(as.numeric(as.character(Overall.experiences.and.progress.of.children.and.young.people)), na.rm=T),
+            closed = mean(closed, na.rm=T))%>%
+  dplyr::ungroup()
+# Plot the averages
+one <- ggplot(df_avg, aes(x = Sector_merge, y = avg_places)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  xlab("Sector") +
+  ylab("Average Places") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+two <- ggplot(df_avg, aes(x = Sector_merge, y = avg_inspection)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  xlab("Sector") +
+  ylab("Average Inspection score") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+three <- ggplot(df_avg, aes(x = Sector_merge, y = closed)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  xlab("Sector") +
+  ylab("Proportion of homes closed") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
+# Ensure Sector_merge has the correct factor levels
+df$Sector_merge <- factor(df$Sector_merge, levels = c(
+  "Local Authority", 
+  "LA owned company", 
+  "Third sector", 
+  "Individual owned", 
+  "Corporate owned", 
+  "Investment owned", 
+  "Unidentified for-profit"
+))
+
+# Join Region.Country.name into df
+df_reg <- df %>%
+  left_join(
+    mlm %>%
+      select(Local.authority, Region.Country.name) %>%
+      distinct(),
+    by = "Local.authority"
+  )
+
+# Count and calculate proportions by Region and Sector
+df_grouped <- df_reg %>%
+  group_by(Region.Country.name, Sector_merge) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  group_by(Region.Country.name) %>%
+  mutate(percent = count / sum(count))
+
+# Plot with percentages
+four <- ggplot(df_grouped, aes(x = Region.Country.name, y = percent, fill = Sector_merge)) +
+  geom_bar(stat = "identity", position = "fill") +
+  xlab("Region") +
+  ylab("Proportion of Observations") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_fill_manual(values = c(
+    "#008F5D", # Local Authority
+    "#F0AB00", # LA owned company
+    "#E4007C", # Third sector
+    "#FF5E5E", # Individual owned
+    "#5B0000", # Corporate owned
+    "#1F77B4", # Investment owned
+    "#9467BD"  # Unidentified for-profit
+  )) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(fill = "Sector")
+
+
+
+compare <- cowplot::plot_grid(one, two, three, four, ncol=1)
+
+
+ggsave(plot=compare, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new//Care-Markets/figures/Appendix/unident_comp.png", width=6, height=14, dpi=600)
+
+
+
+
+
+
 ####missing data analysis####
 # Required libraries
 library(dplyr)
@@ -1238,4 +1343,14 @@ ggplot(missing_df, aes(x = n_missing, y = variable)) +
     panel.grid.major.x = element_line(color = "grey80", linetype = "dashed")
   )
 
+####compare house price and need ####
 
+ggplot(mlm %>%
+         dplyr::select(Local.authority, average_house_price_per_sq_m_s, net_loss_s, Region.Country.name)%>%
+         dplyr::distinct(.keep_all = T),
+       aes(x= net_loss_s, y=average_house_price_per_sq_m_s, colour = Region.Country.name ))+
+  geom_point()+
+  #facet_grid(~Region.Country.name)+
+  geom_smooth(method="lm")+
+  geom_hline(yintercept = 0)+
+  geom_vline(xintercept = 0)

@@ -1111,8 +1111,8 @@ LA_panel_data <- LA_panel_data %>%
 
 
 
-LA_panel_data <- pdata.frame(LA_panel_data%>%
-                               distinct(.keep_all = T), index = c("Local.authority", "year"))
+LA_panel_data <- LA_panel_data%>%
+                               dplyr::distinct(.keep_all = T)
 
 
 
