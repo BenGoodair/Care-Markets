@@ -112,9 +112,12 @@ map_df <- la_shp %>%
 
 p_map <- ggplot(map_df) +
   geom_sf(aes(fill = O_E), colour = "grey30", size = 0.1) +
-  scale_fill_viridis_c(
-    name   = "O / E ratio",
-    option = "magma",
+  scale_fill_gradient2(
+    name   = "O / E ratio",
+    low    = "#2c7fb8",    # teal
+    mid    = "#f7f7f7",    # light grey
+    high   = "#d7301f",    # coral/red
+    midpoint = 1,
     limits = c(0, 3),
     oob    = scales::squish
   ) +
@@ -227,7 +230,6 @@ p_funnel_clean <- ggplot(region_data, aes(x = E, y = O_E)) +
 
 
 plot<- cowplot::plot_grid(p_funnel_clean,p_map, rel_widths = c(0.42,0.58))
-
 
 #ggsave(plot=plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2_revised.jpeg", width=11, height=6, dpi=600)
 }
