@@ -51,7 +51,10 @@ essential_packages <- c(
   "plotly",        # Interactive plots
   "scales",        # Plot scaling
   "viridis",       # Color palettes
-  "RColorBrewer"   # Color palettes
+  "RColorBrewer",   # Color palettes
+  "cowplot",
+  "gtsummary",
+  "brms"
 )
 
 # Install all essential packages
