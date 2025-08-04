@@ -45,8 +45,7 @@ create_table_1 <- function(){
       c("stat_1", "stat_2", "stat_3", "stat_4", "stat_5") ~ "**Ownership**"
     ) %>%
     modify_caption("**Table. Children Home and Area Characteristics**") %>%
-    modify_header(label = "**Variable**") %>%
-    bold_labels()
+    modify_header(label = "**Variable**") 
   
   # Convert the gtsummary table to a gt table to add sub-headers and styling
   gt_table <- as_gt(summary_table) %>%
