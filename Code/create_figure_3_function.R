@@ -2,12 +2,9 @@ create_figure_3 <- function(){
   
   if (!require("pacman")) install.packages("pacman")
   
-  pacman::p_load(tidyverse, brms, patchwork, ggdist, scales)
+  pacman::p_load(tidyverse, brms, patchwork, ggdist, scales, dplyr, tidyr, 
+                 broom.mixed, kableExtra, officer)
 
-  
-  
-  if (!require("pacman")) install.packages("pacman")
-  pacman::p_load(brms, dplyr, tidyr, broom.mixed, kableExtra, officer)
   
   source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_data_function.R")
   
@@ -124,7 +121,7 @@ create_figure_3 <- function(){
       "Individual owned" = "#757575",
       "Third sector"     = "#757575"
     ), guide = "none") +
-    labs(title = "Odds Ratios: Area Need",
+    labs(title = "A) Odds Ratios: Area Need",
          subtitle = "Reference: Local Authority",
          x = "Odds Ratio", y = "Sector") +
     theme_minimal(base_size = 12) +
@@ -140,7 +137,7 @@ create_figure_3 <- function(){
       "Individual owned" = "#757575",
       "Third sector"     = "#757575"
     ), guide = "none") +
-    labs(title = "Odds Ratios: House Price",
+    labs(title = "B) Odds Ratios: House Price",
          subtitle = "Reference: Local Authority",
          x = "Odds Ratio", y = "") +
     theme_minimal(base_size = 12) +
@@ -200,7 +197,7 @@ create_figure_3 <- function(){
                   position = position_dodge(width = 0.5),
                   width = 0.4, size = 1.2) +
     geom_point(position = position_dodge(width = 0.5), size = 3) +
-    labs(title    = "Predicted Probability by Area Need",
+    labs(title    = "C) Predicted Probability by Area Need",
          subtitle = "(holding number of children at average and closure status as open)",
          x        = "Area Need",
          y        = "Probability",
@@ -252,7 +249,7 @@ create_figure_3 <- function(){
                   position = position_dodge(width = 0.5),
                   width = 0.4, size = 1.2) +
     geom_point(position = position_dodge(width = 0.5), size = 3) +
-    labs(title    = "Predicted Probability by House Price",
+    labs(title    = "D) Predicted Probability by House Price",
          subtitle = "(holding number of children at average and closure status as open)",
          x        = "House price",
          y        = "Probability",
@@ -268,7 +265,7 @@ create_figure_3 <- function(){
     plot_layout(heights = c(2, 1.2, 1)) &
     theme(plot.title = element_text(face = "bold"))
   
- # ggsave(plot=figure_3, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_3_revised.jpeg", width=12, height=11, dpi=600)
+  #ggsave(plot=figure_3, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_3_revised.jpeg", width=12, height=11, dpi=600)
   
   return(final)
 }

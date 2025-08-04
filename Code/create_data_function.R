@@ -1132,7 +1132,8 @@ LA_panel_data <- LA_panel_data%>%
 mlm <- df %>% 
   dplyr::mutate(joined = ifelse(is.na(Join) | Join <= "2016-01-01", 0, 1),
                 left = ifelse(!is.na(Leave), 1, 0),
-                age = as.integer(time_length(difftime( as.Date(Registration.date,  format =  "%d/%m/%Y"), as.Date("2024-01-01")), "months"))*-1)%>%
+                age = ifelse(!is.na(Registration.date), as.integer(time_length(difftime( as.Date(Registration.date,  format =  "%d/%m/%Y"), as.Date("2024-01-01")), "months"))*-1,
+                             ifelse(!is.na(Join), as.integer(time_length(difftime( as.Date(Join), as.Date("2024-01-01")), "months"))*-1, NA)))%>%
   left_join(., read.csv(curl("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Data/processed_profs.csv")),
     by = "Company.name"
   )%>%

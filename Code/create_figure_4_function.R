@@ -116,7 +116,6 @@ create_figure_4 <- function() {
     plots_list[[5]],
     ncol = 1,
     rel_heights = c(0.05, 1, 1, 1, 0.02, 0.05, 1, 1),
-    labels = c("", "A", "B", "C", "", "", "D", "E"),
     label_size = 12,
     align = "v"
   )
