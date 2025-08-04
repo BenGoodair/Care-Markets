@@ -1,3 +1,4 @@
+renv::init(force=T)
 
 
 source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_data_function.R")
