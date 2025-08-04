@@ -1,4 +1,3 @@
-renv::init(force=T)
 
 
 source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_data_function.R")
@@ -33,6 +32,8 @@ figure_3 <- create_figure_3()
 source("https://raw.githubusercontent.com/BenGoodair/Care-Markets/refs/heads/main/Code/create_figure_4_function.R")
 
 figure_4 <- create_figure_4()
+
+renv::snapshot()
 
 
 #write.csv(df, "Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Final Data/final_data.csv")
