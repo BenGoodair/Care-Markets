@@ -1,11 +1,24 @@
-install.packages("brms", dependencies = TRUE)
-install.packages(c(
-  "dplyr", "tidyr", "broom.mixed",
-  "kableExtra", "officer", "flextable",
-  "gt", "gtsummary", "lubridate"", "ggplot2"",
-  "viridis", "cowplot", "sf", "scales"
-))
+# Install required R packages for Binder
+if (!require("pacman")) install.packages("pacman")
 
-# Optional: if you want cmdstanr (may be easier than rstan on Binder)
-install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
-cmdstanr::install_cmdstan()
+# Use pacman to install and load packages
+pacman::p_load(
+  # Add all your required packages here
+  tidyverse,
+  ggplot2,
+  dplyr,
+  readr,
+  stringr,
+  lubridate,
+  # Add any other packages your code uses
+  rmarkdown,
+  knitr,
+  DT,
+  plotly
+)
+
+# If you have specific package versions in renv.lock, consider using renv
+if (file.exists("renv.lock")) {
+  if (!require("renv")) install.packages("renv")
+  renv::restore()
+}
