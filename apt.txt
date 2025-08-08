@@ -10,3 +10,5 @@ libtiff5-dev
 libjpeg-dev
 libgit2-dev
 libssh2-1-dev
+libv8-dev
+build-essential
