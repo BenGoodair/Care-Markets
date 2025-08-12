@@ -1345,12 +1345,84 @@ ggplot(missing_df, aes(x = n_missing, y = variable)) +
 
 ####compare house price and need ####
 
-ggplot(mlm %>%
+comp <- ggplot(mlm %>%
          dplyr::select(Local.authority, average_house_price_per_sq_m_s, net_loss_s, Region.Country.name)%>%
          dplyr::distinct(.keep_all = T),
-       aes(x= net_loss_s, y=average_house_price_per_sq_m_s, colour = Region.Country.name ))+
+       aes(x= net_loss_s, y=average_house_price_per_sq_m_s ))+
   geom_point()+
   #facet_grid(~Region.Country.name)+
   geom_smooth(method="lm")+
   geom_hline(yintercept = 0)+
-  geom_vline(xintercept = 0)
+  geom_vline(xintercept = 0)+
+  theme_bw()
+
+ggsave(plot=comp, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new//Care-Markets/figures/Appendix/comp.png", width=7, height=6, dpi=600)
+
+
+#### compare openings and ratings by opening date ####
+
+mlm %>% dplyr::select(Places, overall.average, Registration.date)%>%
+  dplyr::filter(!is.na(Registration.date))
+
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(zoo)
+
+# Clean and transform
+mlm_clean <- mlm %>%
+  filter(!is.na(Registration.date)) %>%
+  mutate(
+    Registration.date = dmy(Registration.date),
+    Year = year(Registration.date)
+  ) %>%
+  filter(!is.na(overall.average), !is.nan(overall.average), !is.na(Places))
+
+# Aggregate: yearly average
+mlm_yearly <- mlm_clean %>%
+  group_by(Year) %>%
+  summarise(
+    avg_quality = mean(overall.average, na.rm = TRUE),
+    avg_size = mean(Places, na.rm = TRUE),
+    n = n()
+  ) %>%
+  arrange(Year) %>%
+  mutate(
+    roll_quality = rollmean(avg_quality, 3, fill = NA, align = "right"),
+    roll_size = rollmean(avg_size, 3, fill = NA, align = "right")
+  )%>%
+  dplyr::filter(Year>1995)
+# Plot 1: Quality over time
+p1 <- ggplot(mlm_yearly, aes(x = Year, y = roll_quality)) +
+  geom_line(color = "darkred", size = 1) +
+  labs(
+    title = "Average inspection ratings by year of registration",
+    x = "Year of Registration",
+    y = "3-Year Rolling Mean\nQuality Score"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(face = "bold"))
+
+# Plot 2: Size over time
+p2 <- ggplot(mlm_yearly, aes(x = Year, y = roll_size)) +
+  geom_line(color = "steelblue", size = 1) +
+  labs(
+    title = "Average size of homes by year of registration",
+    x = "Year of Registration",
+    y = "3-Year Rolling Mean\nNumber of Places"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(face = "bold"))
+combined_plot <- cowplot::plot_grid(
+  p1, p2,
+  labels = c("A", "B"),
+  label_size = 16,
+  ncol = 2,
+  align = "v"
+)
+
+# Print the plot
+print(combined_plot)
+
+ggsave(plot=combined_plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new//Care-Markets/figures/Appendix/size_qual.png", width=7, height=6, dpi=600)
+
