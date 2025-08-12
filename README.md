@@ -26,6 +26,10 @@ The file in the folder Manuscript code is a simple way to replicate all the resu
 
 For non-coders or R users, a final version of the data used for all tables and figures is provided in the Final Data folder.
 
+## For replication
+
+In it's current stage the packages gtsummary and brms are preventing replication via binder - I am working on a file which will produce results without using bayesian methods.
+
 # Notes and considerations
 
  - Some underlying data is not shareable, and so for some variables like profits and ownership, the data provided here is pre-aggregated.
