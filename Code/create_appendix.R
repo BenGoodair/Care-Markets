@@ -959,82 +959,47 @@ save_as_docx(ft_bayes, path = "~/Library/CloudStorage/OneDrive-Nexus365/Document
 ####non informative priors####
 
 
-
-priors <- c(
-  # Slopes for each category
-  prior(normal(0, 1), class = "b", dpar = "muCorporateowned"),
-  prior(normal(0, 1), class = "b", dpar = "muIndividualowned"),
-  prior(normal(0, 1), class = "b", dpar = "muInvestmentowned"),
-  prior(normal(0, 1), class = "b", dpar = "muThirdsector"),
-  
-  # Intercepts
-  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muCorporateowned"),
-  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muIndividualowned"),
-  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muInvestmentowned"),
-  prior(student_t(3, 0, 2.5), class = "Intercept", dpar = "muThirdsector"),
-  
-  # Random effect SDs
-  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muCorporateowned"),
-  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muIndividualowned"),
-  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muInvestmentowned"),
-  prior(student_t(3, 0, 2.5), class = "sd", dpar = "muThirdsector")
-)
-
-
-brmdata_multinom <- mlm %>%
-  tidyr::drop_na(Sector_merge, net_loss_s, children_in_care_s,  Local.authority) %>%
-  dplyr::select(Sector_merge, net_loss_s, children_in_care_s,
-                Local.authority, closed) %>%
-  dplyr::mutate(
+# Data for Model 1: Net Loss
+data_netloss <- mlm %>%
+  drop_na(Sector_merge, net_loss_s, children_in_care_s, Local.authority) %>%
+  select(Sector_merge, net_loss_s, children_in_care_s, Local.authority, closed) %>%
+  mutate(
     Sector_merge = factor(Sector_merge),
     Local.authority = factor(Local.authority),
-    closed = factor(closed))
+    closed = factor(closed)
+  )
+data_netloss$Sector_merge <- droplevels(data_netloss$Sector_merge)
+n1 <- nrow(data_netloss)
 
-brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
-levels(brmdata_multinom$Sector_merge) 
-
-
-
-
-
-
-### Fit the Hierarchical Multinomial Model ###
 model_multilevel <- brm(
-  formula   = Sector_merge ~ net_loss_s  + closed + 
-    children_in_care_s   +
-    (1 | Local.authority),
-  data      = brmdata_multinom,
-  family    = categorical(),
-  cores     = 4,
-  iter      = 2000
+  formula = Sector_merge ~ net_loss_s + closed + children_in_care_s + (1 | Local.authority),
+  data = data_netloss,
+  family = categorical(),
+  cores = 4,
+  iter = 2000
 )
 
-
-
-
-brmdata_multinom <- mlm %>%
-  tidyr::drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,  Local.authority) %>%
-  dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,
-                Local.authority, closed) %>%
-  dplyr::mutate(
+# Data for Model 3: House Price
+data_house <- mlm %>%
+  drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s, Local.authority) %>%
+  select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s, Local.authority, closed) %>%
+  mutate(
     Sector_merge = factor(Sector_merge),
     Local.authority = factor(Local.authority),
-    closed = factor(closed))
+    closed = factor(closed)
+  )
+data_house$Sector_merge <- droplevels(data_house$Sector_merge)
+n3 <- nrow(data_house)
 
-brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
-levels(brmdata_multinom$Sector_merge) 
-
-### Fit the Hierarchical Multinomial Model ###
 model_multilevel_house <- brm(
-  formula   = Sector_merge ~ average_house_price_per_sq_m_s  + closed + 
-    children_in_care_s   +
-    (1 | Local.authority),
-  data      = brmdata_multinom,
-  family    = categorical(),
-  cores     = 4,
-  iter      = 2000
+  formula = Sector_merge ~ average_house_price_per_sq_m_s + closed + children_in_care_s + (1 | Local.authority),
+  data = data_house,
+  family = categorical(),
+  cores = 4,
+  iter = 2000
 )
 
+# Function to extract OR table
 extract_bayes_table <- function(model) {
   draws <- as_draws_df(model) %>%
     select(starts_with("b_mu")) %>%
@@ -1104,9 +1069,16 @@ ft_bayes <- flextable(wide_bayes) %>%
 
 
 
-# Save directly to Word
-save_as_docx(ft_bayes, path = "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Appendix/Table3_no_priors.docx")
 
+
+# Save directly to Word
+save_as_docx(ft_bayes, path = "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Appendix/Table3_no_priors_rev.docx")
+
+one <- pp_check(model_multilevel, type = "bars")           # bar plot comparison for categories
+two <- pp_check(model_multilevel_house, type = "bars")           # bar plot comparison for categories
+
+ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Appendix/prior_diag_need_rev.png", one, width = 7, height = 7, dpi = 600)
+ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Appendix/diag_house_rev.png", two, width = 7, height = 7, dpi = 600)
 
 
 ####all owenership cats - hashtagged out because requires a different dataset to see all cats####
