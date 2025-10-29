@@ -110,126 +110,146 @@ print(summary_stats)
 map_df <- la_shp %>%
   left_join(region_data, by = "Local.authority")
 
+library(scales)
+
+map_df$O_E_log <- ifelse(map_df$O_E < 1, -log(1 / map_df$O_E), log(map_df$O_E))
+
+# Define the log-transformed function
+log_transform <- function(x) ifelse(x < 1, -log(1 / x), log(x))
+
+# Define breaks in the original O/E scale
+breaks_original <- c(0.1, 0.5, 1, 2, 3)
+
+# Map them to the log-transformed scale for color
+breaks_transformed <- log_transform(breaks_original)
+
 p_map <- ggplot(map_df) +
-  geom_sf(aes(fill = O_E), colour = "grey30", size = 0.1) +
+  geom_sf(aes(fill = log_transform(O_E)), colour = "grey30", size = 0.1) +
   scale_fill_gradient2(
-    name   = "O / E ratio",
-    low    = "#2c7fb8",    # teal
-    mid    = "#f7f7f7",    # light grey
-    high   = "#d7301f",    # coral/red
-    midpoint = 1,
-    limits = c(0, 3),
-    oob    = scales::squish
+    name     = "O / E ratio",
+    low      = "#045a8d",  # darker blue
+    mid      = "#f7f7f7",  # light grey
+    high     = "#d7301f",  # coral/red
+    midpoint = 0,
+    breaks   = breaks_transformed,
+    labels   = breaks_original,
+    limits = c(log(0.05), log(5))
   ) +
   labs(
-    title   = "",
+    title    = "",
     subtitle = "Map of O:E",
-    caption = "Expected calculated from Bayesian Poission model\nAssumes that all areas need the same number of places per child"
+    caption  = "Expected calculated from Bayesian Poisson model\nAssumes that all areas need the same number of places per child\nSee supplement for London-only map and funnel plot including outlier, Birmingham."
   ) +
-  theme_bw()+
-  theme(plot.title      = element_text(face = "bold"),
-  plot.subtitle   = element_text(size = 9) ,
-  legend.position = "bottom"
-)
+  theme_bw() +
+  theme(
+    plot.title    = element_text(face = "bold"),
+    plot.subtitle = element_text(size = 9),
+    legend.position = "bottom"
+  )
+
+
 
 # print or save
 # ggsave("Figure2_choropleth_OE.png", p_map, width=8, height=6)
 
+
+
+
+
+# --- Exact Poisson funnel lines CIs for each LA --------------------
+
+# choose alphas for funnel lines
+alpha_95   <- 0.05    # 95% two-sided
+alpha_998  <- 0.002   # 99.8% two-sided
+
+# grid of expected counts to draw the funnel lines over
+E_grid <- seq(from = max(0.1, min(region_data$E, na.rm = TRUE)), 
+              to   = max(region_data$E, na.rm = TRUE) * 1.15, 
+              length.out = 2000)
+
+# For each E on the grid compute Poisson limits for observed counts, then convert to O/E
+# Note: qpois returns integer quantiles; dividing by E gives the exact (discrete) funnel steps.
+funnel_df <- data.frame(
+  E = E_grid,
+  lower95 = qpois(alpha_95/2,    lambda = E_grid) / E_grid,
+  upper95 = qpois(1 - alpha_95/2, lambda = E_grid) / E_grid,
+  lower998 = qpois(alpha_998/2,    lambda = E_grid) / E_grid,
+  upper998 = qpois(1 - alpha_998/2, lambda = E_grid) / E_grid
+)
+
+# Replace infinite/NaN (if any) with small/large finite values to avoid plotting issues
+funnel_df <- funnel_df %>%
+  mutate(
+    lower95  = ifelse(is.na(lower95) | is.infinite(lower95), 0, lower95),
+    upper95  = ifelse(is.na(upper95) | is.infinite(upper95), max(upper95, na.rm = TRUE), upper95),
+    lower998 = ifelse(is.na(lower998) | is.infinite(lower998), 0, lower998),
+    upper998 = ifelse(is.na(upper998) | is.infinite(upper998), max(upper998, na.rm = TRUE), upper998)
+  )
+
+# --- Per-LA exact  CIs for O/E (useful for labels / tables) -----------
+# CI for Poisson mean mu given observed count O:
+# lower_mu = 0.5 * qchisq(alpha/2, 2*O)       (with lower_mu = 0 when O=0)
+# upper_mu = 0.5 * qchisq(1 - alpha/2, 2*(O+1))
+
+alpha <- 0.05
+O <- region_data$O
+E <- region_data$E
+
+lower_O <- ifelse(O == 0, 0, qchisq(alpha/2, 2 * O) / 2)
+upper_O <- qchisq(1 - alpha/2, 2 * (O + 1)) / 2
+
 region_data <- region_data %>%
   mutate(
-    z95     = qnorm(0.975),
-    z998    = qnorm(0.999),
-    lower95  = 1 - z95  / sqrt(E),
-    upper95  = 1 + z95  / sqrt(E),
-    lower998 = 1 - z998 / sqrt(E),
-    upper998 = 1 + z998 / sqrt(E),
-    outlier  = case_when(
-      O_E > upper998 ~ "High",
-      O_E < lower998 ~ "Low",
+    OE_lower = lower_O / E,
+    OE_upper = upper_O / E,
+    lower_998 = ifelse(O == 0, 0, qpois(alpha_998/2, E) / E),
+    upper_998 = qpois(1 - alpha_998/2, E) / E,
+    outlier = case_when(
+      O_E > upper_998 ~ "High",
+      O_E < lower_998 ~ "Low",
       TRUE           ~ "Normal"
     )
   )
 
-
-
-region_data$outlier <- factor(region_data$outlier, levels = c("High", "Normal", "Low"))
-
+# --- Plot: replace the previous funnel limit lines with exact Poisson lines -------
 library(ggplot2)
-library(scales)
 library(ggrepel)
-library(grid)    # for unit()
 
-# find a good x‑position (just inside the left margin)
-x0 <- min(region_data$E) * 40.45
-
-# pick the corresponding y for the 99.8% lines at that x
-y_hi <- region_data$upper998[which.min(region_data$E)]
-y_lo <- region_data$lower998[which.min(region_data$E)]
-
-p_funnel_clean <- ggplot(region_data, aes(x = E, y = O_E)) +
-  # funnel limits
-  geom_line(aes(y = upper95),  linetype = "dashed") +
-  geom_line(aes(y = lower95),  linetype = "dashed") +
-  geom_line(aes(y = upper998), linetype = "solid") +
-  geom_line(aes(y = lower998), linetype = "solid") +
-  # points colored by outlier status
-  geom_point(aes(col = outlier), size = 1.4) +
-  # labels only for true outliers
+p_funnel_exact <- ggplot(region_data, aes(x = E, y = O_E)) +
+  # exact Poisson funnel lines (95% dashed, 99.8% solid)
+  geom_line(data = funnel_df, aes(x = E, y = upper95),  linetype = "dashed") +
+  geom_line(data = funnel_df, aes(x = E, y = lower95),  linetype = "dashed") +
+  geom_line(data = funnel_df, aes(x = E, y = upper998), linetype = "solid") +
+  geom_line(data = funnel_df, aes(x = E, y = lower998), linetype = "solid") +
+  
+  # points colored by simple outlier marker (recompute based on exact 99.8% lines)
+  # (we compute whether each observed O_E lies outside the exact 99.8% limits at that E)
+  geom_point(aes(col = outlier), size = 1.6) +
+  
+  # labels only for extreme points
   geom_text_repel(
-    data = subset(region_data, O_E > 3 | O_E < 0.3),
+    data = subset(region_data %>% dplyr::filter(Local.authority != "BIRMINGHAM"), O_E > 3 | O_E < 0.3),
     aes(label = Local.authority),
-    size         = 1.5,
+    size = 2,
     max.overlaps = 15,
     box.padding  = 0.3,
-    point.padding= 0.4
+    point.padding = 0.4
   ) +
-  # annotate the top/bottom limits at left margin
-  annotate(
-    "text",
-    x      = x0,
-    y      = y_hi,
-    label  = "More than expected\nchildren's home places",
-    colour = "red",
-    hjust  = 0,           # flush‐left
-    size   = 2
-  ) +
-  annotate(
-    "text",
-    x      = x0,
-    y      = y_lo,
-    label  = "Fewer than expected\nchildren's home places",
-    colour = "blue",
-    hjust  = 0,
-    size   = 2
-  ) +
-  # extend x‑axis so labels fit
-  expand_limits(x = max(region_data$E) * 1.15) +
-  # manual colours
-  scale_colour_manual(
-    values = c("High"   = "red",
-               "Normal" = "black",
-               "Low"    = "blue"),
-    guide  = guide_legend(title = "O/E ratio")
-  ) +
-  scale_x_continuous("Expected count of places (E)", labels = comma) +
-  scale_y_continuous("Observed/Expected (O/E)", limits = c(0, NA)) +
+  
+  scale_x_continuous("Expected count of places (E)", labels = scales::comma) +
+  scale_y_continuous("Observed / Expected (O/E)", trans = "log10", limits = c(0.1, NA), labels = scales::comma) +
+  
   labs(
     title    = "Local Authority observed to expected ratios",
-    subtitle = "Funnel plot: dashed = 95% limits; solid = 99.8% limits",
-    caption = " \n "
-  ) +
+    subtitle = "Funnel plot: dashed = 95%, solid = 99.8% limits (standard Poisson limits)."  ) +
   theme_bw() +
-  theme(
-    legend.position = "bottom",
-    plot.title      = element_text(face = "bold"),
-    plot.subtitle   = element_text(size = 9)  # more space on right
-  )
+  theme(legend.position = "bottom") +
+  coord_cartesian(xlim = c(0, 300))
 
 
 
+plot<- cowplot::plot_grid(p_funnel_exact,p_map, rel_widths = c(0.42,0.58))
 
 
-plot<- cowplot::plot_grid(p_funnel_clean,p_map, rel_widths = c(0.42,0.58))
-
-#ggsave(plot=plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2_revised.jpeg", width=11, height=6, dpi=600)
+ggsave(plot=plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2_revised.jpeg", width=11, height=6, dpi=600)
 }

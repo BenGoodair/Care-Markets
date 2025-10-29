@@ -822,19 +822,17 @@ brmdata_multinom <- mlm %>%
     Local.authority = factor(Local.authority),
     closed = factor(closed))
 
+n1 <- nrow(brmdata_multinom)
+
+
 brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
 levels(brmdata_multinom$Sector_merge) 
 
 
 
-
-
-
-### Fit the Hierarchical Multinomial Model ###
+### Fit the Hierarchical Multinomial Models (unchanged) ###
 model_multilevel <- brm(
-  formula   = Sector_merge ~ net_loss_s  + closed + majority+
-    children_in_care_s   +
-    (1 | Local.authority),
+  formula   = Sector_merge ~ net_loss_s  + closed + majority + children_in_care_s + (1 | Local.authority),
   data      = brmdata_multinom,
   family    = categorical(),
   prior     = priors,
@@ -843,26 +841,23 @@ model_multilevel <- brm(
 )
 
 
-
-
-
 brmdata_multinom <- mlm %>%
   tidyr::drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,  Local.authority) %>%
-  dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,majority,
-                Local.authority, closed) %>%
+  dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,
+                Local.authority, closed, majority) %>%
   dplyr::mutate(
     Sector_merge = factor(Sector_merge),
     Local.authority = factor(Local.authority),
     closed = factor(closed))
 
+n3 <- nrow(brmdata_multinom)
+
+
 brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
 levels(brmdata_multinom$Sector_merge) 
 
-### Fit the Hierarchical Multinomial Model ###
 model_multilevel_house <- brm(
-  formula   = Sector_merge ~ average_house_price_per_sq_m_s  + closed + majority+
-    children_in_care_s   +
-    (1 | Local.authority),
+  formula   = Sector_merge ~ average_house_price_per_sq_m_s + closed + majority + children_in_care_s + (1 | Local.authority),
   data      = brmdata_multinom,
   family    = categorical(),
   prior     = priors,
@@ -870,12 +865,18 @@ model_multilevel_house <- brm(
   iter      = 2000
 )
 
+### Extract Bayesian-style summary table ###
 extract_bayes_table <- function(model) {
   draws <- as_draws_df(model) %>%
     select(starts_with("b_mu")) %>%
     pivot_longer(everything(), names_to = "orig_term", values_to = "logodds") %>%
-    mutate(term_clean = orig_term %>% sub("^b_", "", .) %>% sub("^mu", "", .),
-           OR = exp(logodds))
+    mutate(
+      term_clean = orig_term %>%
+        sub("^b_", "", .) %>%
+        sub("^mu", "", .),
+      OR = exp(logodds)
+    )
+  
   summary_stats <- draws %>%
     group_by(term_clean) %>%
     summarise(
@@ -885,31 +886,37 @@ extract_bayes_table <- function(model) {
       OR_conf.high= quantile(OR, 0.975),
       Pr_GT_1     = mean(OR > 1)
     )
+  
   labels <- tidy(model, effects = "fixed") %>%
-    mutate(term_clean = term %>% sub("^b_", "", .) %>% sub("^mu", "", .),
-           Category   = sub("_.*$", "", term_clean),
-           Predictor  = sub("^[^_]+_", "", term_clean)) %>%
+    mutate(
+      term_clean = term %>% sub("^b_", "", .) %>% sub("^mu", "", .),
+      Category   = sub("_.*$", "", term_clean),
+      Predictor  = sub("^[^_]+_", "", term_clean)
+    ) %>%
     select(term_clean, Category, Predictor)
+  
   labels %>%
     left_join(summary_stats, by = "term_clean") %>%
-    mutate(Value = sprintf(
-      "%.3f\n(SD=%.3f)\n[%.3f, %.3f]\nPr>1=%.2f",
-      OR_estimate, OR_sd, OR_conf.low, OR_conf.high, Pr_GT_1
-    )) %>%
+    mutate(
+      Value = sprintf(
+        "%.3f\n(SD=%.3f)\n[%.3f, %.3f]\nPr>1=%.2f",
+        OR_estimate, OR_sd, OR_conf.low, OR_conf.high, Pr_GT_1
+      )
+    ) %>%
     select(Category, Predictor, Value)
 }
 
-# Compile models and tables
+### Combine models into a single long + wide table ###
 bayes_models <- list(
   `Model 1: Net Loss`    = model_multilevel,
   `Model 3: House Price` = model_multilevel_house
 )
+
 combined_bayes <- do.call(rbind, lapply(names(bayes_models), function(mn) {
   df <- extract_bayes_table(bayes_models[[mn]])
   df$Model <- mn
   df
 }))
-
 
 combined_bayes <- combined_bayes %>%
   filter(Predictor %in% c("net_loss_s", "average_house_price_per_sq_m_s",
@@ -930,30 +937,32 @@ combined_bayes <- combined_bayes %>%
   ) %>%
   arrange(Category, Predictor)
 
-
-
 wide_bayes <- combined_bayes %>%
   pivot_wider(names_from = Model, values_from = Value)
-# Build flextable with sample sizes
+
+
+library(flextable)
+### Build clean flextable with credible intervals ###
 ft_bayes <- flextable(wide_bayes) %>%
-  # Add a top header row for sample size
-  add_header_row(values = c("", "", paste0("N=", n1), paste0("N=", n3)), colwidths = c(1, 1, 1, 1), top = TRUE) %>%
-  # Add the main header row
-  add_header_row(values = c("", "", "Posterior Summary", ""), colwidths = c(1, 1, 1, 1)) %>%
+  add_header_row(values = c("", "", paste0("N=", n1), paste0("N=", n3)),
+                 colwidths = c(1, 1, 1, 1), top = TRUE) %>%
+  add_header_row(values = c("", "", "Posterior Summary", ""),
+                 colwidths = c(1, 1, 1, 1)) %>%
   set_header_labels(
     Category               = "Ownership Type",
     Predictor              = "Predictor",
     `Model 1: Net Loss`    = "Model 1: Net Loss",
     `Model 3: House Price` = "Model 3: House Price"
   ) %>%
-  theme_booktabs() %>%
-  align(j = 1:2, align = "left") %>%
-  align(j = 3:4, align = "center")
+  flextable::theme_booktabs() %>%
+  flextable::align(j = 1:2, align = "left") %>%
+  flextable::align(j = 3:4, align = "center")
 
 ft_bayes
 
-# Save directly to Word
-save_as_docx(ft_bayes, path = "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Appendix/Table3_council_cont.docx")
+### Save output
+save_as_docx(ft_bayes,
+             path = "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Appendix/Table3_council_cont_rev.docx")
 
 
 ####non informative priors####
@@ -1084,86 +1093,85 @@ ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Car
 ####all owenership cats - hashtagged out because requires a different dataset to see all cats####
 
 
-# 
-# # Create a full sequence of times
-# all_times <- tibble(time = -238:0)
-# 
-# # Process the start dataset
-# carehomesstart <- df %>%
-#   mutate(
-#     Registration.date = as.Date(Registration.date, format = "%d/%m/%Y"),
-#     Join = as.Date(Join),
-#     location_start = coalesce(Registration.date, Join, as.Date("2014-03-15")),
-#     date = location_start,
-#     time = as.integer(time_length(difftime(date, as.Date("2023-12-01")), "months"))
-#   ) %>%
-#   distinct(URN, .keep_all = TRUE) %>%
-#   dplyr::select(time, Sector_merge, URN)
-# 
-# # Count observations by group
-# nobsByIdih <- carehomesstart %>%
-#   count(time, Sector_merge, name = "nobs")
-# 
-# # Ensure all time periods exist for each Sector_merge
-# nobsBySector <- nobsByIdih %>%
-#   complete(Sector_merge, time = all_times$time, fill = list(nobs = 0)) %>%
-#   group_by(Sector_merge) %>%
-#   mutate(cumulative = cumsum(nobs)) %>%
-#   ungroup()
-# 
-# # Process the end dataset
-# carehomesend <- df %>%
-#   filter(Leave != "") %>%
-#   mutate(
-#     date = as.Date(Leave),
-#     time = as.integer(time_length(difftime(date, as.Date("2023-12-01")), "months"))
-#   ) %>%
-#   distinct(URN, .keep_all = TRUE) %>%
-#   dplyr::select(time, Sector_merge, URN)
-# 
-# # Count observations by group
-# nobsEndByIdih <- carehomesend %>%
-#   count(time, Sector_merge, name = "nobs")
-# 
-# # Ensure all time periods exist for each Sector_merge
-# nobsEndBySector <- nobsEndByIdih %>%
-#   complete(Sector_merge, time = all_times$time, fill = list(nobs = 0)) %>%
-#   group_by(Sector_merge) %>%
-#   mutate(cumulative_end = cumsum(nobs)) %>%
-#   ungroup()
-# 
-# # Merge start and end datasets and compute the running total
-# nobser <- full_join(nobsBySector, nobsEndBySector, by = c("Sector_merge", "time")) %>%
-#   mutate(
-#     cumulative = replace_na(cumulative, 0),
-#     cumulative_end = replace_na(cumulative_end, 0),
-#     runningsum = cumulative - cumulative_end
-#   )
-# 
-# # Create the time-series plot
-# d <- ggplot(nobser %>% filter(time > -155),
-#             aes(x = time, y = runningsum, group = Sector_merge,
-#                 fill = Sector_merge, colour = Sector_merge, alpha = Sector_merge)) +
-#   geom_point() +
-#   theme_minimal() +
-#   scale_color_manual(values = c("#008F5D", "#F0AB00", "#E4007C", "#FF5E5E", "#5B0000", "#1F77B4", "#9467BD")) +
-#   scale_alpha_manual(values = c(0.2, 0.2, 1, 1, 1, 0.2, 0.2)) +
-#   labs(x = "Year", y = "Number of children homes", 
-#        title = "Number of children's homes owned for-profit",
-#        fill = "Ownership", color = "Ownership", alpha = "Ownership") +
-#   scale_x_continuous(breaks = c(-12, -24, -36, -48, -60, -72, -84, -96, -108, -120, -132, -144, -156),
-#                      labels = c("2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011")) +
-#   theme_minimal() +
-#   theme(
-#     legend.position = "none",
-#     plot.title = element_text(size = 11, face = "bold")  ) +
-#   coord_cartesian(xlim = c(-110, -13)) +
-#   theme(legend.position = "bottom")
-# 
-# 
-# ggsave(plot=d, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new//Care-Markets/figures/Appendix/all_cats.png", width=8, height=6, dpi=600)
-# 
-
+ 
+ # Create a full sequence of times
+ all_times <- tibble(time = -238:0)
+ 
+ # Process the start dataset
+ carehomesstart <- df %>%
+   mutate(
+     Registration.date = as.Date(Registration.date, format = "%d/%m/%Y"),
+     Join = as.Date(Join),
+     location_start = coalesce(Registration.date, Join, as.Date("2014-03-15")),
+     date = location_start,
+     time = as.integer(time_length(difftime(date, as.Date("2023-12-01")), "months"))
+   ) %>%
+   distinct(URN, .keep_all = TRUE) %>%
+   dplyr::select(time, Sector_merge, URN)
+ 
+ # Count observations by group
+ nobsByIdih <- carehomesstart %>%
+   count(time, Sector_merge, name = "nobs")
+ 
+ # Ensure all time periods exist for each Sector_merge
+ nobsBySector <- nobsByIdih %>%
+   complete(Sector_merge, time = all_times$time, fill = list(nobs = 0)) %>%
+   group_by(Sector_merge) %>%
+   mutate(cumulative = cumsum(nobs)) %>%
+   ungroup()
+ 
+ # Process the end dataset
+ carehomesend <- df %>%
+   filter(Leave != "") %>%
+   mutate(
+     date = as.Date(Leave),
+     time = as.integer(time_length(difftime(date, as.Date("2023-12-01")), "months"))
+   ) %>%
+   distinct(URN, .keep_all = TRUE) %>%
+   dplyr::select(time, Sector_merge, URN)
+ 
+ # Count observations by group
+ nobsEndByIdih <- carehomesend %>%
+   count(time, Sector_merge, name = "nobs")
+ 
+ # Ensure all time periods exist for each Sector_merge
+ nobsEndBySector <- nobsEndByIdih %>%
+   complete(Sector_merge, time = all_times$time, fill = list(nobs = 0)) %>%
+   group_by(Sector_merge) %>%
+   mutate(cumulative_end = cumsum(nobs)) %>%
+   ungroup()
+ 
+ # Merge start and end datasets and compute the running total
+ nobser <- full_join(nobsBySector, nobsEndBySector, by = c("Sector_merge", "time")) %>%
+   mutate(
+     cumulative = replace_na(cumulative, 0),
+     cumulative_end = replace_na(cumulative_end, 0),
+     runningsum = cumulative - cumulative_end
+   )
+ 
+ # Create the time-series plot
+ d <- ggplot(nobser %>% filter(time > -155),
+             aes(x = time, y = runningsum, group = Sector_merge,
+                 fill = Sector_merge, colour = Sector_merge, alpha = Sector_merge)) +
+   geom_point() +
+   theme_minimal() +
+   scale_color_manual(values = c("#008F5D", "#F0AB00", "#E4007C", "#FF5E5E", "#5B0000", "#1F77B4", "#9467BD")) +
+   scale_alpha_manual(values = c(0.2, 0.2, 1, 1, 1, 0.2, 0.2)) +
+   labs(x = "Year", y = "Number of children homes", 
+        title = "Number of children's homes owned for-profit",
+        fill = "Ownership", color = "Ownership", alpha = "Ownership") +
+   scale_x_continuous(breaks = c(-12, -24, -36, -48, -60, -72, -84, -96, -108, -120, -132, -144, -156),
+                      labels = c("2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011")) +
+   theme_minimal() +
+   theme(
+     legend.position = "none",
+     plot.title = element_text(size = 11, face = "bold")  ) +
+   coord_cartesian(xlim = c(-110, -13)) +
+   theme(legend.position = "bottom")
+ 
+ 
+ ggsave(plot=d, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new//Care-Markets/figures/Appendix/all_cats_rev.png", width=8, height=6, dpi=600)
+ 
 ####comparing unidentified fp with others####
 
 library(dplyr)
@@ -1173,6 +1181,19 @@ library(ggplot2)
 
 df <- df %>%
   dplyr::filter(!is.na(URN))
+
+df$Sector_merge <- as.character(df$Sector_merge)
+df$Sector_merge[df$Sector_merge == "Unidentified for-profit"] <- "Unlinked for-profit"
+
+df$Sector_merge <- factor(df$Sector_merge, levels = c(
+  "Local Authority", 
+  "LA owned company", 
+  "Third sector", 
+  "Individual owned", 
+  "Corporate owned", 
+  "Investment owned", 
+  "Unlinked for-profit"
+))
 
 df_avg <- df %>%
   dplyr::mutate(closed = ifelse(is.na(Leave), 0,1),
@@ -1211,7 +1232,9 @@ three <- ggplot(df_avg, aes(x = Sector_merge, y = closed)) +
 
 
 
-# Ensure Sector_merge has the correct factor levels
+df$Sector_merge <- as.character(df$Sector_merge)
+df$Sector_merge[df$Sector_merge == "Unidentified for-profit"] <- "Unlinked for-profit"
+
 df$Sector_merge <- factor(df$Sector_merge, levels = c(
   "Local Authority", 
   "LA owned company", 
@@ -1219,8 +1242,9 @@ df$Sector_merge <- factor(df$Sector_merge, levels = c(
   "Individual owned", 
   "Corporate owned", 
   "Investment owned", 
-  "Unidentified for-profit"
+  "Unlinked for-profit"
 ))
+
 
 # Join Region.Country.name into df
 df_reg <- df %>%
@@ -1389,12 +1413,530 @@ combined_plot <- cowplot::plot_grid(
   p1, p2,
   labels = c("A", "B"),
   label_size = 16,
-  ncol = 2,
-  align = "v"
+  ncol = 1,
+  align = "h"
 )
 
 # Print the plot
 print(combined_plot)
 
 ggsave(plot=combined_plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new//Care-Markets/figures/Appendix/size_qual.png", width=7, height=6, dpi=600)
+
+
+
+
+
+#### house_price_figure####
+
+
+
+# Model 3: House Price
+brmdata_multinom <- mlm %>%
+  tidyr::drop_na(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,  Local.authority) %>%
+  dplyr::select(Sector_merge, average_house_price_per_sq_m_s, children_in_care_s,
+                Local.authority, closed) %>%
+  dplyr::mutate(
+    Sector_merge = factor(Sector_merge),
+    Local.authority = factor(Local.authority),
+    closed = factor(closed))
+
+brmdata_multinom$Sector_merge <- droplevels(brmdata_multinom$Sector_merge)
+levels(brmdata_multinom$Sector_merge) 
+
+### Fit the Hierarchical Multinomial Model ###
+model_multilevel_house <- brm(
+  formula   = Sector_merge ~ average_house_price_per_sq_m_s  + closed + 
+    children_in_care_s   +
+    (1 | Local.authority),
+  data      = brmdata_multinom,
+  family    = categorical(),
+  prior     = priors,
+  cores     = 4,
+  iter      = 2000
+)
+
+
+# Helper: extract posterior OR draws for an effect
+extract_posterior_OR <- function(model, effect_name){
+  draws <- as_draws_df(model)
+  sectors <- c("Corporateowned","Individualowned","Investmentowned","Thirdsector")
+  map_dfr(sectors, ~{
+    term <- paste0("b_mu", .x, "_", effect_name)
+    if(term %in% names(draws)){
+      tibble(sector = .x, OR = exp(draws[[term]]))
+    } else tibble()
+  }) %>%
+    filter(!is.na(OR)) %>%
+    mutate(
+      sector = factor(sector, levels = sectors),
+      label = recode(sector,
+                     Investmentowned = "Investment owned",
+                     Corporateowned  = "Corporate owned",
+                     Individualowned = "Individual owned",
+                     Thirdsector     = "Third sector")
+    )
+}
+
+# Extract OR draws for need and price
+or_price  <- extract_posterior_OR(model_multilevel_house,        "average_house_price_per_sq_m_s")
+
+levels(or_price$sector) <- c("Investmentowned","Corporateowned" , "Individualowned", "Thirdsector"    ) 
+or_price$label <- factor(
+  or_price$label,
+  levels = c("Investment owned",
+             "Corporate owned",
+             "Individual owned",
+             "Third sector")
+)
+p1_price <- ggplot(or_price, aes(x = OR, y = label, fill = label)) +
+  stat_halfeye(.width = c(0.5,0.95), slab_alpha = 0.8, slab_size = 1) +
+  geom_vline(xintercept = 1, linetype = "dashed") +
+  scale_x_continuous(trans = "log10", labels = label_number()) +
+  scale_fill_manual(values = c(
+    "Investment owned" = "#5B0000",
+    "Corporate owned"  = "#FF5E5E",
+    "Individual owned" = "#E4007C",
+    "Third sector"     = "#F0AB00"
+  ), guide = "none") +
+  labs(title = "A) Odds Ratios: House Price",
+       subtitle = "Reference: Local Authority",
+       x = "Odds Ratio", y = "") +
+  theme_minimal(base_size = 12) +
+  coord_cartesian(xlim = c(0.1, 3))
+
+
+# Shared colors
+sector_colors <- c(
+  "Local Authority"  = "#008F5D",
+  "Investment owned" = "#5B0000",
+  "Corporate owned"  = "#FF5E5E",
+  "Individual owned" = "#E4007C",
+  "Third sector"     = "#F0AB00"
+)
+
+
+# PANEL 3: Predicted probabilities by House Price
+grid_price <- expand_grid(
+  net_loss_s                   = 0,
+  average_house_price_per_sq_m_s = c(-1.5, 1.5),
+  children_in_care_s           = 0,
+  closed                       = 0
+)
+preds_price <- posterior_epred(
+  model_multilevel_house,
+  newdata         = grid_price,
+  re_formula      = NA,
+  allow_new_levels = TRUE
+)
+df_price <- as_tibble(reshape2::melt(preds_price)) %>%
+  rename(draw = Var1, row = Var2, category = Var3, prob = value) %>%
+  mutate(
+    price = ifelse(grid_price[row, ]$average_house_price_per_sq_m_s < 0,
+                   "Low price", "High price"),
+    label = recode(category,
+                   b_muInvestmentowned = "Investment owned",
+                   b_muCorporateowned  = "Corporate owned",
+                   b_muIndividualowned = "Individual owned",
+                   b_muThirdsector     = "Third sector")
+  )
+df_price_sum <- df_price %>%
+  group_by(price, label) %>%
+  summarize(
+    median  = median(prob),
+    lower95 = quantile(prob, 0.025),
+    upper95 = quantile(prob, 0.975),
+    lower50 = quantile(prob, 0.25),
+    upper50 = quantile(prob, 0.75),
+    .groups = "drop"
+  )
+
+p2 <- ggplot(df_price_sum, aes(x = price, y = median, color = label)) +
+  geom_errorbar(aes(ymin = lower95, ymax = upper95),
+                position = position_dodge(width = 0.5),
+                width = 0.2) +
+  geom_errorbar(aes(ymin = lower50, ymax = upper50),
+                position = position_dodge(width = 0.5),
+                width = 0.4, size = 1.2) +
+  geom_point(position = position_dodge(width = 0.5), size = 3) +
+  labs(title    = "B) Predicted Probability by House Price",
+       subtitle = "(holding number of children at average and closure status as open)",
+       x        = "House price",
+       y        = "Probability",
+       color = "Ownership") +
+  scale_color_manual(values = sector_colors) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom")
+
+
+
+changeplot <- mlm %>%
+  
+  dplyr::select(Registration.date, Sector_merge, Local.authority, Join) %>%
+  left_join(., mlm %>%
+              dplyr::select(Local.authority, average_house_price_per_sq_m_s) %>%
+              dplyr::distinct(.keep_all = TRUE) %>%
+              dplyr::mutate(needQuint = factor(ntile(average_house_price_per_sq_m_s, 5))) %>%
+              dplyr::select(-average_house_price_per_sq_m_s)
+  ) %>%
+  mutate(location_start = dmy(Registration.date),
+         location_start = ifelse(is.na(location_start), Join, as.character(location_start)),
+         location_start = as.Date(location_start))%>%
+  filter(location_start >= as.Date("2014-03-01"),
+         Sector_merge == "Local Authority"|Sector_merge == "Third sector",
+         !is.na(needQuint)) %>%
+  mutate(month = floor_date(location_start, "month")) %>%
+  group_by(month, needQuint) %>%
+  summarise(new_care_homes = n(), .groups = "drop") %>%
+  complete(
+    month = seq(min(month), max(month), by = "month"),
+    needQuint = unique(needQuint),
+    fill = list(new_care_homes = 0)
+  ) %>%
+  group_by(needQuint) %>%
+  arrange(month) %>%
+  mutate(cumulative_homes = cumsum(new_care_homes),
+         needQuint = case_when(
+           needQuint == 5 ~ "5 (High price)",
+           needQuint == 4 ~ "4",
+           needQuint == 3 ~ "3",
+           needQuint == 2 ~ "2",
+           needQuint == 1 ~ "1 (Low price)"
+         ))
+
+zero_rows <- changeplot %>%
+  group_by(needQuint) %>%
+  summarise(month = min(month) - months(1), cumulative_homes = 0, .groups = "drop") %>%
+  mutate(new_care_homes = 0)
+
+changeplot <- bind_rows(changeplot, zero_rows) %>%
+  arrange(needQuint, month)
+
+non_com <- ggplot(changeplot, aes(x = month, y = cumulative_homes, color = needQuint)) +
+  geom_line(size = 1.5) +
+  labs(
+    title = "D) Non-commercial homes opened by house price",
+    subtitle = "Non-commercial = Local Authority and Third sector",
+    x = NULL,
+    y = "Cumulative new homes opened",
+    color = "House Price\n(£ per square metre, Quintile)"
+  ) +
+  theme_bw() +
+  scale_color_viridis_d(option = "viridis") +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 12)
+  )
+
+
+changeplot <- mlm %>%
+  
+  dplyr::select(Registration.date, Sector_merge, Local.authority, Join) %>%
+  left_join(., mlm %>%
+              dplyr::select(Local.authority, average_house_price_per_sq_m_s) %>%
+              dplyr::distinct(.keep_all = TRUE) %>%
+              dplyr::mutate(needQuint = factor(ntile(average_house_price_per_sq_m_s, 5))) %>%
+              dplyr::select(-average_house_price_per_sq_m_s)
+  ) %>%
+  mutate(location_start = dmy(Registration.date),
+         location_start = ifelse(is.na(location_start), Join, as.character(location_start)),
+         location_start = as.Date(location_start))%>%
+  filter(location_start >= as.Date("2014-03-01"),
+         Sector_merge == "Individual owned"|Sector_merge == "Corporate owned"|Sector_merge == "Investment owned",
+         !is.na(needQuint)) %>%
+  mutate(month = floor_date(location_start, "month")) %>%
+  group_by(month, needQuint) %>%
+  summarise(new_care_homes = n(), .groups = "drop") %>%
+  complete(
+    month = seq(min(month), max(month), by = "month"),
+    needQuint = unique(needQuint),
+    fill = list(new_care_homes = 0)
+  ) %>%
+  group_by(needQuint) %>%
+  arrange(month) %>%
+  mutate(cumulative_homes = cumsum(new_care_homes),
+         needQuint = case_when(
+           needQuint == 5 ~ "5 (High price)",
+           needQuint == 4 ~ "4",
+           needQuint == 3 ~ "3",
+           needQuint == 2 ~ "2",
+           needQuint == 1 ~ "1 (Low price)"
+         ))
+
+zero_rows <- changeplot %>%
+  group_by(needQuint) %>%
+  summarise(month = min(month) - months(1), cumulative_homes = 0, .groups = "drop") %>%
+  mutate(new_care_homes = 0)
+
+changeplot <- bind_rows(changeplot, zero_rows) %>%
+  arrange(needQuint, month)
+
+com <- ggplot(changeplot, aes(x = month, y = cumulative_homes, color = needQuint)) +
+  geom_line(size = 1.5) +
+  labs(
+    title = "C) Commercial homes opened by house price",
+    subtitle = "Commercial = Individual, Corporate and Investment owned",
+    x = NULL,
+    y = "Cumulative homes opened",
+    color = "House price\n(£ per square metre, Quintile)"
+  ) +
+  theme_bw() +
+  scale_color_viridis_d(option = "viridis") +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(face = "bold", size = 12)
+  )
+
+
+# Combine panels
+final <- p1_price / p2 /com/non_com
+
+
+
+
+ggsave(plot=final, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/Appendix/house_price.jpeg", width=9, height=11, dpi=600)
+
+
+
+####London map####
+
+
+la_shp   <-  st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2022_UK_BGC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")%>%
+  dplyr::rename(Local.authority = CTYUA22NM)%>%
+  dplyr::filter(Local.authority!="Wales",
+                Local.authority!="Scotland",
+                grepl('^E', CTYUA22CD))%>%
+  dplyr::mutate(Local.authority = Local.authority %>%
+                  gsub('&', 'and', .) %>%
+                  gsub('[[:punct:] ]+', ' ', .) %>%
+                  gsub('[0-9]', '', .)%>%
+                  toupper() %>%
+                  gsub("CITY OF", "",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("COUNTY OF", "",.)%>%
+                  gsub("ROYAL BOROUGH OF", "",.)%>%
+                  gsub("LEICESTER CITY", "LEICESTER",.)%>%
+                  gsub("UA", "",.)%>%
+                  gsub("DARWIN", "DARWEN", .)%>%
+                  gsub("COUNTY DURHAM", "DURHAM", .)%>%
+                  gsub("AND DARWEN", "WITH DARWEN", .)%>%
+                  gsub("NE SOM", "NORTH EAST SOM", .)%>%
+                  gsub("N E SOM", "NORTH EAST SOM", .)%>%
+                  str_trim())
+
+obs_la <- mlm %>%
+  dplyr::filter(closed==0)%>%
+  dplyr::group_by(Local.authority)%>%
+  dplyr::summarise(O = sum(Places, na.rm=T))%>%
+  dplyr::ungroup()
+
+
+region_data <- obs_la %>%
+  left_join(
+    mlm %>%
+      group_by(Local.authority) %>%
+      summarise(
+        children_in_care_s            = mean(children_in_care_s,            na.rm=TRUE)      ),
+    by = "Local.authority"
+  )
+
+count_priors <- c(
+  prior(normal(0, 1), class = "b"),            # slopes
+  prior(student_t(3, 0, 2.5), class = "Intercept"),  # intercept
+  prior(student_t(3, 0, 2.5), class = "sd")         # random‐effect SD
+)
+
+# 4a. Poisson  
+model_poisson <- brm(
+  bf(O ~ children_in_care_s 
+     + (1 | Local.authority)
+  ),
+  data    = region_data,
+  family  = poisson(),
+  prior   = count_priors,
+  cores   = 4,
+  iter    = 2000,
+  control = list(adapt_delta = 0.95)
+)
+
+
+
+# Choose best (e.g. model_negbin) for E
+
+fitted_E <- fitted(
+  model_poisson,        # or model_poisson
+  newdata    = region_data,
+  re_formula = NA,     # marginalise over LA random effects
+  scale      = "response"
+)
+
+region_data <- region_data %>%
+  mutate(
+    E   = fitted_E[, "Estimate"],
+    O_E = O / E
+  )
+
+#–– 7. Summary Statistics of O:E  
+summary_stats <- region_data %>%
+  summarise(
+    median_OE = median(O_E, na.rm=T),
+    IQR_OE    = IQR(O_E, na.rm=T),
+    min_OE    = min(O_E, na.rm=T),
+    max_OE    = max(O_E, na.rm=T)
+  )
+print(summary_stats)
+
+map_df <- la_shp %>%
+  left_join(region_data, by = "Local.authority")%>% 
+  left_join(., mlm %>% dplyr::select(Local.authority, Region.Country.name)%>%dplyr::distinct(.keep_all = T))%>%
+  dplyr::filter(Region.Country.name=="London")
+
+library(scales)
+
+map_df$O_E_log <- ifelse(map_df$O_E < 1, -log(1 / map_df$O_E), log(map_df$O_E))
+
+# Define the log-transformed function
+log_transform <- function(x) ifelse(x < 1, -log(1 / x), log(x))
+
+# Define breaks in the original O/E scale
+breaks_original <- c(0.1, 0.5, 1, 2, 3)
+
+# Map them to the log-transformed scale for color
+breaks_transformed <- log_transform(breaks_original)
+
+p_map <- ggplot(map_df) +
+  geom_sf(aes(fill = log_transform(O_E)), colour = "grey30", size = 0.1) +
+  scale_fill_gradient2(
+    name     = "O / E ratio",
+    low      = "#045a8d",  # darker blue
+    mid      = "#f7f7f7",  # light grey
+    high     = "#d7301f",  # coral/red
+    midpoint = 0,
+    breaks   = breaks_transformed,
+    labels   = breaks_original,
+    limits = c(log(0.05), log(5))
+  ) +
+  labs(
+    title    = "",
+    subtitle = "Map of O:E for London",
+  ) +
+  theme_bw() +
+  theme(
+    plot.title    = element_text(face = "bold"),
+    plot.subtitle = element_text(size = 9),
+    legend.position = "bottom"
+  )
+
+ggsave(plot=p_map, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/Appendix/london_map.jpeg", width=9, height=11, dpi=600)
+
+
+####funnel plot, birmingham####
+
+
+region_data <- region_data %>%
+  mutate(
+    z95     = qnorm(0.975),
+    z998    = qnorm(0.999),
+    lower95  = 1 - z95  / sqrt(E),
+    upper95  = 1 + z95  / sqrt(E),
+    lower998 = 1 - z998 / sqrt(E),
+    upper998 = 1 + z998 / sqrt(E),
+    outlier  = case_when(
+      O_E > upper998 ~ "High",
+      O_E < lower998 ~ "Low",
+      TRUE           ~ "Normal"
+    )
+  )
+
+
+
+region_data$outlier <- factor(region_data$outlier, levels = c("High", "Normal", "Low"))
+
+library(ggplot2)
+library(scales)
+library(ggrepel)
+library(grid)    # for unit()
+
+# find a good x‑position (just inside the left margin)
+x0 <- min(region_data$E) * 40.45
+
+# pick the corresponding y for the 99.8% lines at that x
+y_hi <- region_data$upper998[which.min(region_data$E)]
+y_lo <- region_data$lower998[which.min(region_data$E)]
+
+p_funnel_clean <- ggplot(region_data, aes(x = E, y = O_E)) +
+  # funnel limits
+  geom_line(aes(y = upper95),  linetype = "dashed") +
+  geom_line(aes(y = lower95),  linetype = "dashed") +
+  geom_line(aes(y = upper998), linetype = "solid") +
+  geom_line(aes(y = lower998), linetype = "solid") +
+  
+  # points colored by outlier status
+  geom_point(aes(col = outlier), size = 1.4) +
+  
+  # labels only for true outliers
+  geom_text_repel(
+    data = subset(region_data, O_E > 3 | O_E < 0.3),
+    aes(label = Local.authority),
+    size         = 1.5,
+    max.overlaps = 15,
+    box.padding  = 0.3,
+    point.padding= 0.4
+  ) +
+  
+  # annotate the top/bottom limits
+  annotate(
+    "text",
+    x      = x0,
+    y      = y_hi,
+    label  = "More than expected\nchildren's home places",
+    colour = "red",
+    hjust  = 0,
+    size   = 2
+  ) +
+  annotate(
+    "text",
+    x      = x0,
+    y      = y_lo,
+    label  = "Fewer than expected\nchildren's home places",
+    colour = "blue",
+    hjust  = 0,
+    size   = 2
+  ) +
+  
+  # extend x-axis so labels fit
+  expand_limits(x = max(region_data$E) * 1.15) +
+  
+  # manual colours
+  scale_colour_manual(
+    values = c("High"   = "red",
+               "Normal" = "black",
+               "Low"    = "blue"),
+    guide  = guide_legend(title = "O/E ratio")
+  ) +
+  
+  # x-axis
+  scale_x_continuous("Expected count of places (E)", labels = scales::comma) +
+  
+  # log-transform y-axis
+  scale_y_continuous(
+    "Observed / Expected (O/E)",
+    trans = "log10",        # log10 scale
+    limits = c(0.1, NA),    # avoid zeros (since log10(0) is -Inf)
+    labels = scales::comma
+  ) +
+  
+  labs(
+    title    = "Local Authority observed to expected ratios",
+    subtitle = "Funnel plot: dashed = 95% limits; solid = 99.8% limits",
+    caption  = " \n  \n"
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "bottom",
+    plot.title      = element_text(face = "bold"),
+    plot.subtitle   = element_text(size = 9)
+  )
+
+
+ggsave(plot=p_funnel_clean, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/Appendix/birmingham_funnel.jpeg", width=7, height=6, dpi=600)
 

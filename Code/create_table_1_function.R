@@ -14,19 +14,19 @@ create_table_1 <- function(){
   
   # Create the summary table with renamed variables
   summary_table <- df %>%
-    dplyr::distinct(URN, .keep_all = T)%>%
+    dplyr::distinct(URN, .keep_all = TRUE) %>%
     mutate(Sector_merge = droplevels(Sector_merge)) %>%
     dplyr::select(Sector_merge,
-           overall.average, ever_outstanding, reqs_per, age, Places, left, profit_margin_average,
-           chain_size, Region.Country.name) %>%
+                  overall.average, ever_outstanding, reqs_per, age, Places, left, profit_margin_average,
+                  chain_size, Region.Country.name) %>%
     tbl_summary(
-      by = Sector_merge,              # split table by ownership type
+      by = Sector_merge,
       missing = "no",
       type = all_continuous() ~ "continuous2",
-      statistic = all_continuous() ~ c("{median}, {mean}",
-                                       "({min} : {max}), {IQR}",
-                                       "{N_nonmiss}"
-                                       
+      statistic = all_continuous() ~ c(
+        "{median}, {mean}",
+        "({min} : {max}), ({p25} : {p75})",   # <-- Q1 and Q3 displayed here
+        "{N_nonmiss}"
       ),
       label = list(
         overall.average ~ "Quality (average inspection score)",
@@ -63,8 +63,8 @@ create_table_1 <- function(){
     )
   
   # # Print the final pretty table
-   # gt_table%>%
-   #   gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table_1_revised.html")
+    gt_table%>%
+      gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table_1_revised.html")
   # 
   # 
   
