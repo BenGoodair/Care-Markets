@@ -1331,10 +1331,10 @@ mlm <- mlm %>%
                                      gsub("N E SOM", "NORTH EAST SOM", .)%>%
                                      str_trim())%>%
                      dplyr::select(Local.authority, X2014)%>%
-                     dplyr::rename(house_price_2014 = X2014)
+                     dplyr::rename(house_price_2014 = X2014))
                    
                    
-  )
+                   
 
 
 
@@ -1377,6 +1377,22 @@ mlm <-  dplyr::left_join(mlm, read.csv(curl("https://raw.githubusercontent.com/B
 
 
 
+mlm <- mlm %>% dplyr::left_join(.,
+                                read.csv(curl("https://github.com/BenGoodair/Care-Markets/raw/refs/heads/main/Final%20Data/all_missing_info.csv")) %>%
+                                dplyr::select(URN, Correct_category)%>%
+                                  dplyr::mutate(fixed=1))
+
+mlm <- mlm %>%
+  mutate(
+    Sector_merge = dplyr::if_else(
+      !is.na(fixed) & fixed == 1,
+      Correct_category,
+      Sector_merge
+    )
+  )
+
+
+  
 
 
 
