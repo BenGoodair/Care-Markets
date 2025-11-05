@@ -1,0 +1,82 @@
+,Sector_merge,Company.name,URN,Registered.number,Reason,Correct_category,comment
+5,Corporate owned,ACORN HOMES (U.K.) LIMITED,1278087,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+17,Corporate owned,ACORN HOMES (U.K.) LIMITED,SC469396,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+25,Corporate owned,ACORN HOMES (U.K.) LIMITED,2682837,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+26,Corporate owned,ACORN HOMES (U.K.) LIMITED,2588753,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+48,Corporate owned,ACORN HOMES (U.K.) LIMITED,SC023645,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+50,Corporate owned,ACORN HOMES (U.K.) LIMITED,SC023646,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+52,Corporate owned,ACORN HOMES (U.K.) LIMITED,1250521,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+56,Corporate owned,ACORN HOMES (U.K.) LIMITED,2572812,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+57,Corporate owned,ACORN HOMES (U.K.) LIMITED,SC478616,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+62,Corporate owned,ACORN HOMES (U.K.) LIMITED,1256417,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+71,Corporate owned,ACORN HOMES (U.K.) LIMITED,SC416915,03218525,incorrect fame match (ACORN HOMES (UK) vs ACORN HOMES (U.K.),Investment owned,owned by Lighthouse Capital Investments Limited; so would be coded as investment owned if the shareholder info returned correctly. Corporate probably fine
+9,Corporate owned,ALBRIGHTON CARE HOMES LTD,2519084,07081004,incorrect fame match,Individual owned,matched to dissolved ALBRIGHTON CARE HOMES LTD rather than ALBRIGHTON CARE LTD - which is run by two men with same surname
+22,Corporate owned,BAYIS SHELI LTD,SC490365,05576871,Charity identified as private by ofsted,Third sector,"registered as a charity after opening as a private, ofsted not updated, unsure."
+58,Corporate owned,CARE ASSIST CHILDRENS SERVICES LTD,SC061678,03713959,incorrect fame match,Individual owned,"matched to dissolved CARE ASSIST CHILDRENS SERVICES LTD rather than CARE ASSIST CHILDRENS SERVICES limited, run by terrence murphey"
+28,Corporate owned,CONQUERED LIMITED,2594859,03833987,incorrect fame match,Individual owned,"two companies named CONQUERED LIMITED, matched to dissolved company"
+15,Corporate owned,CROSSWAY SERVICES LIMITED,SC063498,03455097,incorrect fame match,Corporate owned,"part of pebbles, then Ardenten UK corporate chain, no obvious investment. Two companies called CROSSWAY SERVICES LIMITED"
+16,Corporate owned,CROSSWAY SERVICES LIMITED,SC460761,03455097,incorrect fame match,Corporate owned,"part of pebbles, then Ardenten UK corporate chain, no obvious investment. Two companies called CROSSWAY SERVICES LIMITED"
+23,Corporate owned,CROSSWAY SERVICES LIMITED,SC068206,03455097,incorrect fame match,Corporate owned,"part of pebbles, then Ardenten UK corporate chain, no obvious investment. Two companies called CROSSWAY SERVICES LIMITED"
+32,Corporate owned,CROSSWAY SERVICES LIMITED,SC061438,03455097,incorrect fame match,Corporate owned,"part of pebbles, then Ardenten UK corporate chain, no obvious investment. Two companies called CROSSWAY SERVICES LIMITED"
+37,Corporate owned,CROSSWAY SERVICES LIMITED,SC064573,03455097,incorrect fame match,Corporate owned,"part of pebbles, then Ardenten UK corporate chain, no obvious investment. Two companies called CROSSWAY SERVICES LIMITED"
+51,Corporate owned,CROSSWAY SERVICES LIMITED,SC386810,03455097,incorrect fame match,Corporate owned,"part of pebbles, then Ardenten UK corporate chain, no obvious investment. Two companies called CROSSWAY SERVICES LIMITED"
+20,Corporate owned,DETAIL PERSONNEL CARE LIMITED,2688405,06892198,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by one individual"
+44,Corporate owned,DEVON & CORNWALL AUTISTIC COMMUNITY TRUST,1276719,01662611,Muddle,Third sector,"seems a mess, charity renamed Spectrum, went bust, failed a bunch of care homes, not sure how the children's home is still running or who owns it"
+7,Corporate owned,DISCOVERED LIMITED,1272209,04278702,incorrect fame match,Individual owned,"two companies with same name, owned by an individual with one asset holding company "
+55,Corporate owned,DISCOVERED LIMITED,2545027,04278702,incorrect fame match,Individual owned,"two companies with same name, owned by an individual with one asset holding company "
+63,Corporate owned,EMBRACE CARE LTD,2686253,07406700,incorrect fame match,Individual owned,"two companies with same name, owned by five individuals"
+68,Corporate owned,EMBRACE CARE LTD,2672566,07406700,incorrect fame match,Individual owned,"two companies with same name, owned by five individuals"
+19,Corporate owned,EXCEPTIONAL CARE LIMITED,2537801,05555624,incorrect fame match,Individual owned,"two companies with same name, owned by gillian ashcroft"
+38,Corporate owned,EXCEPTIONAL CARE LIMITED,1227335,05555624,incorrect fame match,Individual owned,"two companies with same name, owned by gillian ashcroft"
+40,Corporate owned,EXCEPTIONAL CARE LIMITED,1247212,05555624,incorrect fame match,Individual owned,"two companies with same name, owned by gillian ashcroft"
+42,Corporate owned,EXCEPTIONAL CARE LIMITED,2644925,05555624,incorrect fame match,Individual owned,"two companies with same name, owned by gillian ashcroft"
+49,Corporate owned,EXCEPTIONAL CARE LIMITED,2627967,05555624,incorrect fame match,Individual owned,"two companies with same name, owned by gillian ashcroft"
+69,Corporate owned,EXCEPTIONAL CARE LIMITED,SC483070,05555624,incorrect fame match,Individual owned,"two companies with same name, owned by gillian ashcroft"
+12,Corporate owned,FIRST 4 CARE LIMITED,1250196,05764818,incorrect fame match,Individual owned,"two companies with same name, owned by 11 members of the Doods family"
+13,Corporate owned,FIRST 4 CARE LIMITED,1256608,05764818,incorrect fame match,Individual owned,"two companies with same name, owned by 11 members of the Doods family"
+41,Corporate owned,FIRST 4 CARE LIMITED,SC390293,05764818,incorrect fame match,Individual owned,"two companies with same name, owned by 11 members of the Doods family"
+46,Corporate owned,FIRST 4 CARE LIMITED,SC399586,05764818,incorrect fame match,Individual owned,"two companies with same name, owned by 11 members of the Doods family"
+66,Corporate owned,FIRST 4 CARE LIMITED,2575463,05764818,incorrect fame match,Individual owned,"two companies with same name, owned by 11 members of the Doods family"
+31,Corporate owned,FIRST STEPS CARE LTD,2636996,07265204,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by twi individuals, including a danish person"
+21,Corporate owned,FUTURE FOCUSED LTD,2563164,07408112,incorrect fame match,Individual owned,"two companies with same name, owned by two couples"
+27,Corporate owned,FUTURE FOCUSED LTD,2591916,07408112,incorrect fame match,Individual owned,"two companies with same name, owned by two couples"
+59,Corporate owned,FUTURE FOCUSED LTD,1241634,07408112,incorrect fame match,Individual owned,"two companies with same name, owned by two couples"
+64,Corporate owned,FUTURE FOCUSED LTD,2495397,07408112,incorrect fame match,Individual owned,"two companies with same name, owned by two couples"
+74,Corporate owned,FUTURE FOCUSED LTD,1270301,07408112,incorrect fame match,Individual owned,"two companies with same name, owned by two couples"
+30,Corporate owned,GOOD FOUNDATION LTD,SC067771,04068605,incorrect fame match,Individual owned,"two companies with same name, owned by three couples"
+36,Corporate owned,GOOD FOUNDATION LTD,SC065789,04068605,incorrect fame match,Individual owned,"two companies with same name, owned by three couples"
+39,Corporate owned,GOOD FOUNDATION LTD,SC486165,04068605,incorrect fame match,Individual owned,"two companies with same name, owned by three couples"
+61,Corporate owned,GOOD FOUNDATION LTD,SC456417,04068605,incorrect fame match,Individual owned,"two companies with same name, owned by three couples"
+72,Corporate owned,GOOD FOUNDATION LTD,SC419808,04068605,incorrect fame match,Individual owned,"two companies with same name, owned by three couples"
+79,Corporate owned,GOOD FOUNDATION LTD,SC063318,04068605,incorrect fame match,Individual owned,"two companies with same name, owned by three couples"
+60,Corporate owned,GRACE CARE LIMITED,SC436818,04758580,incorrect fame match,Individual owned,"two companies with same name, owned russels and Gardner"
+73,Corporate owned,HAND IN HAND CHILDCARE LLP,2510328,OC340936,incorrect fame match,Individual owned,matched to llp no ltd; owned by individuals with one holding company aceday holdings.
+1,Corporate owned,HEADWAY HOUSE LIMITED,1214688,09490097,genuine closed company,Individual owned,"used to owned by an individual, closed down in 2018ish"
+34,Corporate owned,HELM CARE SERVICES LTD,2677619,04832036,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by individuals with one holding company 'borneo'"
+6,Corporate owned,HORIZON INDEPENDENT CARE LTD,1264696,09972851,incorrect fame match,Individual owned,"this one is unbelievable, two old care companies both dissolved with the same name taken over by new names… impossible, one in oldham one in manchester."
+8,Corporate owned,HORIZON INDEPENDENT CARE LTD,2490784,09972851,incorrect fame match,Individual owned,"this one is unbelievable, two old care companies both dissolved with the same name taken over by new names… impossible, one in oldham one in manchester."
+14,Corporate owned,LOYAL CARE LIMITED,2652939,10956354,genuine closed company,Individual owned,"used to owned by an individual, closed down in 2020ish"
+29,Corporate owned,MADIBA LIMITED,2608949,06141614,incorrect fame match,Corporate owned,"two companies with same name, owned by a group and holding company"
+33,Corporate owned,MADIBA LIMITED,2683780,06141614,incorrect fame match,Corporate owned,"two companies with same name, owned by a group and holding company"
+53,Corporate owned,MADIBA LIMITED,2672801,06141614,incorrect fame match,Corporate owned,"two companies with same name, owned by a group and holding company"
+65,Corporate owned,MADIBA LIMITED,2677465,06141614,incorrect fame match,Corporate owned,"two companies with same name, owned by a group and holding company"
+43,Corporate owned,MONTAGE SERVICES LIMITED,2654620,03593471,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by two individuals"
+2,Corporate owned,NH CARE LIMITED,SC477796,04622935,incorrect fame match,Individual owned,mixed NH CARE LIMITED with N H CARE LIMITED… owned by two individuals
+78,Corporate owned,ONE STEP CARE LIMITED,2552036,06556134,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by two individuals"
+54,Corporate owned,PADDOCK HOUSE LIMITED,1252120,03715303,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by one individuals"
+11,Corporate owned,PROACTIVE CARE SERVICES LIMITED,SC479776,03719907,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by one individuals, geezer who owns four companies"
+45,Corporate owned,PURPLE OAK SUPPORT,2504775,02962601,wrong ofsted category,Third sector,incorrect ofsted saying it's private https://register-of-charities.charitycommission.gov.uk/en/charity-search/-/charity-details/1040832
+70,Corporate owned,RAINBOW CORNER LIMITED,2550830,04812823,incorrect fame match,Individual owned,"rainbows not rainbow… two individual shareholders, no structure"
+24,Corporate owned,RESTORING LIVES LTD,2664175,07520526,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by two individuals"
+35,Corporate owned,SOUTHEND-ON-SEA YOUNG MEN'S CHRISTIAN ASSOCIATION,2696017,05051166,wrong ofsted category,Third sector,https://register-of-charities.charitycommission.gov.uk/en/charity-search/-/charity-details/4006758
+18,Corporate owned,SUPPORTING FUTURES LIMITED,2658895,05580083,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by two individuals with one holding company"
+67,Corporate owned,SUPPORTING FUTURES LIMITED,2687920,05580083,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by two individuals with one holding company"
+75,Corporate owned,SUPPORTING FUTURES LIMITED,2509381,05580083,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by two individuals with one holding company"
+77,Corporate owned,SUPPORTING FUTURES LIMITED,2548403,05580083,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by two individuals with one holding company"
+81,Corporate owned,SUPPORTING FUTURES LIMITED,SC381667,05580083,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by two individuals with one holding company"
+4,Corporate owned,THE MULBERRY BUSH ORGANISATION LIMITED,1275569,00538828,wrong ofsted category,Third sector,https://register-of-charities.charitycommission.gov.uk/en/charity-search/?p_p_id=uk_gov_ccew_onereg_charitydetails_web_portlet_CharityDetailsPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_uk_gov_ccew_onereg_charitydetails_web_portlet_CharityDetailsPortlet_regId=309565&_uk_gov_ccew_onereg_charitydetails_web_portlet_CharityDetailsPortlet_subId=0
+10,Corporate owned,THE QALB SHORT BREAK SERVICES LTD,SC420303,06154879,unsure,Third sector,must be a charity but can't find charity status. So I'm confused
+76,Corporate owned,THE QALB SHORT BREAK SERVICES LTD,SC389781,06154879,unsure,Third sector,must be a charity but can't find charity status. So I'm confused
+80,Corporate owned,UBUNTU GROUP LTD,2650948,09683385,incorrect fame match,Individual owned,"two companies with same name, matched to dissolved - owned by two individuals"
+3,Corporate owned,UNSEEN (UK),1263623,06754171,wrong ofsted category,Third sector,https://register-of-charities.charitycommission.gov.uk/en/charity-search/-/charity-details/4042947
+47,Corporate owned,WEST CUMBRIA CARE AND SUPPORT,1247670,IP28282R,This is a mutual,Third sector,https://mutuals.fca.org.uk/Search/Society/20920
