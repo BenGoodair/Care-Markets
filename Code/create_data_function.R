@@ -1395,10 +1395,10 @@ mlm <- mlm %>%
   
 
 
-mlm$Sector_merge <- factor(mlm$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unidentified for-profit"))
+mlm$Sector_merge <- factor(mlm$Sector_merge, levels = c("Local Authority", "Third sector", "Individual owned", "Corporate owned", "Investment owned"))
 
 
-
+mlm
 
 
 }
