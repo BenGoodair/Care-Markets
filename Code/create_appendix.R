@@ -79,7 +79,7 @@ ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Car
 ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/figures/Appendix/prior_diag_house.png", two, width = 7, height = 7, dpi = 600)
 
 ####Simple MLM####
-
+library(modelsummary)
 mlm$sector_third <- ifelse(mlm$Sector_merge=="Local Authority", 0,
                            ifelse(mlm$Sector_merge=="Third sector", 1, NA
                            ))
@@ -310,7 +310,7 @@ create_ownership_plot <- function(data, ownership_type, title_suffix) {
 ownership_types <- c("Individual owned", "Corporate owned", "Investment owned", "Local Authority", "Third sector")
 display_names   <- c("Individual owned",   "Corporate owned",   "Investment owned",   "Local Authority",   "Third sector")
 
-plots_list <- Map(function(own, lab) create_ownership_plot(mlm2, own, lab),
+plots_list <- Map(function(own, lab) create_ownership_plot(mlm, own, lab),
                   ownership_types, display_names)
 
 
@@ -1095,7 +1095,7 @@ ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Car
 
  
  # Create a full sequence of times
- all_times <- tibble(time = -238:0)
+ all_times <- tibble(time = -607:0)
  
  # Process the start dataset
  carehomesstart <- df %>%
@@ -1155,8 +1155,8 @@ ggsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Car
                  fill = Sector_merge, colour = Sector_merge, alpha = Sector_merge)) +
    geom_point() +
    theme_minimal() +
-   scale_color_manual(values = c("#008F5D", "#F0AB00", "#E4007C", "#FF5E5E", "#5B0000", "#1F77B4", "#9467BD")) +
-   scale_alpha_manual(values = c(0.2, 0.2, 1, 1, 1, 0.2, 0.2)) +
+   scale_color_manual(values = c("#008F5D","#1F77B4", "#F0AB00", "#E4007C", "#FF5E5E", "#5B0000", "#9467BD")) +
+   scale_alpha_manual(values = c(0.2, 0.2, 0.2, 1, 1, 1, 0.2)) +
    labs(x = "Year", y = "Number of children homes", 
         title = "Number of children's homes owned for-profit",
         fill = "Ownership", color = "Ownership", alpha = "Ownership") +
@@ -1270,11 +1270,11 @@ four <- ggplot(df_grouped, aes(x = Region.Country.name, y = percent, fill = Sect
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_fill_manual(values = c(
     "#008F5D", # Local Authority
+    "#1F77B4", # Investment owned
     "#F0AB00", # LA owned company
     "#E4007C", # Third sector
     "#FF5E5E", # Individual owned
     "#5B0000", # Corporate owned
-    "#1F77B4", # Investment owned
     "#9467BD"  # Unidentified for-profit
   )) +
   theme_minimal() +

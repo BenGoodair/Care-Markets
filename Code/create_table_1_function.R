@@ -63,8 +63,8 @@ create_table_1 <- function(){
     )
   
   # # Print the final pretty table
-    gt_table%>%
-      gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table_1_revised.html")
+  #  gt_table%>%
+  #    gtsave("~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Tables/Table_1_revised.html")
   # 
   # 
   

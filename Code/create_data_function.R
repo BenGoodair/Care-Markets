@@ -1428,7 +1428,10 @@ mlm <- dplyr::left_join(mlm, read.csv(curl("https://github.com/BenGoodair/Care-M
   ))
 
 mlm <- mlm %>%
-  dplyr::select(-Correct_category, -fixed, -fix, -fixed_prof, -fixed_sal, -fixed_name, -fixed_ebitda)
+  dplyr::select(-Correct_category, -fixed, -fix, -fixed_prof, -fixed_sal, -fixed_name, -fixed_ebitda)%>%
+  dplyr::distinct(URN, .keep_all = T)
+
+
 mlm
 
 }
