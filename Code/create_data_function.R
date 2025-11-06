@@ -1398,8 +1398,38 @@ mlm <- mlm %>%
 mlm$Sector_merge <- factor(mlm$Sector_merge, levels = c("Local Authority", "Third sector", "Individual owned", "Corporate owned", "Investment owned"))
 
 
-mlm
 
+mlm <- dplyr::left_join(mlm, read.csv(curl("https://github.com/BenGoodair/Care-Markets/raw/refs/heads/main/Data/processed_profs_2.csv"))%>%
+                   dplyr::rename(fixed_prof = profit_margin_average,
+                                 fixed_ebitda = ebitda_margin_average,
+                                 fixed_sal = salaries_turnover_average,
+                                 fixed_name = Company.name,
+                                 Company.name = old_company_name)%>%
+                   dplyr::mutate(fix=1), join_by(Company.name))%>%
+  dplyr::mutate(profit_margin_average = dplyr::if_else(
+    !is.na(fix) & fix == 1,
+    fixed_prof,
+    profit_margin_average
+  ),
+  ebitda_margin_average = dplyr::if_else(
+    !is.na(fix) & fix == 1,
+    fixed_ebitda,
+    ebitda_margin_average
+  ),
+  salaries_turnover_average = dplyr::if_else(
+    !is.na(fix) & fix == 1,
+    fixed_sal,
+    salaries_turnover_average
+  ),
+  Company.name = dplyr::if_else(
+    !is.na(fix) & fix == 1,
+    fixed_name,
+    Company.name
+  ))
+
+mlm <- mlm %>%
+  dplyr::select(-Correct_category, -fixed, -fix, -fixed_prof, -fixed_sal, -fixed_name, -fixed_ebitda)
+mlm
 
 }
 
