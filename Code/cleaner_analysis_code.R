@@ -6311,3 +6311,23 @@ corrplot(cor_matrix,
 
 # Close the device to save the image
 dev.off()
+
+
+
+
+correction_to_profits <-  read.csv("~/Library/CloudStorage/OneDrive-Nexus365/Documents/Children's Care Homes Project/Data/profits_over_time_2.csv") %>%
+  mutate(across(starts_with("Profit.margin"), as.numeric),
+         across(starts_with("Salaries..Turnover"), as.numeric),
+         across(starts_with("EBITDA.margin."), as.numeric)) %>%
+  mutate(
+    profit_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Profit.margin")))) >= 3,
+                                   rowMeans(dplyr::select(., starts_with("Profit.margin")), na.rm = TRUE), NA),
+    ebitda_margin_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("EBITDA.margin.")))) >= 3,
+                                   rowMeans(dplyr::select(., starts_with("EBITDA.margin.")), na.rm = TRUE), NA),
+    salaries_turnover_average = ifelse(rowSums(!is.na(dplyr::select(., starts_with("Salaries..Turnover")))) >= 3,
+                                       rowMeans(dplyr::select(., starts_with("Salaries..Turnover")), na.rm = TRUE), NA)
+  )%>%
+  dplyr::select(profit_margin_average, ebitda_margin_average,salaries_turnover_average, old_company_name,Company.name )
+
+
+write.csv(correction_to_profits, "~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Data/processed_profs_2.csv")

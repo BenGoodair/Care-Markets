@@ -142,5 +142,5 @@ create_table_2 <- function(){
   
 
   
-  #save_as_docx(table_2, path = "Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Tables/Table_Bayesian_Regressions_revision.docx")
+ # save_as_docx(ft_bayes, path = "Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/GitHub_new/Care-Markets/Tables/Table_Bayesian_Regressions_revision.docx")
 }
