@@ -465,10 +465,10 @@ df <- df %>%
   dplyr::left_join(., francois_clean, by="Company.name") %>%
   dplyr::mutate(Sector_merge = ifelse(Sector.x=="Local Authority", "Local Authority",
                                       ifelse(Sector.x=="Voluntary", "Third sector", Sector.y)),
-                Sector_merge = ifelse(is.na(Sector_merge), "Unidentified for-profit", Sector_merge))%>%
+                Sector_merge = ifelse(is.na(Sector_merge), "Unlinked for-profit", Sector_merge))%>%
   dplyr::filter(!is.na(URN))
 
-df$Sector_merge <- factor(df$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unidentified for-profit"))
+df$Sector_merge <- factor(df$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unlinked for-profit"))
 
 
 
@@ -897,7 +897,7 @@ inspection_data <- create_provider_data()%>%
 
 
 
-df$Sector_merge <- factor(df$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unidentified for-profit"))
+df$Sector_merge <- factor(df$Sector_merge, levels = c("Local Authority", "LA owned company", "Third sector", "Individual owned", "Corporate owned", "Investment owned", "Unlinked for-profit"))
 df$Overall.experiences.and.progress.of.children.and.young.people<- factor(df$Overall.experiences.and.progress.of.children.and.young.people, levels = c("Inadequate", "Requires improvement to be good", "Good", "Outstanding"))
 df$year = lubridate::year(df$Latest.full.inspection.date)
 
@@ -1027,7 +1027,7 @@ LA_panel_data$net_loss_same_year <- as.numeric(scale(as.numeric(LA_panel_data$ne
 LA_panel_data$All_homes <- LA_panel_data$Homes_Local_Authority+
   LA_panel_data$Homes_LA_owned_company+
   LA_panel_data$Homes_Investment_owned+
-  LA_panel_data$Homes_Unidentified_for_profit+
+  LA_panel_data$Homes_Unlinked_for_profit+
   LA_panel_data$Homes_Individual_owned+
   LA_panel_data$Homes_Corporate_owned+
   LA_panel_data$Homes_Third_sector
@@ -1154,7 +1154,7 @@ mlm <- df %>%
                                       rel_pov_per = mean(as.numeric(rel_pov_per), na.rm=T))%>%
                      dplyr::ungroup(),
                    by="Local.authority")%>%
-  dplyr::filter(Sector_merge!="Unidentified for-profit",
+  dplyr::filter(Sector_merge!="Unlinked for-profit",
                 Sector_merge!="LA owned company")%>%
   dplyr::left_join(., inspection_data, by="URN")%>%
   dplyr::distinct(URN, .keep_all = T)

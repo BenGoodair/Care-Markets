@@ -251,5 +251,5 @@ p_funnel_exact <- ggplot(region_data, aes(x = E, y = O_E)) +
 plot<- cowplot::plot_grid(p_funnel_exact,p_map, rel_widths = c(0.42,0.58))
 
 
-ggsave(plot=plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2_revised.jpeg", width=11, height=6, dpi=600)
+#ggsave(plot=plot, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_2_final.pdf", width=11, height=6, dpi=600)
 }

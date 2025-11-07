@@ -97,6 +97,6 @@ create_figure_1 <- function(){
     )
   
   
- # ggsave(plot=d, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_1_revised.jpeg", width=9.5, height=7, dpi=600)
+  #ggsave(plot=d, filename="~/Library/CloudStorage/OneDrive-Nexus365/Documents/GitHub/Github_new/Care-Markets/Figures/figure_1_final.pdf", width=9.5, height=7, dpi=600)
   
 }

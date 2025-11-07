@@ -437,7 +437,7 @@ create_ownership_plot <- function(data, ownership_type, title_suffix) {
 ownership_types <- c("Individual owned", "Corporate owned", "Investment owned", "Local Authority", "Third sector")
 display_names   <- c("Individual owned",   "Corporate owned",   "Investment owned",   "Local Authority",   "Third sector")
 
-plots_list <- Map(function(own, lab) create_ownership_plot(mlm2, own, lab),
+plots_list <- Map(function(own, lab) create_ownership_plot(mlm, own, lab),
                   ownership_types, display_names)
 
 

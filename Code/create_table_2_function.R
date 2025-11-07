@@ -123,7 +123,7 @@ create_table_2 <- function(){
   # Build flextable with sample sizes
   ft_bayes <- flextable(wide_bayes) %>%
     # Add a top header row for sample size
-    add_header_row(values = c("", "", paste0("N=", n1), paste0("N=", n3)), colwidths = c(1, 1, 1, 1), top = TRUE) %>%
+    add_header_row(values = c("", "", paste0("N=", n3), paste0("N=", n1)), colwidths = c(1, 1, 1, 1), top = TRUE) %>%
     # Add the main header row
     add_header_row(values = c("", "", "Posterior Summary", ""), colwidths = c(1, 1, 1, 1)) %>%
     set_header_labels(
