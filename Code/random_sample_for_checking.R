@@ -2,6 +2,19 @@ library(tidyverse)
 
 final_data <- read_csv("Downloads/final_data.csv")
 
+check1 <- final_data %>% dplyr::select(URN, age, Registration.date)
+
+check2 <- mlm %>% dplyr::select(URN, age, Registration.date)
+
+
+age_diff <- check1 %>%
+  inner_join(check2, by = c("URN"), suffix = c(".check1", ".check2")) %>%
+  filter(age.check1 != age.check2)
+
+# View the differing observations
+age_diff
+
+
 random_sample <- final_data %>%
   filter(Sector.x != "Local Authority", Sector.x != "Voluntary") %>%
   sample_n(30)
