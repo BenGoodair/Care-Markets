@@ -32,6 +32,8 @@ In it's current stage the packages gtsummary and brms are preventing replication
 
 # Notes and considerations
 
+ - Our data will have some error. The only way available to us to know the companies running children's homes is via the text reported by Ofsted inspections. Comapnies are often named with the same names as old companies, they change their names, and small typos can make it hard to identify the correct company. We have done our best to make sure it is precise - but some error is likely.
+   
  - Some underlying data is not shareable, and so for some variables like profits and ownership, the data provided here is pre-aggregated.
 
  - The code uses Pacman to make it as reproducible as possible - but therefore if you run the code, expect many R packages to be downloaded onto your machines.
